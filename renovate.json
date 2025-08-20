@@ -1,0 +1,73 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":label(renovate)",
+    ":dependencyDashboard",
+    "docker:pinDigests"
+  ],
+
+  // Tell Renovate where to look (Compose files in each stack folder)
+  "enabledManagers": ["docker-compose"],
+  "managerFilePatterns": [
+    "(^|/)(?:docker-)?compose\\.(ya?ml)$"        // match compose.yaml / compose.yml
+  ],
+
+  // General behavior
+  "rangeStrategy": "bump",
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 10,
+  "timezone": "Europe/Amsterdam",
+  "schedule": ["after 20:00 and before 07:00 every weekday", "every weekend"],
+
+  // Optional: group by stack to reduce PR noise
+  "packageRules": [
+    {
+      "matchManagers": ["docker-compose"],
+      "groupName": "stack: {{packageFileDirNamed}}",
+      "addLabels": ["stack:{{packageFileDirNamed}}"]
+    },
+
+    // Safe automerge for patch updates (Docker tags that follow semver)
+    {
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+
+    // LinuxServer images: allow minor automerge (optional, remove if you prefer manual)
+    {
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["^lscr\\.io/linuxserver/"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+
+    // Keep ghcr images grouped (optional)
+    {
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["^ghcr\\.io/"],
+      "groupName": "ghcr images"
+    }
+  ],
+
+  // Optional: catch image refs hiding in strings (labels/env/etc.)
+  // If you ever reference images outside standard 'image:' keys,
+  // you can add a regex manager later.
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)compose\\.ya?ml$"],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker",
+      "matchStrings": [
+        // Example: image reference inside a label like "some.label=image=name:tag"
+        // "some\\.label=(?<depName>[-\\w./]+):(?<currentValue>[-\\w.]+)"
+        // Start with this section disabled/commented until you really need it.
+      ]
+    }
+  ]
+}
