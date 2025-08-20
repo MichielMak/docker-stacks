@@ -1,0 +1,48 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: mealie
+    restart: unless-stopped
+    #ports:
+    #- "9925:9000" # 
+    deploy:
+      resources:
+        limits:
+          memory: 1000M #
+    volumes:
+      - ${DOCKER_DATA_DIR}/mealie/config:/app/data/
+    environment:
+      # Set Backend ENV Variables Here
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: Europe/Amsterdam
+      MAX_WORKERS: 1
+      WEB_CONCURRENCY: 1
+      BASE_URL: ${BASE_URL}
+      ALLOW_SIGNUP: "true"
+      OIDC_AUTH_ENABLED: "true"
+      OIDC_SIGNUP_ENABLED: "true"
+      OIDC_PROVIDER_NAME: Authentik
+      OIDC_CONFIGURATION_URL: ${OIDC_CONFIGURATION_URL}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_AUTO_REDIRECT: "true"
+      OIDC_REMEMBER_ME: "true"
+      OIDC_USER_GROUP: user
+      OIDC_ADMIN_GROUP: admin
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=Mealie
+      - homepage.icon=mealie.png
+      - homepage.href=https://mealie.${DOMAIN}/
+      - homepage.description=recipe manager and meal planner
+      - homepage.widget.type=mealie
+      - homepage.widget.fields=["recipes", "categories"]
+      - homepage.widget.url=http://mealie:9000
+      - homepage.widget.version=2
+      - homepage.widget.key=${HOMEPAGE_API}
+networks:
+  npm:
+    external: true
