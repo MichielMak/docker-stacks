@@ -1,0 +1,53 @@
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:31.0.8
+    container_name: nextcloud
+    restart: unless-stopped
+    #    networks:
+    #      - npm
+    depends_on:
+      - nextclouddb
+    #    ports:
+    #      - 443:443
+    volumes:
+      - ${DOCKER_DATA_DIR}/nextcloud/config:/config
+      - ${MEDIA_DIR}/nextcloud:/data
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${DB_PW}
+      - MYSQL_HOST=nextclouddb
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=Nextcloud
+      - homepage.icon=nextcloud.png
+      - homepage.href=http://nextcloud.${DOMAIN}/
+      - homepage.description=Open source content collaboration platform
+      - homepage.widget.type=nextcloud
+      - homepage.widget.fields=["freespace", "numfiles"]
+      - homepage.widget.url=https://nextcloud:443
+      - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
+  nextclouddb:
+    image: linuxserver/mariadb:11.4.5
+    container_name: nextclouddb
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PW}
+      - TZ=Europe/Amsterdam
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PW}
+    volumes:
+      - ${DOCKER_DATA_DIR}/nextclouddb/config:/config
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
