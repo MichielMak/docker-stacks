@@ -1,0 +1,50 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/bazarr/config:/config
+      - ${MEDIA_DIR}:/media
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Bazarr
+      - homepage.id=colsmall
+      - homepage.icon=bazarr.png
+      - homepage.href=http://bazarr.${DOMAIN}/
+      - homepage.description=Subtitle management
+      - homepage.widget.type=bazarr
+      - homepage.widget.url=http://bazarr:6767
+      - homepage.widget.key=${BAZARR_API}
+    restart: unless-stopped
+    networks:
+      - npm
+  bazarrexternal:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarrexternal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/bazarrexternal/config:/config
+      - ${MEDIA_DIR}:/media
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Bazarr external
+      - homepage.id=colsmall
+      - homepage.icon=bazarr.png
+      - homepage.href=http://bazarrexternal.${DOMAIN}/
+      - homepage.description=Subtitle management
+      - homepage.widget.type=bazarr
+      - homepage.widget.url=http://bazarrexternal:6767
+      - homepage.widget.key=${BAZARREXTERNAL_API}
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
