@@ -2,7 +2,7 @@
   "extends": [
     "config:recommended",
     ":dependencyDashboard",
-    ":pinDigests",
+    "docker:pinDigests",
     ":semanticCommits",
     ":timezone(Europe/Amsterdam)"
   ],
@@ -10,9 +10,7 @@
   "prConcurrentLimit": 10,
   "labels": ["renovate", "deps"],
   "rangeStrategy": "pin",
-
   "packageRules": [
-    /* ---------- per-stack grouping ---------- */
     {
       "matchFileNames": ["authentik/**"],
       "groupName": "authentik stack",
@@ -53,15 +51,12 @@
       "groupName": "cwa-bd stack",
       "matchUpdateTypes": ["minor", "patch", "digest"]
     },
-
-    /* ---------- special cases ---------- */
     {
       "description": "Authentik uses CalVer (YYYY.M.P)",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/goauthentik/server"],
       "versioning": "regex:^(?<year>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$"
     },
-
     {
       "description": "Stay on Postgres 16.x unless you intentionally bump",
       "matchDatasources": ["docker"],
@@ -75,8 +70,6 @@
       "matchUpdateTypes": ["patch", "digest"],
       "automerge": true
     },
-
-    /* ---------- safer automerge defaults ---------- */
     {
       "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
       "matchDatasources": ["docker"],
@@ -94,8 +87,6 @@
       "matchUpdateTypes": ["major"],
       "automerge": false
     },
-
-    /* ---------- make security-ish patches more visible ---------- */
     {
       "description": "Raise priority for patch updates",
       "matchUpdateTypes": ["patch"],
