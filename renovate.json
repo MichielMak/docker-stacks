@@ -7,13 +7,7 @@
     ":dependencyDashboard",
     "docker:pinDigests"
   ],
-  "enabledManagers": ["docker-compose"],
-  "managerFilePatterns": [
-    "(^|/)(?:docker-)?compose\\.ya?ml$"
-  ],
   "rangeStrategy": "bump",
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 10,
   "timezone": "Europe/Amsterdam",
   "schedule": [
     "after 20:00 and before 07:00 every weekday",
