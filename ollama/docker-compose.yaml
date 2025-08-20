@@ -1,0 +1,25 @@
+services:
+  ollama:
+    image: ollama/ollama:v0.11.5
+    container_name: ollama
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_KEEP_ALIVE=24h
+    volumes:
+      - ${DOCKER_DATA_DIR}/ollama:/root/.ollama
+    networks:
+      - npm
+
+    # --- OPTIONAL: NVIDIA GPU ---
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           capabilities: [gpu]
+    #           count: 1
+
+networks:
+  npm:
+    external: true
