@@ -87,21 +87,14 @@
       "automergeType": "branch"
     },
     {
-      "description": "Respect explicit major tags (stay within same major)",
+      "description": "Disallow major updates for Docker",
       "matchDatasources": [
         "docker"
       ],
-      "allowedVersions": "{{currentVersion.major}}.x"
-    },
-    {
-      "description": "Label PRs with the stack folder name",
-      "matchFileNames": [
-        "**/compose.yaml",
-        "**/docker-compose.yaml"
+      "matchUpdateTypes": [
+        "major"
       ],
-      "addLabels": [
-        "stack:{{parentDir}}"
-      ]
+      "enabled": false
     },
     {
       "description": "Label PRs with the stack folder name",
