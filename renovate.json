@@ -13,6 +13,7 @@
     "deps"
   ],
   "rangeStrategy": "pin",
+  "separateMajorMinor": true,
   "packageRules": [
     {
       "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
@@ -103,8 +104,14 @@
       ]
     },
     {
-      "description": "Split majors and non-majors",
-      "separateMajorMinor": true
+      "description": "Label PRs with the stack folder name",
+      "matchFileNames": [
+        "**/compose.yaml",
+        "**/docker-compose.yaml"
+      ],
+      "addLabels": [
+        "stack:{{parentDir}}"
+      ]
     }
   ]
 }
