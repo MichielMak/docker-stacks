@@ -8,88 +8,165 @@
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
-  "labels": ["renovate", "deps"],
+  "labels": [
+    "renovate",
+    "deps"
+  ],
   "rangeStrategy": "pin",
   "packageRules": [
     {
-      "matchFileNames": ["authentik/**"],
+      "matchFileNames": [
+        "authentik/**"
+      ],
       "groupName": "authentik stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["bazarr/**"],
+      "matchFileNames": [
+        "bazarr/**"
+      ],
       "groupName": "bazarr stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["mealie/**"],
+      "matchFileNames": [
+        "mealie/**"
+      ],
       "groupName": "mealie stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["musicassistant/**"],
+      "matchFileNames": [
+        "musicassistant/**"
+      ],
       "groupName": "musicassistant stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["ollama/**"],
+      "matchFileNames": [
+        "ollama/**"
+      ],
       "groupName": "ollama stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["dockerproxy/**"],
+      "matchFileNames": [
+        "dockerproxy/**"
+      ],
       "groupName": "dockerproxy stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["firefox/**"],
+      "matchFileNames": [
+        "firefox/**"
+      ],
       "groupName": "firefox stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
-      "matchFileNames": ["cwa-bd/**"],
+      "matchFileNames": [
+        "cwa-bd/**"
+      ],
       "groupName": "cwa-bd stack",
-      "matchUpdateTypes": ["minor", "patch", "digest"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
     },
     {
       "description": "Authentik uses CalVer (YYYY.M.P)",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/goauthentik/server"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/goauthentik/server"
+      ],
       "versioning": "regex:^(?<year>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$"
     },
     {
       "description": "Stay on Postgres 16.x unless you intentionally bump",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["postgres"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "postgres"
+      ],
       "allowedVersions": "16.x"
     },
     {
       "description": "Optionally: auto-merge safe Postgres patches/digests",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["postgres"],
-      "matchUpdateTypes": ["patch", "digest"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "postgres"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "digest"
+      ],
       "automerge": true
     },
     {
       "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": [
-        "^lscr\\.io/linuxserver/.*",
-        "^ghcr\\.io/linuxserver/.*",
-        "^ollama/ollama$"
+      "matchDatasources": [
+        "docker"
       ],
-      "matchUpdateTypes": ["patch", "digest"],
-      "automerge": true
+      "matchUpdateTypes": [
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "matchPackageNames": [
+        "/^lscr\\.io/linuxserver/.*/",
+        "/^ghcr\\.io/linuxserver/.*/",
+        "/^ollama/ollama$/"
+      ]
     },
     {
       "description": "Never auto-merge majors",
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false
     },
     {
       "description": "Raise priority for patch updates",
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
       "prPriority": 10
     }
   ]
