@@ -15,126 +15,15 @@
   "rangeStrategy": "pin",
   "packageRules": [
     {
-      "matchFileNames": [
-        "authentik/**"
-      ],
-      "groupName": "authentik stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "bazarr/**"
-      ],
-      "groupName": "bazarr stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "mealie/**"
-      ],
-      "groupName": "mealie stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "musicassistant/**"
-      ],
-      "groupName": "musicassistant stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "ollama/**"
-      ],
-      "groupName": "ollama stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "dockerproxy/**"
-      ],
-      "groupName": "dockerproxy stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "firefox/**"
-      ],
-      "groupName": "firefox stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "cwa-bd/**"
-      ],
-      "groupName": "cwa-bd stack",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ]
-    },
-    {
-      "description": "Authentik uses CalVer (YYYY.M.P)",
+      "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
       "matchDatasources": [
         "docker"
       ],
-      "matchPackageNames": [
-        "ghcr.io/goauthentik/server"
+      "matchPackagePatterns": [
+        ".*"
       ],
-      "versioning": "regex:^(?<year>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$"
-    },
-    {
-      "description": "Stay on Postgres 16.x unless you intentionally bump",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "postgres"
-      ],
-      "allowedVersions": "16.x"
-    },
-    {
-      "description": "Optionally: auto-merge safe Postgres patches/digests",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "postgres"
-      ],
-      "matchUpdateTypes": [
-        "patch",
-        "digest"
-      ],
-      "automerge": true
+      "versioning": "regex:^v?(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$",
+      "matchCurrentVersion": "/^v?\\d{4}\\.\\d{1,2}\\.\\d+$/"
     },
     {
       "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
@@ -146,10 +35,13 @@
         "digest"
       ],
       "automerge": true,
-      "matchPackageNames": [
-        "/^lscr\\.io/linuxserver/.*/",
-        "/^ghcr\\.io/linuxserver/.*/",
-        "/^ollama/ollama$/"
+      "matchPackagePatterns": [
+        "^lscr\\.io/linuxserver/.*",
+        "^ghcr\\.io/linuxserver/.*",
+        "^ollama/ollama$",
+        "^postgres$",
+        "^library/postgres$",
+        "^docker\\.io/library/postgres$"
       ]
     },
     {
@@ -168,6 +60,51 @@
         "patch"
       ],
       "prPriority": 10
+    },
+    {
+      "description": "Group updates per stack folder",
+      "matchFileNames": [
+        "**/compose.yaml",
+        "**/docker-compose.yaml"
+      ],
+      "groupName": "{{parentDir}} stack",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ]
+    },
+    {
+      "description": "Auto-merge digest-only updates without PR",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Respect explicit major tags (stay within same major)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "allowedVersions": "{{currentVersion.major}}.x"
+    },
+    {
+      "description": "Label PRs with the stack folder name",
+      "matchFileNames": [
+        "**/compose.yaml",
+        "**/docker-compose.yaml"
+      ],
+      "addLabels": [
+        "stack:{{parentDir}}"
+      ]
+    },
+    {
+      "description": "Split majors and non-majors",
+      "separateMajorMinor": true
     }
   ]
 }
