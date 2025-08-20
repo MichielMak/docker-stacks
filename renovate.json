@@ -10,26 +10,40 @@
   "rangeStrategy": "bump",
   "timezone": "Europe/Amsterdam",
   "schedule": [
-    "after 20:00 and before 07:00 every weekday",
-    "every weekend"
+    "after 20:00 every weekday",
+    "every weekend",
+    "before 07:00 every weekday"
   ],
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
     },
     {
-      "matchManagers": ["docker-compose"],
+      "matchManagers": [
+        "docker-compose"
+      ],
       "groupName": "stack: {{packageFileDirNamed}}",
-      "addLabels": ["stack:{{packageFileDirNamed}}"]
+      "addLabels": [
+        "stack:{{packageFileDirNamed}}"
+      ]
     },
     {
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["^ghcr\\.io/"],
-      "groupName": "ghcr images"
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": "ghcr images",
+      "matchPackageNames": [
+        "/^ghcr\\.io//"
+      ]
     }
   ],
   "rebaseWhen": "behind-base-branch",
