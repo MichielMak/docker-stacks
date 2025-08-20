@@ -20,11 +20,11 @@
       "matchDatasources": [
         "docker"
       ],
-      "matchPackagePatterns": [
-        ".*"
-      ],
       "versioning": "regex:^v?(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$",
-      "matchCurrentVersion": "/^v?\\d{4}\\.\\d{1,2}\\.\\d+$/"
+      "matchCurrentVersion": "/^v?\\d{4}\\.\\d{1,2}\\.\\d+$/",
+      "matchPackageNames": [
+        "/.*/"
+      ]
     },
     {
       "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
@@ -36,13 +36,13 @@
         "digest"
       ],
       "automerge": true,
-      "matchPackagePatterns": [
-        "^lscr\\.io/linuxserver/.*",
-        "^ghcr\\.io/linuxserver/.*",
-        "^ollama/ollama$",
-        "^postgres$",
-        "^library/postgres$",
-        "^docker\\.io/library/postgres$"
+      "matchPackageNames": [
+        "/^lscr\\.io/linuxserver/.*/",
+        "/^ghcr\\.io/linuxserver/.*/",
+        "/^ollama/ollama$/",
+        "/^postgres$/",
+        "/^library/postgres$/",
+        "/^docker\\.io/library/postgres$/"
       ]
     },
     {
