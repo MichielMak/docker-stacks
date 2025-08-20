@@ -1,51 +1,98 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":semanticCommits",
-    ":label(renovate)",
     ":dependencyDashboard",
-    "docker:pinDigests"
+    ":pinDigests",
+    ":semanticCommits",
+    ":timezone(Europe/Amsterdam)"
   ],
-  "rangeStrategy": "bump",
-  "timezone": "Europe/Amsterdam",
-  "schedule": [
-    "after 20:00 every weekday",
-    "every weekend",
-    "before 07:00 every weekday"
-  ],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "labels": ["renovate", "deps"],
+  "rangeStrategy": "pin",
+
   "packageRules": [
+    /* ---------- per-stack grouping ---------- */
     {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "matchFileNames": ["authentik/**"],
+      "groupName": "authentik stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
     },
     {
-      "matchManagers": [
-        "docker-compose"
-      ],
-      "groupName": "stack: {{packageFileDirNamed}}",
-      "addLabels": [
-        "stack:{{packageFileDirNamed}}"
-      ]
+      "matchFileNames": ["bazarr/**"],
+      "groupName": "bazarr stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
     },
     {
-      "matchDatasources": [
-        "docker"
+      "matchFileNames": ["mealie/**"],
+      "groupName": "mealie stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchFileNames": ["musicassistant/**"],
+      "groupName": "musicassistant stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchFileNames": ["ollama/**"],
+      "groupName": "ollama stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchFileNames": ["dockerproxy/**"],
+      "groupName": "dockerproxy stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchFileNames": ["firefox/**"],
+      "groupName": "firefox stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchFileNames": ["cwa-bd/**"],
+      "groupName": "cwa-bd stack",
+      "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+
+    /* ---------- special cases ---------- */
+    {
+      "description": "Authentik uses CalVer (YYYY.M.P)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/goauthentik/server"],
+      "versioning": "regex:^(?<year>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$"
+    },
+    {
+      "description": "Stay on Postgres 16.x unless you intentionally bump",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres"],
+      "allowedVersions": "16.x",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+
+    /* ---------- safer automerge defaults ---------- */
+    {
+      "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "^lscr\\.io/linuxserver/.*",
+        "^ghcr\\.io/linuxserver/.*",
+        "^ollama/ollama$"
       ],
-      "groupName": "ghcr images",
-      "matchPackageNames": [
-        "/^ghcr\\.io//"
-      ]
+      "matchUpdateTypes": ["patch", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Never auto-merge majors",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+
+    /* ---------- make security-ish patches more visible ---------- */
+    {
+      "description": "Raise priority for patch updates",
+      "matchUpdateTypes": ["patch"],
+      "prPriority": 10
     }
-  ],
-  "rebaseWhen": "behind-base-branch",
-  "commitBodyTable": true
+  ]
 }
