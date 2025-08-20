@@ -1,0 +1,20 @@
+services:
+  cwa-bd:
+    container_name: cwa-bd
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:0.1.4
+    environment:
+      UID: ${UID}
+      GID: ${GID}
+      FLASK_PORT: 8084
+      FLASK_DEBUG: false
+      USE_BOOK_TITLE: true
+      BOOK_LANGUAGE: nl
+      USE_CF_BYPASS: true
+    restart: unless-stopped
+    volumes:
+      - ${MEDIA_DIR}/downloads/usenet/books:/cwa-book-ingest
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
