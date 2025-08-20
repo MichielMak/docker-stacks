@@ -1,0 +1,32 @@
+services:
+  musicassistant:
+    privileged: true
+    container_name: musicassistant
+    volumes:
+      - ${DOCKER_DATA_DIR}/musicassistant/config:/data
+    image: ghcr.io/music-assistant/server
+    environment:
+      # Provide logging level as environment variable.
+      # default=info, possible=(critical, error, warning, info, debug)
+      - LOG_LEVEL=info
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+    security_opt:
+      - apparmor:unconfined
+    restart: unless-stopped
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${MUSICASSISTANT_IP}
+      npm: null
+    labels:
+      - homepage.group=Media
+      - homepage.name=MusicAssistant
+      - homepage.icon=https://www.music-assistant.io/assets/transparent-logo.png
+      - homepage.href=http://musicassistant.${DOMAIN}/
+      - homepage.description=Music library manager for offline & online sources
+networks:
+  my-macvlan-net:
+    external: true
+  npm:
+    external: true
