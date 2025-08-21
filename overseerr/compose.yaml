@@ -1,0 +1,51 @@
+services:
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/overseerr/config:/app/config
+      - ${DOCKER_DATA_DIR}/overseerr/images/logo_full.png:/app/overseerr/public/logo_full.png
+      - ${DOCKER_DATA_DIR}/overseerr/images/logo_full.svg:/app/overseerr/public/logo_full.svg
+      - ${DOCKER_DATA_DIR}/overseerr/images/logo_stacked.svg:/app/overseerr/public/logo_stacked.svg
+    labels:
+      - homepage.group=Media
+      - homepage.name=Overseerr
+      - homepage.icon=overseerr.png
+      - homepage.href=http://overseerr.${DOMAIN}/
+      - homepage.description=Media request management
+      - homepage.widget.fields=["pending", "processing"]
+      - homepage.widget.type=overseerr
+      - homepage.widget.url=http://overseerr:5055
+      - homepage.widget.key=${OVERSEERR_API}
+    restart: unless-stopped
+    networks:
+      - npm
+  overseerr_private:
+    image: sctx/overseerr:latest
+    container_name: overseerr_private
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/overseerrprivate/config:/app/config
+    labels:
+      - homepage.group=Media
+      - homepage.name=Overseerr Private
+      - homepage.icon=overseerr.png
+      - homepage.href=http://overseerrprivate.${DOMAIN}/
+      - homepage.description=Media request management
+      - homepage.widget.fields=["pending", "processing"]
+      - homepage.widget.type=overseerr
+      - homepage.widget.url=http://overseerr_private:5055
+      - homepage.widget.key=${OVERSEERRPRIVATE_API}
+    restart: unless-stopped
+    networks:
+      - npm
+
+  npm:
+    external: true
