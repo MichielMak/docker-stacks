@@ -87,11 +87,6 @@
       ],
       "groupName": "stack: {{parentDir}}",
       "groupSlug": "stack-{{parentDir}}",
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ],
       "separateMinorPatch": true,
       "addLabels": [
         "stack:{{parentDir}}"
