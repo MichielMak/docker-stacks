@@ -4,7 +4,8 @@
     ":dependencyDashboard",
     "docker:pinDigests",
     ":semanticCommits",
-    ":timezone(Europe/Amsterdam)"
+    ":timezone(Europe/Amsterdam)",
+    ":pinDigests"
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
