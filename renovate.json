@@ -17,12 +17,16 @@
   "packageRules": [
     {
       "description": "Ignore all prereleases globally",
-      "matchPackagePatterns": [".*"],
-      "ignoreUnstable": true
+      "ignoreUnstable": true,
+      "matchPackageNames": [
+        "/.*/"
+      ]
     },
     {
       "description": "Delay Docker tags to avoid accidental pre-releases",
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "minimumReleaseAge": "1 days"
     },
     {
