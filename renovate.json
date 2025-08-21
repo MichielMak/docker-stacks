@@ -30,7 +30,8 @@
       "prCreation": "immediate"
     },
     {
-      "description": "Ignore all prereleases globally",
+      "description": "Ignore Docker prereleases globally",
+      "matchDatasources": ["docker"],
       "ignoreUnstable": true
     },
     {
