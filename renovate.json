@@ -5,7 +5,7 @@
     "docker:pinDigests",
     ":semanticCommits",
     ":timezone(Europe/Amsterdam)",
-    ":pinDigests"
+    ":pinDigest"
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
