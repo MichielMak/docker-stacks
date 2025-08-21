@@ -77,20 +77,28 @@
       "prPriority": 10
     },
     {
-      "description": "Group updates per stack folder",
+      "description": "Group updates strictly per compose file directory",
+      "matchManagers": [
+        "docker-compose"
+      ],
       "matchFileNames": [
         "**/compose.yaml",
         "**/docker-compose.yaml"
       ],
-      "groupName": "{{parentDir}} stack",
+      "groupName": "stack: {{parentDir}}",
+      "groupSlug": "stack-{{parentDir}}",
       "matchUpdateTypes": [
         "minor",
         "patch",
         "digest"
+      ],
+      "separateMinorPatch": true,
+      "addLabels": [
+        "stack:{{parentDir}}"
       ]
     },
     {
-      "description": "Auto-merge digest-only updates without PR",
+      "description": "Auto-merge digest-only updates with a PR (one per stack dir)",
       "matchDatasources": [
         "docker"
       ],
@@ -98,7 +106,15 @@
         "digest"
       ],
       "automerge": true,
-      "automergeType": "branch"
+      "automergeType": "pr",
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "groupName": "stack: {{parentDir}}",
+      "groupSlug": "stack-{{parentDir}}",
+      "addLabels": [
+        "stack:{{parentDir}}"
+      ]
     },
     {
       "description": "Disallow major updates for Docker",
