@@ -1,0 +1,21 @@
+services:
+  profilarr:
+    image: santiagosayshey/profilarr:v1.1 # Use :beta for early access to new features
+    container_name: profilarr
+    volumes:
+      - ${DOCKER_DATA_DIR}/profilarr/config:/config # Replace with your actual path
+    environment:
+      - TZ=Europe/Amsterdam # Set your timezone
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Profilarr
+      - homepage.id=colsmall
+      - homepage.icon=https://dictionarry.dev/logo.png
+      - homepage.href=http://profilarr.${DOMAIN}/
+      - homepage.description=Config management for -arr suite
+networks:
+  npm:
+    external: true
