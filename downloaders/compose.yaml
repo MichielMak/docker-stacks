@@ -1,0 +1,93 @@
+services:
+  qbittorrent:
+    image: ghcr.io/hotio/qbittorrent:5.1.2
+    container_name: qbittorrent
+    environment:
+      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - WEBUI_PORTS=8080/tcp,8080/udp
+      - LIBTORRENT=v1
+    volumes:
+      - ${DOCKER_DATA_DIR}/qbittorrent/config:/config
+      - ${MEDIA_DIR}/downloads/torrents:/media/downloads/torrents
+      - ${OVERIG_DIR}/prestage:/overig/prestage
+    ports:
+      - 6881:6881/tcp
+      - 6881:6881/udp
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Qbittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=http://qbittorrent.$DOMAIN/
+      - homepage.description=Torrent client
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.url=http://qbittorrent:8080
+    restart: unless-stopped
+    networks:
+      - npm
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:4.5.2
+    container_name: sabnzbd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - DOCKER_MODS=ghcr.io/tailscale-dev/docker-mod:main
+      - TAILSCALE_STATE_DIR=/var/lib/tailscale
+      - TAILSCALE_SERVE_PORT=8080
+      - TAILSCALE_SERVE_MODE=https
+      - TAILSCALE_AUTHKEY=${TAILSCALE_AUTHKEY}
+      - TAILSCALE_HOSTNAME=sabnzbd
+      - TAILSCALE_USE_SSH=0
+      - TAILSCALE_ACCEPT_ROUTES=1
+    volumes:
+      - ${DOCKER_DATA_DIR}/sabnzbd/config:/config
+      - ${DOCKER_DATA_DIR}/sabnzbd/tailscale:/var/lib/tailscale
+      - ${MEDIA_DIR}/downloads/usenet:/media/downloads/usenet
+      - ${OVERIG_DIR}/prestage:/overig/prestage
+    #    ports:
+    #      - 8080:8080
+    labels:
+      - homepage.group=Infra
+      - homepage.name=SABnzbd
+      - homepage.icon=sabnzbd.png
+      - homepage.href=http://sabnzbd.$DOMAIN/
+      - homepage.description=Usenet client
+      - homepage.widget.type=sabnzbd
+      - homepage.widget.url=http://sabnzbd:8080
+      - homepage.widget.key=${SABNZBD_API}
+    restart: unless-stopped
+    networks:
+      - npm
+  pyload:
+    image: lscr.io/linuxserver/pyload-ng:0.5.0b3.dev91-ls188
+    container_name: pyload
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/pyload/config:/config
+      - ${MEDIA_DIR}/downloads/pyload:/downloads
+    #    ports:
+    #      - 8000:8000
+    #      - 9666:9666 #optional
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Pyload
+      - homepage.icon=pyload.png
+      - homepage.href=http://pyload.$DOMAIN/
+      - homepage.description=Free and Open Source download manager
+      - homepage.widget.type=pyload
+      - homepage.widget.fields=["speed", "active", "queue"]
+      - homepage.widget.url=http://pyload:8000
+      - homepage.widget.username=pyload
+      - homepage.widget.password=${PYLOAD_PW}
+networks:
+  npm:
+    external: true
