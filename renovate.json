@@ -13,6 +13,7 @@
     "deps"
   ],
   "rangeStrategy": "pin",
+  "prerelease": false,
   "separateMajorMinor": true,
   "packageRules": [
     {
