@@ -40,7 +40,7 @@ services:
     depends_on:
       - spotizerr-redis
   spotizerr-redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232
     container_name: spotizerr-redis
     restart: unless-stopped
     environment:
