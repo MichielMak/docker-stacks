@@ -19,7 +19,7 @@
     "deps"
   ],
   "rangeStrategy": "pin",
-  "prCreation": "status-success",
+  "prCreation": "not-pending",
   "separateMajorMinor": true,
   "packageRules": [
     {
