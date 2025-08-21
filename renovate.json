@@ -32,6 +32,7 @@
   "separateMajorMinor": true,
   "commitBodyTable": true,
   "pruneStaleBranches": true,
+  "schedule": ["at any time"],
   "packageRules": [
     {
       "description": "Open PRs immediately for all Docker updates",
