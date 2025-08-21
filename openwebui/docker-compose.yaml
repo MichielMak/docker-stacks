@@ -1,0 +1,18 @@
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:v0.6.22
+    container_name: openwebui
+    restart: unless-stopped
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434   # resolves via Docker DNS on the npm network
+      - WEBUI_AUTH=False                      # set True in prod
+      # - DEFAULT_MODELS=llama3.1:8b
+    volumes:
+      - ${DOCKER_DATA_DIR}/openwebui/data:/app/backend/data
+      # - ${MEDIA_DIR}/openwebui:/app/backend/data
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true

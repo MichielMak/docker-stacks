@@ -1,0 +1,68 @@
+services:
+  romm:
+    image: rommapp/romm:4.1.3
+    container_name: romm
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - ROMM_AUTH_SECRET_KEY=${ROMM_AUTH_SECRET_KEY}
+      - DB_HOST=romm-db
+      - DB_NAME=romm
+      - DB_USER=romm-user
+      - DB_PASSWD=${MYSQL_PASSWORD}
+      - IGDB_CLIENT_ID=${IGDB_ID}
+      - IGDB_CLIENT_SECRET=${IGDB_SECRET}
+      - STEAMGRIDDB_API_KEY=${STEAMGRIDDB_API_KEY}
+      - DISABLE_DOWNLOAD_ENDPOINT_AUTH=true
+      - DISABLE_USERPASS_LOGIN=true
+      - OIDC_ENABLED=true
+      - OIDC_PROVIDER=authentik
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
+      - OIDC_REDIRECT_URI=${OIDC_REDIRECT_URI}
+      - OIDC_SERVER_APPLICATION_URL=${OIDC_SERVER_APPLICATION_URL}
+    volumes:
+      - romm_resources:/romm/resources
+      - romm_redis_data:/redis-data
+      - ${ROM_MEDIA_DIR}:/romm/library
+      - ${DOCKER_DATA_DIR}/romm/assets:/romm/assets
+      - ${DOCKER_DATA_DIR}/romm/config:/romm/config
+    labels:
+      - homepage.group=Media
+      - homepage.name=Romm
+      - homepage.icon=romm.png
+      - homepage.href=https://romm.${DOMAIN}/
+      - homepage.description=A beautiful, powerful, self-hosted rom manager
+      - homepage.widget.type=romm
+      - homepage.widget.url=http://romm:8080
+      - homepage.widget.fields=["platforms", "totalRoms"]
+      - homepage.widget.username=${ROMM_USER}
+      - homepage.widget.password=${ROMM_PASSWORD}
+    depends_on:
+      - romm-db
+    networks:
+      - npm
+  romm-db:
+    image: mariadb:12.0.2
+    container_name: romm-db
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=Europe/Amsterdam
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=romm
+      - MYSQL_USER=romm-user
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ${DOCKER_DATA_DIR}/rommdb/data:/var/lib/mysql
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
+volumes:
+  romm_resources: null
+  romm_redis_data: null
