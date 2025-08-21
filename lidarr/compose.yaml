@@ -1,0 +1,37 @@
+services:
+  lidarr:
+    image: ghcr.io/hotio/lidarr:pr-plugins
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      #- DOCKER_MODS=ghcr.io/tailscale-dev/docker-mod:main
+      #- TAILSCALE_STATE_DIR=/var/lib/tailscale
+      #- TAILSCALE_SERVE_PORT=8686
+      #- TAILSCALE_SERVE_MODE=https
+      #- TAILSCALE_AUTHKEY=${TAILSCALE_AUTHKEY}
+      #- TAILSCALE_HOSTNAME=lidarr
+      #- TAILSCALE_USE_SSH=0
+    volumes:
+      - ${DOCKER_DATA_DIR}/lidarr/config:/config
+      - ${MEDIA_DIR}:/media
+      - ${DEEMIX_DIR}:/deemix
+      - ${DOCKER_DATA_DIR}/lidarr/tailscale:/var/lib/tailscale
+#    ports:
+#      - 8686:8686
+    restart: unless-stopped
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Lidarr
+      - homepage.icon=lidarr.png
+      - homepage.href=http://lidarr.${DOMAIN}/
+      - homepage.description=Music management
+      - homepage.widget.type=lidarr
+      - homepage.widget.url=http://lidarr:8686
+      - homepage.widget.key=${LIDARR_API}
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
