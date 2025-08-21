@@ -46,6 +46,6 @@ services:
     restart: unless-stopped
     networks:
       - npm
-
+networks:
   npm:
     external: true
