@@ -1,0 +1,16 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v1.4.5
+    container_name: homepage
+    volumes:
+      - ${DOCKER_DATA_DIR}/homepage/config:/app/config
+    networks:
+      - npm
+    restart: unless-stopped
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - HOMEPAGE_ALLOWED_HOSTS=${DOMAIN}
+networks:
+  npm:
+    external: true
