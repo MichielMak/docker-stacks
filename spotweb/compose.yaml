@@ -19,7 +19,7 @@ services:
     #    ports:
     #     - 81:80
     volumes:
-      -${DOCKER_DATA_DIR}/spotweb/config:/config
+      - ${DOCKER_DATA_DIR}/spotweb/config:/config
     networks:
       - npm
     labels:
