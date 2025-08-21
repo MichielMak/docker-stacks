@@ -13,6 +13,7 @@
     "deps"
   ],
   "rangeStrategy": "pin",
+  "prCreation": "status-success",
   "separateMajorMinor": true,
   "packageRules": [
     {
@@ -100,6 +101,7 @@
       "matchUpdateTypes": [
         "digest"
       ],
+      "prCreation": "immediate",
       "automerge": true,
       "automergeType": "pr",
       "matchManagers": [
