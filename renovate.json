@@ -6,11 +6,19 @@
     ":semanticCommits",
     ":timezone(Europe/Amsterdam)"
   ],
-  
   "hostRules": [
-    { "matchHost": "index.docker.io", "hostType": "docker" },
-    { "matchHost": "ghcr.io", "hostType": "docker" },
-    { "matchHost": "lscr.io", "hostType": "docker" }
+    {
+      "matchHost": "index.docker.io",
+      "hostType": "docker"
+    },
+    {
+      "matchHost": "ghcr.io",
+      "hostType": "docker"
+    },
+    {
+      "matchHost": "lscr.io",
+      "hostType": "docker"
+    }
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
@@ -26,12 +34,16 @@
   "packageRules": [
     {
       "description": "Open PRs immediately for all Docker updates",
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "prCreation": "immediate"
     },
     {
       "description": "Ignore Docker prereleases globally",
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "ignoreUnstable": true
     },
     {
@@ -39,8 +51,7 @@
       "matchDatasources": [
         "docker"
       ],
-      "minimumReleaseAge": "12 hours",
-      "stabilityDays": 1
+      "minimumReleaseAge": "12 hours"
     },
     {
       "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
@@ -137,12 +148,16 @@
     },
     {
       "description": "Keep Postgres at 16.x for authentik",
-      "matchManagers": ["docker-compose"],
+      "matchManagers": [
+        "docker-compose"
+      ],
       "matchFileNames": [
         "**/authentik/**/compose.yaml",
         "**/authentik/**/docker-compose.yaml"
       ],
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "matchPackageNames": [
         "/^postgres$/",
         "/^library\\/postgres$/",
@@ -152,12 +167,16 @@
     },
     {
       "description": "Exclude Postgres for Immich (custom image tag not supported)",
-      "matchManagers": ["docker-compose"],
+      "matchManagers": [
+        "docker-compose"
+      ],
       "matchFileNames": [
         "**/immich/**/compose.yaml",
         "**/immich/**/docker-compose.yaml"
       ],
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "matchPackageNames": [
         "/^ghcr\\.io\\/immich-app\\/postgres$/"
       ],
