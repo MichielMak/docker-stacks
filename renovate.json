@@ -18,7 +18,12 @@
     {
       "description": "Ignore all prereleases globally",
       "matchPackagePatterns": [".*"],
-      "prerelease": false
+      "ignoreUnstable": true
+    },
+    {
+      "description": "Delay Docker tags to avoid accidental pre-releases",
+      "matchDatasources": ["docker"],
+      "minimumReleaseAge": "1 days"
     },
     {
       "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
