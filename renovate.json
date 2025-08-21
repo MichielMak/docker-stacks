@@ -13,9 +13,13 @@
     "deps"
   ],
   "rangeStrategy": "pin",
-  "prerelease": false,
   "separateMajorMinor": true,
   "packageRules": [
+    {
+      "description": "Ignore all prereleases globally",
+      "matchPackagePatterns": [".*"],
+      "prerelease": false
+    },
     {
       "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
       "matchDatasources": [
