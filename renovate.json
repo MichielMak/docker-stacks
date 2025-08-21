@@ -149,6 +149,19 @@
         "/^docker\\.io\\/library\\/postgres$/"
       ],
       "allowedVersions": "<17"
+    },
+    {
+      "description": "Exclude Postgres for Immich (custom image tag not supported)",
+      "matchManagers": ["docker-compose"],
+      "matchFileNames": [
+        "**/immich/**/compose.yaml",
+        "**/immich/**/docker-compose.yaml"
+      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "/^ghcr\\.io\\/immich-app\\/postgres$/"
+      ],
+      "enabled": false
     }
   ]
 }
