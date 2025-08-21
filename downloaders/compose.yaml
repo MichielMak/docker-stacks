@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: ghcr.io/hotio/qbittorrent:5.1.2
+    image: ghcr.io/hotio/qbittorrent:release-5.1.2
     container_name: qbittorrent
     environment:
       - TZ=Europe/Amsterdam
