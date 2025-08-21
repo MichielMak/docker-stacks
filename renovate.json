@@ -23,17 +23,6 @@
   "separateMajorMinor": true,
   "packageRules": [
     {
-      "description": "Search docker tags in these registries",
-      "matchDatasources": [
-        "docker"
-      ],
-      "registryUrls": [
-        "https://index.docker.io",
-        "https://ghcr.io",
-        "https://lscr.io"
-      ]
-    },
-    {
       "description": "Ignore all prereleases globally",
       "ignoreUnstable": true,
       "matchPackageNames": [
