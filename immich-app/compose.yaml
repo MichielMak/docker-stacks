@@ -9,10 +9,6 @@
 services:
   immich-server:
     container_name: immich_server
-    extends:
-      # uncomment this section for hardware acceleration - see https://immich.app/docs/features/hardware-transcoding
-      file: /mnt/ssd0/docker/stacks/immich-app/hwaccel.transcoding.yml
-      service: quicksync # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     image: ghcr.io/immich-app/immich-server:v1.138.1
     environment:
       - TZ=Europe/Amsterdam
@@ -22,6 +18,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_USERNAME=${DB_USERNAME}
       - DB_DATABASE_NAME=${DB_DATABASE_NAME}
+    devices:
+      - /dev/dri:/dev/dri
     networks:
       - npm
     volumes:
