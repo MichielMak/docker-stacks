@@ -18,8 +18,11 @@
     "renovate",
     "deps"
   ],
+  "platformAutomerge": true,
+  "rebaseWhen": "conflicted",
   "rangeStrategy": "pin",
   "separateMajorMinor": true,
+  "commitBodyTable": true,
   "packageRules": [
     {
       "description": "Open PRs immediately for all Docker updates",
@@ -28,17 +31,15 @@
     },
     {
       "description": "Ignore all prereleases globally",
-      "ignoreUnstable": true,
-      "matchPackageNames": [
-        "/.*/"
-      ]
+      "ignoreUnstable": true
     },
     {
       "description": "Delay Docker tags to avoid accidental pre-releases",
       "matchDatasources": [
         "docker"
       ],
-      "minimumReleaseAge": "1 days"
+      "minimumReleaseAge": "12 hours",
+      "stabilityDays": 1
     },
     {
       "description": "Generic CalVer (YYYY.M.P) for clearly CalVer-tagged Docker images",
@@ -46,10 +47,7 @@
         "docker"
       ],
       "versioning": "regex:^v?(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d+)$",
-      "matchCurrentVersion": "/^v?\\d{4}\\.\\d{1,2}\\.\\d+$/",
-      "matchPackageNames": [
-        "/.*/"
-      ]
+      "matchCurrentVersion": "/^v?\\d{4}\\.\\d{1,2}\\.\\d+$/"
     },
     {
       "description": "Auto-merge low-risk updates (patch/digest) for common homelab images",
@@ -61,10 +59,13 @@
         "digest"
       ],
       "automerge": true,
+      "automergeType": "pr",
       "matchPackageNames": [
         "/^lscr\\.io/linuxserver/.*/",
         "/^ghcr\\.io/linuxserver/.*/",
-        "/^ollama/ollama$/",
+        "/^ollama\\/ollama$/",
+        "/^docker\\.io\\/ollama\\/ollama$/",
+        "/^ghcr\\.io\\/ollama\\/ollama$/",
         "/^postgres$/",
         "/^library/postgres$/",
         "/^docker\\.io/library/postgres$/"
@@ -122,16 +123,6 @@
       "addLabels": [
         "stack:{{parentDir}}"
       ]
-    },
-    {
-      "description": "Disallow major updates for Docker",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "enabled": false
     },
     {
       "description": "Label PRs with the stack folder name",
