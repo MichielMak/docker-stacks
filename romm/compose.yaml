@@ -1,6 +1,6 @@
 services:
   romm:
-    image: rommapp/romm:4.1.3
+    image: rommapp/romm:4.1.3@sha256:fe68b32b2765c61a696012709e7ad638faba9c4776d936bf23a35fb576a66eea
     container_name: romm
     restart: unless-stopped
     environment:
@@ -45,7 +45,7 @@ services:
     networks:
       - npm
   romm-db:
-    image: mariadb:12.0.2
+    image: mariadb:12.0.2@sha256:b30cc65b57a11a2e791ad5c06284e599fe9f1bf3fe9081a88d85bcf36389be4a
     container_name: romm-db
     restart: unless-stopped
     environment:
