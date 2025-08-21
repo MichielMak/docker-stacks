@@ -1,0 +1,51 @@
+services:
+  spotweb:
+    image: jgeusebroek/spotweb:latest
+    container_name: spotweb
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - GUID=${GUID}
+      - TZ=Europe/Amsterdam
+      - SPOTWEB_DB_TYPE=pdo_mysql
+      - SPOTWEB_DB_HOST=spotweb_db
+      - SPOTWEB_DB_PORT=3306
+      - SPOTWEB_DB_NAME=spotweb
+      - SPOTWEB_DB_USER=spotweb
+      - SPOTWEB_DB_PASS=${MYSQL_PASSWORD}
+      - SPOTWEB_CRON_RETRIEVE=* */2 * * *
+    depends_on:
+      - spotweb_db
+    #    ports:
+    #     - 81:80
+    volumes:
+      -${DOCKER_DATA_DIR}/spotweb/config:/config
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=Spotweb
+      - homepage.icon=https://raw.githubusercontent.com/spotweb/spotweb/refs/heads/develop/images/spotnet.gif
+      - homepage.href=https://spotweb.${DOMAIN}/
+      - homepage.description=Decentralized alternative to usenet indexing
+  spotweb_db:
+    image: linuxserver/mariadb
+    container_name: spotwebdb
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - MYSQL_ROOT_PASSWORD=spotweb
+      - TZ=Europe/Amsterdam
+      - MYSQL_DATABASE=spotweb
+      - MYSQL_USER=spotweb
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ${DOCKER_DATA_DIR}/spotwebdb/config:/config
+    networks:
+      - npm
+#    ports:
+#     - 3306:3306
+networks:
+  npm:
+    external: true
