@@ -134,6 +134,21 @@
       "addLabels": [
         "stack:{{parentDir}}"
       ]
+    },
+    {
+      "description": "Keep Postgres at 16.x for authentik",
+      "matchManagers": ["docker-compose"],
+      "matchFileNames": [
+        "**/authentik/**/compose.yaml",
+        "**/authentik/**/docker-compose.yaml"
+      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "/^postgres$/",
+        "/^library\\/postgres$/",
+        "/^docker\\.io\\/library\\/postgres$/"
+      ],
+      "allowedVersions": "<17"
     }
   ]
 }
