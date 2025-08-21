@@ -1,6 +1,6 @@
 services:
   profilarr:
-    image: santiagosayshey/profilarr:v1.1 # Use :beta for early access to new features
+    image: santiagosayshey/profilarr:v1.1@sha256:5c69978b598a82eb358f0bdac1489d7f24c14aa688fc5615eb5df4ce785bde5d # Use :beta for early access to new features
     container_name: profilarr
     volumes:
       - ${DOCKER_DATA_DIR}/profilarr/config:/config # Replace with your actual path
