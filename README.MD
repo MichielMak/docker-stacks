@@ -17,7 +17,7 @@ This separation allows flexible and maintainable configuration management.
 
 ## 🏠 Homepage Labels
 
-Stacks are labeled with metadata to improve discoverability on the Komodo homepage. Labels include stack categories, technologies used, and status indicators.
+Labels are set directly in the `docker-compose` files to integrate with the [Homepage](https://gethomepage.dev/) dashboard. These labels configure service names, icons, grouping, and dashboard links, providing a user‑friendly way to access services through the Homepage dashboard.
 
 ## 🔄 Renovate Versioning
 
