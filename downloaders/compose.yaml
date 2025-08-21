@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: ghcr.io/hotio/qbittorrent:release-5.1.2
+    image: ghcr.io/hotio/qbittorrent:release-5.1.2@sha256:13efbfced187703eb45e685fa43184110c1c57a95ff70e1b53cdb8fa974790f5
     container_name: qbittorrent
     environment:
       - TZ=Europe/Amsterdam
@@ -28,7 +28,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:4.5.2
+    image: lscr.io/linuxserver/sabnzbd:4.5.2@sha256:371fd7665789ee0c1961c4d15bbd43d85ef2af0145c0e740c505ccd4fff72d16
     container_name: sabnzbd
     environment:
       - PUID=${PUID}
@@ -62,7 +62,7 @@ services:
     networks:
       - npm
   pyload:
-    image: lscr.io/linuxserver/pyload-ng:0.5.0b3.dev91-ls188
+    image: lscr.io/linuxserver/pyload-ng:0.5.0b3.dev91-ls188@sha256:7d28b80b7f6e091d5d423560d1392970789ff8d7c748807a78a7908319457f07
     container_name: pyload
     environment:
       - PUID=${PUID}
