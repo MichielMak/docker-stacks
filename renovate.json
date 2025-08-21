@@ -19,9 +19,13 @@
     "deps"
   ],
   "rangeStrategy": "pin",
-  "prCreation": "not-pending",
   "separateMajorMinor": true,
   "packageRules": [
+    {
+      "description": "Open PRs immediately for all Docker updates",
+      "matchDatasources": ["docker"],
+      "prCreation": "immediate"
+    },
     {
       "description": "Ignore all prereleases globally",
       "ignoreUnstable": true,
