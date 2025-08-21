@@ -6,6 +6,23 @@
     ":semanticCommits",
     ":timezone(Europe/Amsterdam)"
   ],
+  "allowedRegistries": [
+    "docker.io",
+    "ghcr.io",
+    "lscr.io"
+  ],
+  "docker": {
+    "registryUrls": [
+      "https://index.docker.io",
+      "https://ghcr.io",
+      "https://lscr.io"
+    ]
+  },
+  "hostRules": [
+    { "matchHost": "index.docker.io", "hostType": "docker" },
+    { "matchHost": "ghcr.io", "hostType": "docker" },
+    { "matchHost": "lscr.io", "hostType": "docker" }
+  ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
   "labels": [
