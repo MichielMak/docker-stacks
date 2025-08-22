@@ -17,6 +17,9 @@ services:
       IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
       OCIS_MACHINE_AUTH_API_KEY: ${OCIS_MACHINE_AUTH_API_KEY}
       THUMBNAILS_FILESYSTEMSTORAGE_ROOT: /var/lib/ocis/thumbnails
+      IDP_LDAP_BIND_DN: uid=idp,ou=sysusers,o=libregraph-idm
+      IDM_IDPSVC_PASSWORD: ${IDM_IDPSVC_PASSWORD}         # seeds/updates uid=idp in IDM
+      IDP_LDAP_BIND_PASSWORD: ${IDM_IDPSVC_PASSWORD}       # makes IDP use the same password
       # STORAGE_USERS_DRIVER: ocis
     volumes:
       - ${DOCKER_DATA_DIR:?set globally}/owncloud/config:/etc/ocis
