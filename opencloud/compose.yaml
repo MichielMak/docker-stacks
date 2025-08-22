@@ -13,6 +13,9 @@ services:
       - ./app.env
     expose:
       - 9200
+    dns:
+      - ${PIHOLE_IP}
+      - 1.1.1.1
     networks:
       - npm
 
