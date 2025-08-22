@@ -8,15 +8,15 @@
   ],
   "hostRules": [
     {
-      "matchHost": "index.docker.io",
+      "hostName": "index.docker.io",
       "hostType": "docker"
     },
     {
-      "matchHost": "ghcr.io",
+      "hostName": "ghcr.io",
       "hostType": "docker"
     },
     {
-      "matchHost": "lscr.io",
+      "hostName": "lscr.io",
       "hostType": "docker"
     }
   ],
@@ -35,13 +35,10 @@
   "schedule": [
     "at any time"
   ],
+  "docker": {
+    "platform": "linux/amd64"
+  },
   "packageRules": [
-    {
-      "matchCategories": [
-        "docker"
-      ],
-      "platform": "linux/amd64"
-    },
     {
       "description": "Resolve all GHCR images via GHCR",
       "matchDatasources": [
@@ -50,8 +47,8 @@
       "registryUrls": [
         "https://ghcr.io"
       ],
-      "matchPackageNames": [
-        "/^ghcr\\.io//"
+      "matchPackagePatterns": [
+        "^ghcr\\.io/"
       ]
     },
     {
