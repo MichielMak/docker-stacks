@@ -8,15 +8,15 @@
   ],
   "hostRules": [
     {
-      "hostName": "index.docker.io",
+      "matchHost": "index.docker.io",
       "hostType": "docker"
     },
     {
-      "hostName": "ghcr.io",
+      "matchHost": "ghcr.io",
       "hostType": "docker"
     },
     {
-      "hostName": "lscr.io",
+      "matchHost": "lscr.io",
       "hostType": "docker"
     }
   ],
@@ -32,16 +32,27 @@
   "separateMajorMinor": true,
   "commitBodyTable": true,
   "pruneStaleBranches": true,
-  "schedule": ["at any time"],
-  "docker": {
-    "platform": "linux/amd64"
-  },
+  "schedule": [
+    "at any time"
+  ],
   "packageRules": [
     {
+      "matchCategories": [
+        "docker"
+      ],
+      "platform": "linux/amd64"
+    },
+    {
       "description": "Resolve all GHCR images via GHCR",
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["^ghcr\\.io/"],
-      "registryUrls": ["https://ghcr.io"]
+      "matchDatasources": [
+        "docker"
+      ],
+      "registryUrls": [
+        "https://ghcr.io"
+      ],
+      "matchPackageNames": [
+        "/^ghcr\\.io//"
+      ]
     },
     {
       "description": "Open PRs immediately for all Docker updates",
