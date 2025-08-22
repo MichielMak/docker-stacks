@@ -38,7 +38,7 @@ services:
       - npm
 
   opencloud-collabora:
-    image: collabora/code:25.04.1.1.1@sha256:8a0523a5238c8e0c7ce1458543b45d731d253113489ffa35b77bb5d9470bccb3
+    image: collabora/code:25.04.4.2.1@sha256:05df5e537bf7a72f31c6acb72a37dcf74c77893af5a285c0746c1cc590165fb7
     container_name: opencloud-collabora
     restart: always
     entrypoint: ['/bin/bash', '-c']
