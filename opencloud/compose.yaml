@@ -1,0 +1,65 @@
+services:
+  opencloud:
+    image: opencloudeu/opencloud:2.0.4
+    container_name: opencloud
+    restart: always
+    entrypoint:
+      - /bin/sh
+    command: ['-c', 'opencloud init || true; opencloud server']
+    volumes:
+      - ${DOCKER_DATA_DIR}/opencloud/config:/etc/opencloud
+      - ${DOCKER_DATA_DIR}/opencloud/data:/var/lib/opencloud
+    env_file:
+      - ./app.env
+    expose:
+      - 9200
+    networks:
+      - npm
+
+  opencloud-collaboration:
+    image: opencloudeu/opencloud:2.0.4
+    container_name: opencloud-collaboration
+    restart: always
+    depends_on:
+      opencloud:
+        condition: service_started
+      opencloud-collabora:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+    command: ['-c', 'opencloud collaboration server']
+    env_file:
+      - ./collaboration.env
+    volumes:
+      - ${DOCKER_DATA_DIR}/opencloud/config:/etc/opencloud
+    expose:
+      - 9300
+    networks:
+      - npm
+
+  opencloud-collabora:
+    image: collabora/code:25.04.1.1.1
+    container_name: opencloud-collabora
+    restart: always
+    entrypoint: ['/bin/bash', '-c']
+    command: ['coolconfig generate-proof-key && /start-collabora-online.sh']
+    cap_add:
+      - MKNOD
+    env_file:
+      - ./collabora.env
+    expose:
+      - 9980
+    networks:
+      - proxy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'bash',
+          '-c',
+          "exec 3<>/dev/tcp/127.0.0.1/9980 && echo -e 'GET /hosting/discovery HTTP/1.1\r\nHost: localhost:9980\r\n\r\n' >&3 && head -n 1 <&3 | grep '200 OK'",
+        ]
+
+networks:
+  npm:
+    external: true
