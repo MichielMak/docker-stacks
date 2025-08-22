@@ -1,0 +1,32 @@
+services:
+  owncloud:
+    image: owncloud/ocis:7.1.4
+    container_name: owncloud
+    restart: unless-stopped
+    entrypoint: ["/bin/sh","-c","ocis init || true; exec ocis server"]
+    environment:
+      OCIS_CONFIG_DIR: /etc/ocis
+      PROXY_HTTP_ADDR: 0.0.0.0:9200
+      PROXY_TLS: "false"
+      OCIS_LOG_LEVEL: "info"
+      OCIS_INSECURE: "false"
+      OCIS_URL: ${OCIS_URL}
+      IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
+      # STORAGE_USERS_DRIVER: ocis
+    volumes:
+      - ${DOCKER_DATA_DIR:?set globally}/owncloud/config:/etc/ocis
+      - ${MEDIA_DIR:?set globally}/documents:/var/lib/ocis
+      - ${DOCKER_DATA_DIR:?set globally}/owncloud/thumbnails:/var/lib/ocis/thumbnails
+    expose:
+      - "9200"
+    networks:
+      - npm
+    labels:
+      - "homepage.group=Storage"
+      - "homepage.name=ownCloud"
+      - "homepage.icon=owncloud"
+      - "homepage.href=${OCIS_URL}"
+      - "homepage.description=Files & sharing"
+networks:
+  npm:
+    external: true
