@@ -7,7 +7,7 @@ services:
       - ${DOCKER_DATA_DIR}/spotizerr/creds:/app/creds
       - ${DOCKER_DATA_DIR}/spotizerr/logs:/app/logs
       - ${DEEMIX_DIR}:/app/downloads
-    image: cooldockerizer93/spotizerr:3.2.0@sha256:24439613e4eb7222d542401ca5124f8800b0a7b1d41d9d89d87757a9cbd82331
+    image: cooldockerizer93/spotizerr:3.2.1@sha256:8b806b5c0f269eb1f44a8e43e5d46912612604717a6b6879044c7f23753c29c5
 #    ports:
 #      - 7171:7171
     restart: unless-stopped
