@@ -6,6 +6,7 @@ services:
     environment:
       - RENOVATE_TOKEN=${RENOVATE_TOKEN}
       - LOG_LEVEL=debug
+      - RENOVATE_CONFIG_FILE=/usr/src/app/config.json
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
       - renovate-cache:/usr/src/app/cache
