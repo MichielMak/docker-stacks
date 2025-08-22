@@ -1,0 +1,64 @@
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:5.26.2
+    container_name: radarr
+    environment:
+      - PUID={PUID}
+      - PGID={PGID}
+      - TZ=Europe/Amsterdam
+      - DOCKER_MODS=ghcr.io/tailscale-dev/docker-mod:main # Tailscale integration
+      - TAILSCALE_STATE_DIR=/var/lib/tailscale # Tailscale state directory
+      - TAILSCALE_SERVE_PORT=7878 # Port for Tailscale to serve Radarr
+      - TAILSCALE_SERVE_MODE=https # Use HTTPS for Tailscale serving
+      - TAILSCALE_AUTHKEY=${TAILSCALE_AUTHKEY}  # Tailscale auth key
+      - TAILSCALE_HOSTNAME=radarr # Hostname for Tailscale
+      - TAILSCALE_USE_SSH=0 # Disable SSH for Tailscale
+    volumes:
+      - ${DOCKER_DATA_DIR}/radarr/config:/config
+      - ${MEDIA_DIR}:/media
+      - ${DOCKER_DATA_DIR}/radarr/tailscale:/var/lib/tailscale
+    #    ports:
+    #      - 7878:7878
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Radarr
+      - homepage.icon=radarr.png
+      - homepage.href=http://radarr.${DOMAIN}/
+      - homepage.description=Movies management
+      - homepage.widget.type=radarr
+      - homepage.widget.fields=["wanted", "queued", "movies"]
+      - homepage.widget.url=http://radarr:7878
+      - homepage.widget.key=${RADARR_API}
+    restart: unless-stopped
+    networks:
+      - npm
+  radarrexternal:
+    image: lscr.io/linuxserver/radarr:5.26.2
+    container_name: radarrexternal
+    environment:
+      - PUID={PUID}
+      - PGID={PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/radarrrexternal/config:/config
+      - ${MEDIA_DIR}:/media
+    #    ports:
+    #      - 7878
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Radarr external
+      - homepage.icon=radarr.png
+      - homepage.href=http://radarrexternal.${DOMAIN}/
+      - homepage.description=Movies management
+      - homepage.widget.type=radarr
+      - homepage.widget.fields=["wanted", "queued", "movies"]
+      - homepage.widget.url=http://radarrexternal:7878
+      - homepage.widget.key=${RADARREXTERNAL_API}
+      - tsdproxy.enable=true
+      - tsdproxy.container_port=7878
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
