@@ -10,6 +10,7 @@ services:
       PROXY_TLS: "false"
       OCIS_LOG_LEVEL: "info"
       OCIS_INSECURE: "false"
+      OCIS_JWT_SECRET: ${OCIS_JWT_SECRET}
       OCIS_URL: ${OCIS_URL}
       IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
       # STORAGE_USERS_DRIVER: ocis
