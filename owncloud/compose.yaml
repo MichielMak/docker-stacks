@@ -1,6 +1,6 @@
 services:
   owncloud:
-    image: owncloud/ocis:7.1.4
+    image: owncloud/ocis:7.2.0@sha256:a4b42923f0f3c4458660e1485693bf5a8399b8354c75febfedfd07e55590b8ab
     container_name: owncloud
     restart: unless-stopped
     entrypoint: ["/bin/sh","-c","ocis init || true; exec ocis server"]
