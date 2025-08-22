@@ -27,6 +27,9 @@ services:
       - ${DOCKER_DATA_DIR:?set globally}/owncloud/thumbnails:/var/lib/ocis/thumbnails
     expose:
       - "9200"
+    dns:
+      - ${PIHOLE_IP}
+      - 1.1.1.1    
     networks:
       - npm
     labels:
