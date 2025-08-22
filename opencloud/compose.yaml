@@ -50,7 +50,7 @@ services:
     expose:
       - 9980
     networks:
-      - proxy
+      - npm
     healthcheck:
       test:
         [
