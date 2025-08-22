@@ -1,0 +1,12 @@
+services:
+  headless-chrome:
+    #ports:
+    #   - 9222:9222
+    container_name: headless-chrome
+    image: chromedp/headless-shell:139.0.7258.139
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
