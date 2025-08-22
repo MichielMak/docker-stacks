@@ -1,0 +1,16 @@
+services:
+  quickstart:
+    image: kometateam/quickstart:v0.8.19
+    container_name: quickstart
+#    ports:
+#      - 7171:7171
+    environment:
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/quickstart/config:/config
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
