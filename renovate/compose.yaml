@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       - RENOVATE_TOKEN=${RENOVATE_TOKEN}
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
       - renovate-cache:/usr/src/app/cache
