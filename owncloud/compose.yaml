@@ -12,7 +12,6 @@ services:
       OCIS_JWT_SECRET: ${OCIS_JWT_SECRET}
       OCIS_TRANSFER_SECRET: ${OCIS_TRANSFER_SECRET}
       OCIS_URL: ${OCIS_URL} # e.g. https://cloud.example.com
-      PROXY_TLS: "false"
       PROXY_OIDC_ISSUER: ${OCIS_URL}
       PROXY_TRUSTED_PROXIES: "${NPM_IP},${HOST_IP},127.0.0.1,::1"
       IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
