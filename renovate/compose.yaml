@@ -6,7 +6,7 @@ services:
     environment:
       - RENOVATE_TOKEN=${RENOVATE_TOKEN}
       - LOG_LEVEL=info
-    command: ["--config", "/usr/src/app/config/config.json", "github.com/MichielMak/docker-stacks"]
+    command: ["github.com/MichielMak/docker-stacks"]
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config:/usr/src/app/config:ro
       - renovate-cache:/usr/src/app/cache
