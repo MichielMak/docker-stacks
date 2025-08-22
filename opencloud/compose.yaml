@@ -39,6 +39,9 @@ services:
       - 9300
     networks:
       - npm
+    dns:
+      - ${PIHOLE_IP}
+      - 1.1.1.1      
 
   opencloud-collabora:
     image: collabora/code:25.04.4.2.1@sha256:05df5e537bf7a72f31c6acb72a37dcf74c77893af5a285c0746c1cc590165fb7
@@ -54,6 +57,9 @@ services:
       - 9980
     networks:
       - npm
+    dns:
+      - ${PIHOLE_IP}
+      - 1.1.1.1      
     healthcheck:
       test:
         [
