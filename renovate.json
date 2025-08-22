@@ -13,7 +13,9 @@
     },
     {
       "matchHost": "ghcr.io",
-      "hostType": "docker"
+      "hostType": "docker",
+      "username": "{{ env.GHCR_USERNAME }}",
+      "password": "{{ env.GHCR_PAT }}"
     },
     {
       "matchHost": "lscr.io",
