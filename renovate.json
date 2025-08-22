@@ -51,7 +51,19 @@
         "https://ghcr.io"
       ],
       "matchPackageNames": [
-        "/^ghcr\\.io//"
+        "/^ghcr\\.io\\//"
+      ]
+    },
+    {
+      "description": "Run GHCR checks overnight to avoid rate limits",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "/^ghcr\\.io\\//"
+      ],
+      "schedule": [
+        "after 01:00 and before 06:00"
       ]
     },
     {
