@@ -1,6 +1,6 @@
 services:
   opencloud:
-    image: opencloudeu/opencloud:2.0.4
+    image: opencloudeu/opencloud:2.0.4@sha256:8d862e83bea7803fd0d48d68ecd1eba8960fe07ac2b8b021f0e921502c962e38
     container_name: opencloud
     restart: always
     entrypoint:
@@ -17,7 +17,7 @@ services:
       - npm
 
   opencloud-collaboration:
-    image: opencloudeu/opencloud:2.0.4
+    image: opencloudeu/opencloud:2.0.4@sha256:8d862e83bea7803fd0d48d68ecd1eba8960fe07ac2b8b021f0e921502c962e38
     container_name: opencloud-collaboration
     restart: always
     depends_on:
@@ -38,7 +38,7 @@ services:
       - npm
 
   opencloud-collabora:
-    image: collabora/code:25.04.1.1.1
+    image: collabora/code:25.04.1.1.1@sha256:8a0523a5238c8e0c7ce1458543b45d731d253113489ffa35b77bb5d9470bccb3
     container_name: opencloud-collabora
     restart: always
     entrypoint: ['/bin/bash', '-c']
