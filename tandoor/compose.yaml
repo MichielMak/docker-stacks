@@ -1,0 +1,48 @@
+services:
+  db_recipes:
+    container_name: db_recipes
+    restart: unless-stopped
+    image: postgres:16-alpine
+    volumes:
+      - ${DOCKER_DATA_DIR}/tandoor/postgresql:/var/lib/postgresql/data
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_ENGINE=${DB_ENGINE}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - PostGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TZ}
+      - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
+      - SoCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
+    networks:
+      - npm
+  web_recipes:
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_ENGINE=${DB_ENGINE}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - PostGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TZ}
+      - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
+      - SoCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
+    volumes:
+      - staticfiles:/opt/recipes/staticfiles
+      - ${DOCKER_DATA_DIR}/tandoor/mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+    container_name: web_recipes
+    image: vabene1111/recipes:2.0.3
+    restart: unless-stopped
+    networks:
+      - npm
+volumes:
+  nginx_config: null
+  staticfiles: null
+networks:
+  npm:
+    external: true
