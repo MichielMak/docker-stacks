@@ -1,26 +1,114 @@
 services:
-  renovate:
-    image: renovate/renovate:latest
-    container_name: renovate
-    restart: "no"  # one-shot job
+  # GitHub App Installation Token Generator
+  token-generator:
+    image: node:18.20.8-alpine3.20
+    working_dir: /app
     environment:
-      - RENOVATE_PLATFORM=github
-      - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES:-MichielMak/docker-stacks}
-      - LOG_LEVEL=debug
-      - RENOVATE_CONFIG_FILE=/usr/src/app/config.json
+      - APP_ID=${GITHUB_APP_ID}
+      - PRIVATE_KEY_PATH=/app/private-key.pem
+      - INSTALLATION_ID=${GITHUB_APP_INSTALLATION_ID}
+      - GITHUB_API_URL=${GITHUB_ENDPOINT:-https://api.github.com}
     volumes:
-      - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
-      - renovate-cache:/usr/src/app/cache
-      - ${DOCKER_DATA_DIR}/renovate/renovate-app.pem:/app/private-key.pem:ro
-    entrypoint: ["/bin/sh","-c"]
+      - ${DOCKER_DATA_DIR}/renovate/github-app-private-key.pem:/app/private-key.pem:ro
+      - token-volume:/app/token
+      - ./token-generator:/app/src:ro
+    restart: "no"  # Don't restart, just run once
     command: >
-      "export RENOVATE_TOKEN=$(docker run --rm
-         -v $(pwd)/renovate-app.pem:/app/private-key.pem:ro
-         ghcr.io/mshekow/github-app-installation-token
-           --appId ${RENOVATE_APP_ID}
-           --installationId ${RENOVATE_INSTALLATION_ID}
-           --privateKeyPath /app/private-key.pem)
-       && renovate"
+      sh -c "
+        echo 'Installing dependencies...'
+        npm install --silent jsonwebtoken @octokit/rest
+        echo 'Generating GitHub App installation token...'
+        node src/generate-token.js > /app/token/token.txt 2>&1
+        if [ $? -eq 0 ]; then
+          echo 'Token generated successfully'
+          cat /app/token/token.txt | head -c 20
+          echo '...'
+        else
+          echo 'Token generation failed:'
+          cat /app/token/token.txt
+          exit 1
+        fi
+      "
+
+  # One-time Renovate run
+  renovate:
+    image: renovate/renovate:41.82.6
+    depends_on:
+      token-generator:
+        condition: service_completed_successfully
+    user: "0:0"  # Run as root to avoid permission issues
+    environment:
+      # Platform configuration
+      - RENOVATE_PLATFORM=github
+      - RENOVATE_ENDPOINT=${GITHUB_ENDPOINT:-https://api.github.com}
+      
+      # GitHub App configuration
+      - RENOVATE_USERNAME=${GITHUB_APP_USERNAME}
+      - RENOVATE_GIT_AUTHOR=${GITHUB_APP_GIT_AUTHOR}
+      
+      # Repositories to process
+      - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
+      
+      # Renovate behavior
+      - RENOVATE_DRY_RUN=${RENOVATE_DRY_RUN:-false}
+      - RENOVATE_LOG_LEVEL=${RENOVATE_LOG_LEVEL:-info}
+      - RENOVATE_REQUIRE_CONFIG=${RENOVATE_REQUIRE_CONFIG:-required}
+      - RENOVATE_CACHE_DIR=/tmp/renovate/cache
+      
+      # Optional: Additional configuration
+      - RENOVATE_AUTODISCOVER=${RENOVATE_AUTODISCOVER:-false}
+      - RENOVATE_INCLUDE_FORKS=${RENOVATE_INCLUDE_FORKS:-false}
+      
+    volumes:
+      - token-volume:/app/token:ro
+      - ${DOCKER_DATA_DIR}/renovate/config:/usr/src/app/config:ro
+      - ${DOCKER_DATA_DIR}/renovate/cache:/tmp/renovate/cache
+      - ${DOCKER_DATA_DIR}/renovate/logs:/tmp/renovate/logs
+    restart: "no"  # Run once and stop
+    command: >
+      sh -c "
+        echo 'Setting up cache directory permissions...'
+        mkdir -p /tmp/renovate/cache /tmp/renovate/logs
+        chmod 755 /tmp/renovate/cache /tmp/renovate/logs
+        
+        echo 'Reading GitHub App installation token...'
+        if [ ! -f /app/token/token.txt ]; then
+          echo 'ERROR: Token file not found'
+          exit 1
+        fi
+        
+        export RENOVATE_TOKEN=$(cat /app/token/token.txt)
+        if [ -z "$$RENOVATE_TOKEN" ]; then
+          echo 'ERROR: Token is empty'
+          cat /app/token/token.txt
+          exit 1
+        fi
+        
+        echo 'Token loaded successfully (length: '$${#RENOVATE_TOKEN}' chars)'
+        echo 'Starting Renovate...'
+        
+        # Add timestamp to log file
+        echo \"=== Renovate run started at $(date) ===\" >> /tmp/renovate/logs/renovate.log
+        
+        # Run Renovate and capture output
+        renovate 2>&1 | tee -a /tmp/renovate/logs/renovate.log
+        
+        exit_code=$?
+        echo \"=== Renovate run completed at $(date) with exit code $exit_code ===\" >> /tmp/renovate/logs/renovate.log
+        
+        if [ $exit_code -eq 0 ]; then
+          echo 'Renovate completed successfully!'
+        else
+          echo \"Renovate exited with code $exit_code\"
+        fi
+        
+        exit $exit_code
+      "
 
 volumes:
-  renovate-cache: {}
+  token-volume:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
