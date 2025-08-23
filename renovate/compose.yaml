@@ -1,8 +1,20 @@
 services:
+  app-token:
+    image: ghcr.io/mshekow/github-app-installation-token:latest
+    # Provide inputs via env vars (safer/clearer than giant command arg)
+    environment:
+      APP_ID: "${RENOVATE_APP_ID}"
+      INSTALLATION_ID: "${RENOVATE_INSTALLATION_ID}"
+      PRIVATE_KEY: "${RENOVATE_APP_PEM}"
+    restart: "no"
+
   renovate:
     image: renovate/renovate:39.183.0
     container_name: renovate
     restart: unless-stopped
+    depends_on:
+      app-token:
+        condition: service_started
     environment:
       - RENOVATE_PLATFORM=github
       - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
@@ -12,12 +24,6 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
       - renovate-cache:/usr/src/app/cache
-    depends_on:
-      - app-token
-
-  app-token:
-    image: ghcr.io/mshekow/github-app-installation-token:latest
-    command: ["${RENOVATE_APP_ID}", "${RENOVATE_INSTALLATION_ID}", "${RENOVATE_APP_PEM}"]
 
 volumes:
   renovate-cache: {}
