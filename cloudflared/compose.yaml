@@ -1,0 +1,25 @@
+services:
+  cloudflared:
+    container_name: cloudflared
+    environment:
+      - TZ=Europe/Amsterdam
+      - WEBUI_PORT=14333
+    volumes:
+      - ${DOCKER_DATA_DIR}/cloudflared/config:/config
+    networks:
+      - npm
+    restart: unless-stopped
+    image: wisdomsky/cloudflared-web:2025.8.1
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Cloudflared
+      - homepage.icon=cloudflare.png
+      - homepage.href=https://cloudflared.${DOMAIN}/
+      - homepage.description=Tunnel to Cloudflare for public access
+      - homepage.widget.type=cloudflared
+      - homepage.widget.accountid=${ACCOUNTID}
+      - homepage.widget.tunnelid=${TUNNELID}
+      - homepage.widget.key=${CLOUDFLAREAPITOKEN}
+networks:
+  npm:
+    external: true
