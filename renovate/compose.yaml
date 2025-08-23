@@ -97,7 +97,7 @@ services:
         exit_code=$?
         echo \"=== Renovate run completed at $(date) with exit code $exit_code ===\" >> /tmp/renovate/logs/renovate.log
         
-        if [ $exit_code -eq 0 ]; then
+        if [ "$exit_code" -eq 0 ]; then
           echo 'Renovate completed successfully!'
         else
           echo \"Renovate exited with code $exit_code\"
