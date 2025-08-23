@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":enableVulnerabilityAlerts"],
-  "dependencyDashboard": false,
+  "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dependency Dashboard Michiel",
   "dependencyDashboardHeader": "This issue contains a list of Renovate updates and statuses.",
   "timezone": "Europe/Amsterdam",
