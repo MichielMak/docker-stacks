@@ -1,6 +1,6 @@
 services:
   booklore:
-    image: ghcr.io/adityachandelgit/booklore-app:v0.38.0
+    image: booklore/booklore:v0.38.0
     container_name: booklore
     environment:
       - PUID=${PUID}
@@ -19,7 +19,7 @@ services:
     networks:
       - npm
   bookloremariadb:
-    image: lscr.io/linuxserver/mariadb:11.4.5
+    image: lscr.io/linuxserver/mariadb:11.4
     container_name: bookloremariadb
     environment:
       - PUID=${PUID}
