@@ -1,25 +1,16 @@
 services:
-  app-token:
-    image: ghcr.io/mshekow/github-app-installation-token:latest
-    # Pass 3 positional args: APP_ID, INSTALLATION_ID, PRIVATE_KEY_PATH
-    command: ["${RENOVATE_APP_ID}", "${RENOVATE_INSTALLATION_ID}", "/key.pem"]
-    volumes:
-      - ${DOCKER_DATA_DIR}/renovate/renovate_app.pem:/key.pem:ro
-    restart: "no"
-
   renovate:
-    image: renovate/renovate:39.183.0
+    image: renovate/renovate:latest
     container_name: renovate
     restart: unless-stopped
-    depends_on:
-      app-token:
-        condition: service_started
     environment:
       - RENOVATE_PLATFORM=github
+      - RENOVATE_GITHUB_APP_ID=${RENOVATE_APP_ID}
+      - RENOVATE_GITHUB_APP_INSTALLATION_ID=${RENOVATE_INSTALLATION_ID}
+      - RENOVATE_GITHUB_APP_PRIVATE_KEY=${RENOVATE_APP_PEM}
       - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
       - LOG_LEVEL=debug
       - RENOVATE_CONFIG_FILE=/usr/src/app/config.json
-      - RENOVATE_TOKEN_COMMAND=docker compose --progress=quiet run --rm app-token
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
       - renovate-cache:/usr/src/app/cache
