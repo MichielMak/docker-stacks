@@ -27,23 +27,23 @@
       "description": "GHCR: parse vX.Y.Z (+ optional suffix)",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["/^ghcr\\.io\\//"],
-      "versioning": "regex:^v?(?<version>\\d+(?:\\.\\d+){1,3}(?:[-._][A-Za-z0-9]+)*)$"
+      "versioning": "regex:^v?(?<major>\\d+)(?:\\.(?<minor>\\d+))?(?:\\.(?<patch>\\d+))?(?:\\.(?<build>\\d+))?(?:[-._](?<prerelease>[A-Za-z0-9]+))?$"
     },
     {
       "description": "Hotio: parse release-/pr-plugins- <semver> tags",
       "matchPackageNames": ["/^ghcr\\.io\\/hotio\\//"],
-      "versioning": "regex:^(?:release-|pr-plugins-)?(?<version>\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?)$"
+      "versioning": "regex:^(?:release-|pr-plugins-)?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:\\.(?<build>\\d+))?$"
     },
     {
       "description": "LinuxServer: parse <version>-lsNNN tags",
       "matchPackageNames": ["/^lscr\\.io\\/linuxserver\\//"],
-      "versioning": "regex:^(?<version>[^-]+)-ls\\d+(?:-.*)?$"
+      "versioning": "regex:^(?<major>\\d+)(?:\\.(?<minor>\\d+))?(?:\\.(?<patch>\\d+))?(?:\\.(?<build>\\d+))?-ls\\d+(?:-.*)?$"
     },
     {
       "description": "GHCR: parse CalVer tags (YYYY.M.PATCH)",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["/^ghcr\\.io\\//"],
-      "versioning": "regex:^(?:v|version[-/])?(?<version>20\\d{2}(?:[.-]\\d{1,2})(?:[.-]\\d{1,2})?)$"
+      "versioning": "regex:^(?:v|version[-/])?(?<major>20\\d{2})(?:[.-](?<minor>\\d{1,2}))?(?:[.-](?<patch>\\d{1,2}))?$"
     },
     {
       "description": "Postgres: only track 16.x (including distro suffixes)",
