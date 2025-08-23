@@ -18,7 +18,6 @@
   "dependencyDashboardAutoclose": false,
   "rebaseWhen": "behind-base-branch",
   "branchConcurrentLimit": 10,
-  "deleteBranchOnMerge": true,
   "gitIgnoredAuthors": ["renovate[bot]"],
   "packageRules": [
     {
