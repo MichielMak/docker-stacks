@@ -1,0 +1,49 @@
+services:
+  booklore:
+    image: ghcr.io/adityachandelgit/booklore-app:v0.38.0
+    container_name: booklore
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - DATABASE_URL=jdbc:mariadb://bookloremariadb:3306/booklore
+      - DATABASE_USERNAME=booklore
+      - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+    depends_on:
+      bookloremariadb:
+        condition: service_healthy
+    volumes:
+      - ${DOCKER_DATA_DIR}/booklore/config:/app/data
+      - ${MEDIA_DIR}/books:/books:ro
+    restart: unless-stopped
+    networks:
+      - npm
+  bookloremariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: bookloremariadb
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=booklore
+      - MYSQL_USER=booklore
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ${DOCKER_DATA_DIR}/bookloremariadb/config:/config
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - mariadb-admin
+        - ping
+        - -h
+        - localhost
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
