@@ -1,0 +1,36 @@
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - VERSION=docker
+    devices:
+      - /dev/dri/:/dev/dri/
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${PLEX_IP}
+      npm: null
+    volumes:
+      - ${DOCKER_DATA_DIR}/plex/config:/config
+      - ${DOCKER_DATA_DIR}/plex/transcode:/transcode
+      - ${MEDIA_DIR}:/media
+      - ${DOCKER_DATA_DIR}/plex/preroll:/preroll
+    labels:
+      - homepage.group=Media
+      - homepage.name=Plex
+      - homepage.icon=plex.png
+      - homepage.href=https://plex.${DOMAIN}/
+      - homepage.description=mediaserver
+      - homepage.widget.type=plex
+      - homepage.widget.fields=["movies", "tv"]
+      - homepage.widget.url=http://plex:32400
+      - homepage.widget.key=${PLEX_TOKEN}
+    restart: unless-stopped
+networks:
+  npm:
+    external: true
+  my-macvlan-net:
+    external: true
