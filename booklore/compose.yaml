@@ -19,7 +19,7 @@ services:
     networks:
       - npm
   bookloremariadb:
-    image: lscr.io/linuxserver/mariadb:11.4
+    image: linuxserver/mariadb:11.4.5
     container_name: bookloremariadb
     environment:
       - PUID=${PUID}
