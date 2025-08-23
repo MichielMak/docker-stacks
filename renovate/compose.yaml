@@ -2,18 +2,25 @@ services:
   renovate:
     image: renovate/renovate:latest
     container_name: renovate
-    restart: unless-stopped
+    restart: "no"  # one-shot job
     environment:
       - RENOVATE_PLATFORM=github
-      - RENOVATE_GITHUB_APP_ID=${RENOVATE_APP_ID}
-      - RENOVATE_GITHUB_APP_INSTALLATION_ID=${RENOVATE_INSTALLATION_ID}
-      - RENOVATE_GITHUB_APP_PRIVATE_KEY=${RENOVATE_APP_PEM}
-      - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
+      - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES:-MichielMak/docker-stacks}
       - LOG_LEVEL=debug
       - RENOVATE_CONFIG_FILE=/usr/src/app/config.json
     volumes:
       - ${DOCKER_DATA_DIR}/renovate/config/config.json:/usr/src/app/config.json:ro
       - renovate-cache:/usr/src/app/cache
+      - ${DOCKER_DATA_DIR}/renovate/renovate-app.pem:/app/private-key.pem:ro
+    entrypoint: ["/bin/sh","-c"]
+    command: >
+      "export RENOVATE_TOKEN=$(docker run --rm
+         -v $(pwd)/renovate-app.pem:/app/private-key.pem:ro
+         ghcr.io/mshekow/github-app-installation-token
+           --appId ${RENOVATE_APP_ID}
+           --installationId ${RENOVATE_INSTALLATION_ID}
+           --privateKeyPath /app/private-key.pem)
+       && renovate"
 
 volumes:
   renovate-cache: {}
