@@ -50,7 +50,7 @@ services:
     #      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: ghcr.io/immich-app/immich-machine-learning:v1.139.2-cpu
+    image: ghcr.io/immich-app/immich-machine-learning:v1.139.2
     networks:
       - npm
     environment:
