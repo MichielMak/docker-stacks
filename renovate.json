@@ -17,6 +17,9 @@
   "pruneStaleBranches": true,
   "dependencyDashboardAutoclose": false,
   "rebaseWhen": "behind-base-branch",
+  "branchConcurrentLimit": 10,
+  "deleteBranchOnMerge": true,
+  "gitIgnoredAuthors": ["renovate[bot]"],
   "packageRules": [
     {
       "description": "Globally ignore unversioned/channel/hash-only docker tags",
