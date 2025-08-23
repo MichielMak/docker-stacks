@@ -16,11 +16,8 @@ services:
       - app-token
 
   app-token:
-    image: ghcr.io/tibdex/github-app-token:0.8.0
-    environment:
-      - GITHUB_APP_ID=${RENOVATE_APP_ID}
-      - GITHUB_APP_INSTALLATION_ID=${RENOVATE_INSTALLATION_ID}
-      - GITHUB_APP_PRIVATE_KEY=${RENOVATE_APP_PEM}
+    image: ghcr.io/mshekow/github-app-installation-token:latest
+    command: ["${RENOVATE_APP_ID}", "${RENOVATE_INSTALLATION_ID}", "${RENOVATE_APP_PEM}"]
 
 volumes:
   renovate-cache: {}
