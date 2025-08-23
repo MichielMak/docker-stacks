@@ -3,8 +3,8 @@ services:
     image: lscr.io/linuxserver/radarr:5.26.2@sha256:c2adf66bafefa781401d07d358e399c476bdffb9a179a2780bb465bda8a55a51
     container_name: radarr
     environment:
-      - PUID={PUID}
-      - PGID={PGID}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=Europe/Amsterdam
       - DOCKER_MODS=ghcr.io/tailscale-dev/docker-mod:main # Tailscale integration
       - TAILSCALE_STATE_DIR=/var/lib/tailscale # Tailscale state directory
@@ -36,8 +36,8 @@ services:
     image: lscr.io/linuxserver/radarr:5.26.2@sha256:c2adf66bafefa781401d07d358e399c476bdffb9a179a2780bb465bda8a55a51
     container_name: radarrexternal
     environment:
-      - PUID={PUID}
-      - PGID={PGID}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - TZ=Europe/Amsterdam
     volumes:
       - ${DOCKER_DATA_DIR}/radarrrexternal/config:/config
