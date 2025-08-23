@@ -50,7 +50,7 @@ services:
     #      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: ghcr.io/immich-app/immich-machine-learning:v1.139.2
+    image: ghcr.io/immich-app/immich-machine-learning:v1.139.2@sha256:735cacb990861a2e8e69ee71389d5551d4ca1db426b330c7c5a83ab28901b3b0
     networks:
       - npm
     environment:
@@ -64,7 +64,7 @@ services:
     restart: always
   redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:8-bookworm@sha256:a137a2b60aca1a75130022d6bb96af423fefae4eb55faf395732db3544803280
+    image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
     networks:
       - npm    
     healthcheck:
