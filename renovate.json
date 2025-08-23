@@ -18,7 +18,7 @@
   "dependencyDashboardAutoclose": false,
   "rebaseWhen": "behind-base-branch",
   "branchConcurrentLimit": 10,
-  "gitIgnoredAuthors": ["renovate[bot]"],
+  "gitIgnoredAuthors": ["self-hosted-renovate-mm"],
   "packageRules": [
     {
       "description": "Globally ignore unversioned/channel/hash-only docker tags",

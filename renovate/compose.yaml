@@ -42,10 +42,6 @@ services:
       - RENOVATE_PLATFORM=github
       - RENOVATE_ENDPOINT=${GITHUB_ENDPOINT:-https://api.github.com}
       
-      # GitHub App configuration
-      - RENOVATE_USERNAME=${GITHUB_APP_USERNAME}
-      - RENOVATE_GIT_AUTHOR=${GITHUB_APP_GIT_AUTHOR}
-      
       # Repositories to process
       - RENOVATE_REPOSITORIES=${RENOVATE_REPOSITORIES}
       
