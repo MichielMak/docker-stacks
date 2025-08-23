@@ -14,8 +14,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       - TZ=${TZ}
-    #  - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
-    #  - SOCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
+      - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
+      - SOCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
     networks:
       - npm
   web_recipes:
@@ -28,8 +28,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       - TZ=${TZ}
-    #  - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
-    #  - SOCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
+      - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
+      - SOCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
     volumes:
       - staticfiles:/opt/recipes/staticfiles
       - ${DOCKER_DATA_DIR}/tandoor/mediafiles:/opt/recipes/mediafiles
