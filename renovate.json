@@ -1,3 +1,95 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", ":enableVulnerabilityAlerts"],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard Michiel",
+  "dependencyDashboardHeader": "This issue contains a list of Renovate updates and statuses.",
+  "repositoryCache": "enabled",
+  "timezone": "Europe/Amsterdam",
+  "assigneesFromCodeOwners": true,
+  "enabledManagers": ["docker-compose"],
+  "labels": ["renovate"],
+  "prHourlyLimit": 6,
+  "prConcurrentLimit": 10,
+  "pinDigests": true,
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "deleteBranchAfterMerge": true,
+  "pruneStaleBranches": true,
+  "dependencyDashboardAutoclose": true,
+  "rebaseWhen": "behind-base-branch",
+  "packageRules": [
+    {
+      "description": "Globally ignore unversioned/channel/hash-only docker tags",
+      "matchDatasources": ["docker"],
+      "ignoreVersions": [
+        "/^(latest|stable|release|edge|rolling|nightly|master|main)$/i",
+        "/^[a-f0-9]{7,}$/i",
+        "/^pr-plugins-[a-f0-9]{7,}$/i"
+      ]
+    },
+    {
+      "description": "GHCR: parse vX.Y.Z (+ optional suffix)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/^ghcr\\.io\\//"],
+      "versioning": "regex",
+      "extractVersion": "^v?(?<version>\\d+(?:\\.\\d+){1,3}(?:[-._][A-Za-z0-9]+)*)$"
+    },
+    {
+      "description": "Hotio: parse release-/pr-plugins- <semver> tags",
+      "matchPackageNames": ["/^ghcr\\.io\\/hotio\\//"],
+      "versioning": "regex",
+      "extractVersion": "^(?:release-|pr-plugins-)?(?<version>\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?)$"
+    },
+    {
+      "description": "LinuxServer: parse <version>-lsNNN tags",
+      "matchPackageNames": ["/^lscr\\.io\\/linuxserver\\//"],
+      "versioning": "regex",
+      "extractVersion": "^(?<version>[^-]+)-ls\\d+(?:-.*)?$"
+    },
+    {
+      "description": "GHCR: parse CalVer tags (YYYY.M.PATCH)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/^ghcr\\.io\\//"],
+      "versioning": "regex",
+      "extractVersion": "^(?:v|version[-/])?(?<version>20\\d{2}(?:[.-]\\d{1,2})(?:[.-]\\d{1,2})?)$"
+    },
+    {
+      "description": "Postgres: only track 16.x (including distro suffixes)",
+      "matchPackageNames": ["/^docker\\.io\\/library\\/postgres$/"],
+      "allowedVersions": "/^16(?:\\.\\d+){0,2}(?:-[A-Za-z0-9.-]+)?$/"
+    },
+    {
+      "description": "Group updates strictly per compose file directory",
+      "matchManagers": ["docker-compose"],
+      "matchFileNames": ["**/compose.yaml", "**/compose.yml", "**/docker-compose.yaml", "**/docker-compose.yml"],
+      "groupName": "stack: {{parentDir}}",
+      "groupSlug": "stack-{{parentDir}}",
+      "addLabels": ["stack:{{parentDir}}"]
+    },
+    {
+      "description": "Minimum release age for Docker to avoid fresh-tag churn",
+      "matchDatasources": ["docker"],
+      "minimumReleaseAge": "12 hours"
+    },
+    {
+      "description": "Open PRs immediately for digest/minor/patch; majors stay separate",
+      "matchDatasources": ["docker"],
+      "separateMajorMinor": true
+    },
+    {
+      "description": "Swap floating docker tags to numbered tags (SemVer or CalVer) when available",
+      "matchDatasources": ["docker"],
+      "matchCurrentVersion": "/^(latest|stable|release|edge)$/i",
+      "rangeStrategy": "replace",
+      "allowedVersions": "/^(?:\\d+(?:\\.\\d+){1,2}(?:[-._][A-Za-z0-9]+)?)|(20\\d{2}\\.\\d{1,2}(?:\\.\\d+)?)$/",
+      "versioning": "loose"
+    }
+  ],
+  "hostRules": [
+    { "matchHost": "ghcr.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 },
+    { "matchHost": "lscr.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 },
+    { "matchHost": "registry-1.docker.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 }
+  ]
 }

@@ -41,7 +41,6 @@ services:
       # Platform configuration
       - RENOVATE_PLATFORM=github
       - RENOVATE_ENDPOINT=${GITHUB_ENDPOINT:-https://api.github.com}
-      - RENOVATE_CONFIG_FILE=/usr/src/app/config/config.json
       
       # GitHub App configuration
       - RENOVATE_USERNAME=${GITHUB_APP_USERNAME}
