@@ -15,7 +15,6 @@
   "automerge": true,
   "automergeType": "pr",
   "platformAutomerge": true,
-  "deleteBranchAfterMerge": true,
   "pruneStaleBranches": true,
   "dependencyDashboardAutoclose": true,
   "rebaseWhen": "behind-base-branch",
@@ -23,11 +22,7 @@
     {
       "description": "Globally ignore unversioned/channel/hash-only docker tags",
       "matchDatasources": ["docker"],
-      "ignoreVersions": [
-        "/^(latest|stable|release|edge|rolling|nightly|master|main)$/i",
-        "/^[a-f0-9]{7,}$/i",
-        "/^pr-plugins-[a-f0-9]{7,}$/i"
-      ]
+      "allowedVersions": "/^(?!latest$|stable$|release$|edge$|rolling$|nightly$|master$|main$)(?![a-f0-9]{7,}$)(?!pr-plugins-[a-f0-9]{7,}$).+/i"
     },
     {
       "description": "GHCR: parse vX.Y.Z (+ optional suffix)",
@@ -88,8 +83,8 @@
     }
   ],
   "hostRules": [
-    { "matchHost": "ghcr.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 },
-    { "matchHost": "lscr.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 },
-    { "matchHost": "registry-1.docker.io", "hostType": "docker", "respectRateLimits": true, "concurrentRequestLimit": 2, "timeout": 120000 }
+    { "matchHost": "ghcr.io", "hostType": "docker", "concurrentRequestLimit": 2, "timeout": 120000 },
+    { "matchHost": "lscr.io", "hostType": "docker", "concurrentRequestLimit": 2, "timeout": 120000 },
+    { "matchHost": "registry-1.docker.io", "hostType": "docker", "concurrentRequestLimit": 2, "timeout": 120000 }
   ]
 }
