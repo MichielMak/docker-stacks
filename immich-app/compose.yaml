@@ -64,14 +64,14 @@ services:
     restart: always
   redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:8-bookworm@sha256:a137a2b60aca1a75130022d6bb96af423fefae4eb55faf395732db3544803280
+    image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
     networks:
       - npm    
     healthcheck:
       test: redis-cli ping || exit 1
   database:
     container_name: immich_postgres
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.1-pgvectors0.2.0@sha256:0063a64c5288463a7f44a90df610ecb2e5680ff55fc853243ae1adca4c24afd7
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.3.0@sha256:834049bf4c4e253b2db658e3585ca16535e9b548cb69de1e2a0e3599da2fd5de
     networks:
       - npm
     environment:
