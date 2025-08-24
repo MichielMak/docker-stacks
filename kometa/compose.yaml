@@ -1,0 +1,15 @@
+services:
+  kometa:
+    image: kometateam/kometa:v2.2.1
+    environment:
+#      - KOMETA_RUN=true
+      - TZ=Europe/Amsterdam
+    container_name: kometa
+    volumes:
+      - ${DOCKER_DATA_DIR}/kometa/config:/config
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
