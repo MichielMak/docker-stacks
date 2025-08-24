@@ -54,9 +54,9 @@ services:
       # Optional: Additional configuration
       - RENOVATE_AUTODISCOVER=${RENOVATE_AUTODISCOVER:-false}
       - RENOVATE_INCLUDE_FORKS=${RENOVATE_INCLUDE_FORKS:-false}
-      - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}
-      - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN}
-      - RENOVATE_HOST_RULES=[{"hostType":"docker","matchHost":"docker.io","username":"${DOCKERHUB_USERNAME}","password":"${DOCKERHUB_TOKEN}"}]
+      # Docker Hub authentication using Renovate's built-in support
+      - RENOVATE_DOCKER_USERNAME=${DOCKERHUB_USERNAME}
+      - RENOVATE_DOCKER_PASSWORD=${DOCKERHUB_TOKEN}
       
     volumes:
       - token-volume:/app/token:ro
