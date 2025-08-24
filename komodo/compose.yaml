@@ -1,0 +1,73 @@
+networks:
+  komodo:
+    driver: bridge
+  npm:
+    external: true
+services:
+  core:
+    container_name: komodo-core
+    depends_on:
+      - mongo
+    environment:
+      KOMODO_DATABASE_ADDRESS: mongo:27017
+      KOMODO_DATABASE_DB_NAME: komodo
+      KOMODO_DATABASE_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
+      KOMODO_DATABASE_USERNAME: komodo
+      KOMODO_DISABLE_USER_REGISTRATION: true
+      KOMODO_ENABLE_NEW_USERS: false
+      KOMODO_FIRST_SERVER: https://periphery:8120
+      KOMODO_HOST: https://komodo.${DOMAIN}
+      KOMODO_LOCAL_AUTH: false
+      KOMODO_OIDC_CLIENT_ID: ${KOMODO_OIDC_CLIENT_ID}
+      KOMODO_OIDC_CLIENT_SECRET: ${KOMODO_OIDC_CLIENT_SECRET}
+      KOMODO_OIDC_ENABLED: true
+      KOMODO_OIDC_PROVIDER: https://auth.${DOMAIN}/application/o/komodo/
+      KOMODO_PASSKEY: ${KOMODO_PASSKEY}
+      KOMODO_PORT: '30160'
+      KOMODO_SYNC_DIRECTORY: /syncs
+      KOMODO_WEBHOOK_SECRET: ${KOMODO_WEBHOOK_SECRET}
+      TZ: Europe/Amsterdam
+    group_add:
+      - ${PGID}
+    image: ghcr.io/moghtech/komodo-core:latest
+    networks:
+      - komodo
+      - npm
+    expose:
+      - "30160"
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/komodo/backups:/backups
+      - ${DOCKER_DATA_DIR}/data/komodo/syncs:/syncs
+      - ${DOCKER_STACKS_DIR}:${DOCKER_STACKS_DIR}
+  mongo:
+    container_name: komodo-mongo
+    environment:
+      MONGO_INITDB_DATABASE: komodo
+      MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: komodo
+    image: mongo
+    networks:
+      - komodo
+    restart: unless-stopped
+    user: '999:999'
+    volumes:
+      - ${DOCKER_DATA_DIR}/komodo/mongodb:/data/db
+  periphery:
+    container_name: komodo-periphery
+    environment:
+      PERIPHERY_PASSKEYS: ${KOMODO_PASSKEY}
+      PERIPHERY_PORT: '8120'
+      PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/data/komodo/periphery
+      PERIPHERY_SSL_ENABLED: true
+      TZ: Europe/Amsterdam
+    image: ghcr.io/moghtech/komodo-periphery:latest
+    networks:
+      - komodo
+      - npm
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_STACKS_DIR}:${DOCKER_STACKS_DIR}
+      - ${DOCKER_DATA_DIR}/komodo/periphery:${DOCKER_DATA_DIR}/komodo/periphery
+      - /proc:/proc
+      - /var/run/docker.sock:/var/run/docker.sock
