@@ -1,0 +1,24 @@
+services:
+  gotify:
+    #    ports:
+    #      - 80:80
+    volumes:
+      - ${DOCKER_DATA_DIR}/gotify/config:/app/data
+    container_name: gotify
+    image: gotify/server:2.6.3
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Gotify
+      - homepage.icon=gotify.png
+      - homepage.href=http://notifications.${DOMAIN}/
+      - homepage.description=Notifications
+      - homepage.widget.type=gotify
+      - homepage.widget.url=http://gotify:80
+      - homepage.widget.fields=["messages"]
+      - homepage.widget.key=${GOTIFY_API}
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
