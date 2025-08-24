@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: ghcr.io/hotio/qbittorrent:release-5.1.2@sha256:602b0b46df03ee089ab4c2bd658b2986d0b0cdf67a296e0ceaff5425f8500450
+    image: ghcr.io/hotio/qbittorrent:release-5.1.2@sha256:7305ff2ca6684d25a1648a2857f5ffab098f46b725ecad9e6ab65bd4111aaa9f
     container_name: qbittorrent
     environment:
       - TZ=Europe/Amsterdam
