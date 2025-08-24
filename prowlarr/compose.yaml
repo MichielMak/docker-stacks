@@ -1,0 +1,38 @@
+services:
+  prowlarr:
+    image: 11notes/prowlarr:2.0.0
+    container_name: prowlarr
+    read_only: true
+    tmpfs:
+      - /tmp:uid=${PUID},gid=${PGID}
+    environment:
+      TZ: Europe/Amsterdam
+    user: ${PUID}:${PGID}
+    volumes:
+      - ${DOCKER_DATA_DIR}/prowlarr/config:/prowlarr/etc
+    #    ports:
+    #      - 9696:9696
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Prowlarr
+      - homepage.icon=prowlarr.png
+      - homepage.href=http://prowlarr.${DOMAIN}/
+      - homepage.description=Indexer management
+      - homepage.widget.type=prowlarr
+      - homepage.widget.fields=["numberOfGrabs", "numberOfQueries"]
+      - homepage.widget.url=http://prowlarr:9696
+      - homepage.widget.key=${PROWLARR_API}
+      - tsdproxy.enable=true
+      - tsdproxy.container_port=9696
+    restart: unless-stopped
+    networks:
+      - npm
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9696/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+networks:
+  npm:
+    external: true
