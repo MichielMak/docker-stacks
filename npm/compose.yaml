@@ -1,0 +1,27 @@
+services:
+  npm:
+    container_name: npm
+    image: jc21/nginx-proxy-manager:2.12.6
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 82:81
+      - 443:443
+    volumes:
+      - ${DOCKER_DATA_DIR}/npm/data:/data
+      - ${DOCKER_DATA_DIR}/npm/letsencrypt:/etc/letsencrypt
+    labels:
+      - homepage.group=Infra
+      - homepage.name=NPM
+      - homepage.icon=nginx-proxy-manager.png
+      - homepage.href=https://npm.${DOMAIN}/
+      - homepage.description=Nginx Proxy Manager
+      - homepage.widget.type=npm
+      - homepage.widget.url=http://npm:81
+      - homepage.widget.username=${NPM_USERNAME}
+      - homepage.widget.password=${NPM_PASSWORD}
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
