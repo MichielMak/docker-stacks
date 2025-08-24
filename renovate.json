@@ -28,7 +28,7 @@
     {
       "description": "Ignore prerelease (alpha, beta, rc, aN/bN) docker tags",
       "matchDatasources": ["docker"],
-      "allowedVersions": "/^(?!.*(?:^|[._-])(alpha|beta|rc)\\d*)(?!.*\\d+[ab]\\d+).*$/i"
+      "allowedVersions": "/^(?!.*(?:alpha|beta|rc)).*$/i"
     },
     {
       "description": "Hotio: parse release-/pr-plugins- <semver> tags",
