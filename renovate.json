@@ -8,6 +8,7 @@
   "assigneesFromCodeOwners": true,
   "enabledManagers": ["docker-compose"],
   "labels": ["renovate"],
+  "ignoreUnstable": true,
   "prHourlyLimit": 6,
   "prConcurrentLimit": 10,
   "pinDigests": true,
@@ -21,19 +22,19 @@
   "gitIgnoredAuthors": ["self-hosted-renovate-mm"],
   "packageRules": [
     {
-      "description": "Globally ignore unversioned/channel/hash-only docker tags",
+      "description": "Docker: allow only stable SemVer or CalVer",
       "matchDatasources": ["docker"],
-      "allowedVersions": "!/^(latest|stable|release|edge|rolling|nightly|master|main)$|^[a-f0-9]{7,}$|^pr-plugins-[a-f0-9]{7,}$/i"
+      "allowedVersions": "/^(?:\\d+\\.\\d+\\.\\d+(?:[-._][A-Za-z0-9]+)?|20\\d{2}\\.\\d{1,2}(?:\\.\\d+)?)$/i"
     },
     {
-      "description": "Ignore prerelease (alpha, beta, rc, aN/bN) docker tags",
+      "description": "Docker: reject prereleases globally",
       "matchDatasources": ["docker"],
-      "allowedVersions": "!/(alpha|beta|rc|dev|snapshot|canary|nightly|preview|experimental|\\d+[ab]\\d+)/i"
+      "allowedVersions": "!/(alpha|beta|rc|canary|nightly|snapshot|preview|experimental|dev)/i"
     },
     {
-      "description": "Ignore bare YYYYMMDD docker tags",
+      "description": "Docker: reject hash-only and channel tags",
       "matchDatasources": ["docker"],
-      "allowedVersions": "!/^20\\d{2}(0\\d|1[0-2])(0\\d|[12]\\d|3[01])$/"
+      "allowedVersions": "!/^(?:latest|stable|edge|release|rolling|master|main)$|^[a-f0-9]{7,}$/i"
     },
     {
       "description": "Hotio: parse release-/pr-plugins- <semver> tags",
@@ -44,13 +45,6 @@
       "description": "LinuxServer: parse <version>-lsNNN tags",
       "matchPackageNames": ["/^lscr\\.io\\/linuxserver\\//"],
       "versioning": "regex:^(?<major>\\d+)(?:\\.(?<minor>\\d+))?(?:\\.(?<patch>\\d+))?(?:\\.(?<build>\\d+))?-ls\\d+(?:-.*)?$"
-    },
-    {
-      "description": "GHCR: normalize 'v' prefix; accept SemVer + CalVer",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["/^ghcr\\.io\\//"],
-      "extractVersion": "^v?(?<version>.*)$",
-      "versioning": "loose"
     },
     {
       "description": "Postgres: only track 16.x (including distro suffixes)",
