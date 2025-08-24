@@ -28,7 +28,7 @@
     {
       "description": "Ignore prerelease (alpha, beta, rc, aN/bN) docker tags",
       "matchDatasources": ["docker"],
-      "allowedVersions": "!/(alpha|beta|rc|\\d+[ab]\\d+)/i"
+      "allowedVersions": "!/(alpha|beta|rc|dev|snapshot|canary|nightly|preview|experimental|\\d+[ab]\\d+)/i"
     },
     {
       "description": "Ignore bare YYYYMMDD docker tags",
