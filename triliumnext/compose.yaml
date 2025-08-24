@@ -1,0 +1,15 @@
+services:
+  triliumnext:
+    image: triliumnext/notes:v0.98.0
+    restart: unless-stopped
+    environment:
+      - TRILIUM_DATA_DIR=/home/node/trilium-data
+    #    ports:
+    #      - "8080:8080"
+    volumes:
+      - ${DOCKER_DATA_DIR}/triliumnext/config:/home/node/trilium-data
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
