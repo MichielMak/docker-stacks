@@ -4,7 +4,7 @@ services:
     container_name: musicassistant
     volumes:
       - ${DOCKER_DATA_DIR:?DOCKER_DATA_DIR is not set}/musicassistant/config:/data
-    image: ghcr.io/music-assistant/server:2.5.8@sha256:f534116c53d49b3120961c908a5fa24f28684806bf222ccd74add9e16b105aa4
+    image: ghcr.io/music-assistant/server:98775220@sha256:82ecb645e706288673de60cb7b97c984ea64f21bfaba4ecd946e22e21f72f96c
     environment:
       # Provide logging level as environment variable.
       # default=info, possible=(critical, error, warning, info, debug)
