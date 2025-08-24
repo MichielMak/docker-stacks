@@ -1,6 +1,6 @@
 services:
   prowlarr:
-    image: 11notes/prowlarr:2.0.5
+    image: 11notes/prowlarr:2.0.5@sha256:a08b09f9be88a9c6b3f9fc57400a8107675d276e5281c05460181001b6a50802
     container_name: prowlarr
     read_only: true
     tmpfs:
