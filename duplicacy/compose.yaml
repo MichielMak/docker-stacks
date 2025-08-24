@@ -1,0 +1,32 @@
+services:
+  duplicacy:
+    container_name: duplicacy
+    hostname: duplicacy
+    image: ghcr.io/hotio/duplicacy:release-1.8.0
+    #    ports:
+    #      - "3875:3875"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/duplicacy/config:/config
+      - ${DOCKER_DATA_DIR}/duplicacy/cache:/cache
+      - ${DOCKER_DATA_DIR}/duplicacy/logs:/logs
+      - ${DOCKER_DATA_DIR}/duplicacy/creds:/creds
+      - ${MEDIA_DIR}/nextcloud:/data:ro
+      - ${DOCKER_STACKS_DIR}:/opt/stacks:ro
+      - ${DOCKER_DATA_DIR}/:/mnt/data:ro
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Duplicacy
+      - homepage.icon=duplicacy.png
+      - homepage.href=http://duplicacy.${DOMAIN}/
+      - homepage.description=A new generation cloud backup tool
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
