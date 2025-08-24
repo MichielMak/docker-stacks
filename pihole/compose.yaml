@@ -1,0 +1,31 @@
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:2025.08.0
+    environment:
+      TZ: Europe/Amsterdam
+      FTLCONF_webserver_port: 8080
+    volumes:
+      - ${DOCKER_DATA_DIR}/pihole/etc-pihole:/etc/pihole
+      - ${DOCKER_DATA_DIR}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${PIHOLE_IP}
+      npm: null
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Pihole
+      - homepage.icon=pi-hole.png
+      - homepage.href=http://pihole.${DOMAIN}/admin
+      - homepage.description=DNS sinkhole
+      - homepage.widget.type=pihole
+      - homepage.widget.url=http://pihole:8080
+      - homepage.widget.key=${PIHOLE_API}
+      - homepage.widget.version=6
+    restart: unless-stopped
+networks:
+  my-macvlan-net:
+    external: true
+  npm:
+    external: true
