@@ -5,7 +5,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/gotify/config:/app/data
     container_name: gotify
-    image: gotify/server:2.6.3
+    image: gotify/server:2.6.3@sha256:dfbee7fc4701b300936a24b01d24620b4d62e405204c71fd749a63abfb9b4ec4
     labels:
       - homepage.group=Infra
       - homepage.name=Gotify
