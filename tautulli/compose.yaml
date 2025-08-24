@@ -1,0 +1,27 @@
+services:
+  tautulli:
+    image: linuxserver/tautulli:2.15.3
+    container_name: tautulli
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/tautulli/config:/config
+      - ${DOCKER_DATA_DIR}/tautulli/scripts:/scripts
+    #    ports:
+    #      - 8181:8181
+    labels:
+      - homepage.group=Media
+      - homepage.name=Tautulli
+      - homepage.icon=tautulli.png
+      - homepage.href=http://tautulli.${DOMAIN}/
+      - homepage.description=Monitoring and tracking tool for Plex Media Server
+      - homepage.widget.type=tautulli
+      - homepage.widget.url=http://tautulli:8181
+      - homepage.widget.key=${TAUTULLI_API}
+    restart: unless-stopped
+networks:
+  default:
+    external: true
+    name: npm
