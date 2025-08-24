@@ -7,7 +7,7 @@ services:
       OCIS_CONFIG_DIR: /etc/ocis
       PROXY_HTTP_ADDR: 0.0.0.0:9200
       PROXY_TLS: "false"
-      OCIS_LOG_LEVEL: "info"
+      OCIS_LOG_LEVEL: "debug"
       OCIS_INSECURE: "false"
       OCIS_JWT_SECRET: ${OCIS_JWT_SECRET}
       OCIS_TRANSFER_SECRET: ${OCIS_TRANSFER_SECRET}
@@ -19,14 +19,12 @@ services:
       PROXY_AUTOPROVISION_CLAIM_EMAIL: "email"
       PROXY_AUTOPROVISION_CLAIM_DISPLAYNAME: "name"
       PROXY_AUTOPROVISION_CLAIM_GROUPS: "groups"
-      PROXY_ROLE_ASSIGNMENT_OIDC_CLAIM: "groups"
-      PROXY_ROLE_ASSIGNMENT_DRIVER: "oidc"
-      PROXY_ROLE_ASSIGNMENT_OIDC_MAPPING: '[{"claim_value":"authentik Admins","role":"admin"}, {"claim_value":"owncloud-admins","role":"admin"}]'
       WEB_OIDC_AUTHORITY: ${AUTHENTIK_ISSUER}
       WEB_OIDC_CLIENT_SECRET: ${OIDC_WEB_CLIENT_SECRET}
       WEB_OIDC_CLIENT_ID: ${OIDC_WEB_CLIENT_ID}
       WEB_OIDC_SCOPE: "openid profile email offline_access"
       PROXY_CSP_CONFIG_FILE_LOCATION: /oidc/csp.yaml
+      PROXY_CONFIG_FILE: /proxy-config/proxy.yaml
       PROXY_TRUSTED_PROXIES: "${NPM_IP},${HOST_IP},127.0.0.1,::1"
       IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
       OCIS_MACHINE_AUTH_API_KEY: ${OCIS_MACHINE_AUTH_API_KEY}
@@ -40,6 +38,7 @@ services:
       - ${MEDIA_DIR:?set globally}/documents:/var/lib/ocis
       - ${DOCKER_DATA_DIR:?set globally}/owncloud/thumbnails:/var/lib/ocis/thumbnails
       - ${DOCKER_DATA_DIR}/owncloud/oidc:/oidc
+      - ${DOCKER_DATA_DIR}/owncloud/proxy-config:/proxy-config
     expose:
       - "9200"
     dns:
