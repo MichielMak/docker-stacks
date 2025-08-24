@@ -27,6 +27,7 @@ services:
       WEB_OIDC_CLIENT_ID: ${OIDC_WEB_CLIENT_ID}
       WEB_OIDC_SCOPE: "openid profile email offline_access"
       WEB_UI_OIDC_EXTERNAL_DOMAINS: ${AUTHENTIK_HOSTNAME}
+      PROXY_CSP_CONFIG_FILE_LOCATION: /oidc/csp.yaml
       PROXY_TRUSTED_PROXIES: "${NPM_IP},${HOST_IP},127.0.0.1,::1"
       IDM_ADMIN_PASSWORD: ${OCIS_ADMIN_PASSWORD}
       OCIS_MACHINE_AUTH_API_KEY: ${OCIS_MACHINE_AUTH_API_KEY}
@@ -39,6 +40,7 @@ services:
       - ${DOCKER_DATA_DIR:?set globally}/owncloud/config:/etc/ocis
       - ${MEDIA_DIR:?set globally}/documents:/var/lib/ocis
       - ${DOCKER_DATA_DIR:?set globally}/owncloud/thumbnails:/var/lib/ocis/thumbnails
+      - ${DOCKER_DATA_DIR}/owncloud/oidc:/oidc
     expose:
       - "9200"
     dns:
