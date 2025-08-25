@@ -28,7 +28,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:4.5.2@sha256:371fd7665789ee0c1961c4d15bbd43d85ef2af0145c0e740c505ccd4fff72d16
+    image: linuxserver/sabnzbd:4.5.2
     container_name: sabnzbd
     environment:
       - PUID=${PUID}
@@ -62,7 +62,7 @@ services:
     networks:
       - npm
   pyload:
-    image: lscr.io/linuxserver/pyload-ng:0.5.0b3.dev91-ls188@sha256:7d28b80b7f6e091d5d423560d1392970789ff8d7c748807a78a7908319457f07
+    image: linuxserver/pyload-ng:0.5.0
     container_name: pyload
     environment:
       - PUID=${PUID}
