@@ -1,6 +1,6 @@
 services:
   dockerproxy:
-    image: lscr.io/linuxserver/socket-proxy:3.2.3@sha256:f678a19b06ffb54ae5c479aa55b915bbc3bc7d217bd785b6ce3fad6134759f24
+    image: linuxserver/socket-proxy:3.2.3
     container_name: dockerproxy
     environment:
       - CONTAINERS=1 # Allow access to viewing containers
