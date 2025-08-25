@@ -1,0 +1,19 @@
+services:
+  retrom:
+    container_name: retrom
+    image: ghcr.io/jmberesford/retrom-service: v0.7.32
+#    ports:
+#      - 5101:5101
+    volumes:
+      - ${MEDIA_DIR}/retro/roms:/app/library:ro
+      - ${DOCKER_DATA_DIR}/retrom/config:/app/config
+      - ${DOCKER_DATA_DIR}/retrom/data:/app/data/
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
