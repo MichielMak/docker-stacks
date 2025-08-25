@@ -1,0 +1,37 @@
+services:
+  healthchecks:
+    image: lscr.io/linuxserver/healthchecks:3.10.20250825
+    container_name: healthchecks
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - SITE_ROOT=https://healthchecks.${DOMAIN}
+      - SITE_NAME=${HEALTHCHECKS_SITE_NAME}
+      - SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+      - APPRISE_ENABLED=True #optional
+      - INTEGRATIONS_ALLOW_PRIVATE_IPS=True
+      - ALLOWED_HOSTS=*
+      - DEBUG=False
+    volumes:
+      - ${DOCKER_DATA_DIR}/healthchecks/config:/config
+    #    ports:
+    #      - 8000:8000
+    #      - 2525:2525 #optional
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Healthchecks
+      - homepage.icon=healthchecks.png
+      - homepage.href=http://healthchecks.${DOMAIN}/
+      - homepage.description=Open-source cron job and background task monitoring
+        service
+      - homepage.widget.type=healthchecks
+      - homepage.widget.url=http://healthchecks:8000
+      - homepage.widget.key=${HEALTHCHECKS_API}
+networks:
+  npm:
+    external: true
