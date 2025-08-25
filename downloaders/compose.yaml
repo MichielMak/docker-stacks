@@ -28,7 +28,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: linuxserver/sabnzbd:4.5.2
+    image: linuxserver/sabnzbd:4.5.3@sha256:5a3196d71c12603bb0e7ceb83e4b38876510b7ba008d174d7081b69d6dbabd55
     container_name: sabnzbd
     environment:
       - PUID=${PUID}
