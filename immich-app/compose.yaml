@@ -71,7 +71,7 @@ services:
       test: redis-cli ping || exit 1
   database:
     container_name: immich_postgres
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.3.0@sha256:834049bf4c4e253b2db658e3585ca16535e9b548cb69de1e2a0e3599da2fd5de
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.3.0@sha256:b20b880be059980a971b019cec608ec26e739f12a974360d26035ff6f750b63d
     networks:
       - npm
     environment:
