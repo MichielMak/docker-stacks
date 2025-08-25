@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:31.0.8
+    image: linuxserver/nextcloud:31.0.8@sha256:3c3a996203f25b3c1b9551dbfb8f4c4c8de8adc6d1d6fe77b164f30426d64d13
     container_name: nextcloud
     restart: unless-stopped
     #    networks:
