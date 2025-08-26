@@ -1,0 +1,28 @@
+services:
+  wizarr:
+    container_name: wizarr
+    image: ghcr.io/wizarrrr/wizarr:2025.8.3
+    #    ports:
+    #      - 5690:5690
+    volumes:
+      - ${DOCKER_DATA_DIR}/wizarr/database:/data/database
+      - ${DOCKER_DATA_DIR}/wizarr/wizard:/data/wizard_steps
+    environment:
+      - APP_URL=https://wizarr.${DOMAIN} #URL at which you will access and share 
+      - DISABLE_BUILTIN_AUTH=false #Set to true ONLY if you are using another auth provider (Authelia, Authentik, etc)
+      - TZ=Europe/Amsterdam #Set your timezone here
+      - PUID=${PUID} #Set UID
+      - PGID=${PGID} #Set GID
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Wizarr
+      - homepage.icon=wizarr.png
+      - homepage.href=http://wizarr.${DOMAIN}/
+      - homepage.description=Wizarr is an advanced user invitation and
+        management system for Plex
+networks:
+  npm:
+    external: true
