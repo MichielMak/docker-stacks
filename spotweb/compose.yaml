@@ -29,7 +29,7 @@ services:
       - homepage.href=https://spotweb.${DOMAIN}/
       - homepage.description=Decentralized alternative to usenet indexing
   spotweb_db:
-    image: linuxserver/mariadb:11.4.5@sha256:e7e61b51905a0ad386f11fed1c6401179638987459067b4acb0c52a34e603840
+    image: linuxserver/mariadb:11.4.5@sha256:eef506eab5c5e5aaa3ce6d1237dcfa5742a8dafd9054e668c838fad71b0d1547
     container_name: spotwebdb
     restart: unless-stopped
     environment:
