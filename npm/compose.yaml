@@ -7,9 +7,12 @@ services:
       - 80:80
       - 82:81
       - 443:443
+    environment:
+      - TP_THEME=dark
     volumes:
       - ${DOCKER_DATA_DIR}/npm/data:/data
       - ${DOCKER_DATA_DIR}/npm/letsencrypt:/etc/letsencrypt
+      - ${DOCKER_DATA_DIR}/npm/themepark/98-themepark:/etc/cont-init.d/98-themepark #darkmode (https://github.com/NginxProxyManager/nginx-proxy-manager/issues/4314#issuecomment-2888707741)
     labels:
       - homepage.group=Infra
       - homepage.name=NPM
