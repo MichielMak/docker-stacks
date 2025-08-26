@@ -1,0 +1,31 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:v2.28.0
+    container_name: audiobookshelf
+    #    ports:
+    #      - 13378:80
+    volumes:
+      - ${MEDIA_DIR}/music/Audiobooks/:/audiobooks
+      - ${MEDIA_DIR}/music/podcasts/:/podcasts
+      - ${DOCKER_DATA_DIR}/audiobookshelf/config:/config
+      - ${DOCKER_DATA_DIR}/audiobookshelf/metadata:/metadata
+    environment:
+      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=Audiobookshelf
+      - homepage.icon=audiobookshelf.png
+      - homepage.href=http://audiobookshelf.${DOMAIN}/
+      - homepage.description=Audiobook and podcast server
+      - homepage.widget.type=audiobookshelf
+      - homepage.widget.fields=["podcasts", "books"]
+      - homepage.widget.url=http://audiobookshelf:80
+      - homepage.widget.key=${AUDIOBOOKSELF_API}
+    restart: unless-stopped
+networks:
+  npm:
+    external: true
