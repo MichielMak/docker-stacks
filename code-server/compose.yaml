@@ -1,0 +1,26 @@
+services:
+  code-server:
+    image: linuxserver/code-server:4.103.1
+    container_name: code-server
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - PROXY_DOMAIN=codeserver.${DOMAIN}
+      - DEFAULT_WORKSPACE=/stacks
+    volumes:
+      - ${DOCKER_DATA_DIR}/code-server/config:/config
+      - ${DOCKER_DATA_DIR}/homepage/config:/homepage
+      - ${DOCKER_STACKS_DIR}:/stacks
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Codeserver
+      - homepage.icon=vscode.png
+      - homepage.href=http://codeserver.${DOMAIN}/
+      - homepage.description=VS Code in the browser
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
