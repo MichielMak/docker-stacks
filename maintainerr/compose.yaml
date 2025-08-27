@@ -1,0 +1,26 @@
+services:
+  maintainerr:
+    image: ghcr.io/jorenn92/maintainerr:v2.19.0 # or jorenn92/maintainerr:latest
+    container_name: maintainerr
+    user: ${PUID}:${PGID}
+    volumes:
+      - ${DOCKER_DATA_DIR}/maintainerr/data:/opt/data
+    environment:
+      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+    #      - DEBUG=true # uncomment to enable debug logs
+    # ports:
+    # - 6246:6246
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media Management
+      - homepage.name=Maintainerr
+      - homepage.icon=https://raw.githubusercontent.com/jorenn92/Maintainerr/refs/heads/main/ui/public/logo.png
+      - homepage.href=http://maintainerr.${DOMAIN}/
+      - homepage.description=Maintenance tool for the Plex ecosystem
+networks:
+  npm:
+    external: true
