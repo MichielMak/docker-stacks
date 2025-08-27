@@ -71,6 +71,12 @@
       "rangeStrategy": "replace",
       "allowedVersions": "/^(?:\\d+(?:\\.\\d+){1,2}(?:[-._][A-Za-z0-9]+)?)|(20\\d{2}\\.\\d{1,2}(?:\\.\\d+)?)$/",
       "versioning": "loose"
+    },
+    {
+      "description": "Don't resurrect closed digest PRs",
+      "matchManagers": ["docker-compose"],
+      "matchUpdateTypes": ["digest"],
+      "recreateWhen": "never"
     }
   ],
   "hostRules": [
