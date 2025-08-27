@@ -1,0 +1,44 @@
+services:
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagitgat/tdarr:2.45.01
+    restart: unless-stopped
+    devices:
+      - /dev/dri/:/dev/dri/
+    #    network_mode: bridge
+    #    ports:
+    #      - 8265:8265 # webUI port
+    #      - 8266:8266 # server port
+    environment:
+      - TZ=Europe/Amsterdam
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - ffmpegVersion=6
+      - nodeName=mofos
+    volumes:
+      - ${DOCKER_DATA_DIR}/tdarr/server:/app/server
+      - ${DOCKER_DATA_DIR}/tdarr/config:/app/configs
+      - ${DOCKER_DATA_DIR}/tdarr/logs:/app/logs
+      - ${MEDIA_DIR}:/media
+      - ${DOCKER_DATA_DIR}/tdarr/transcode:/temp
+      - ${OVERIG_DIR}:/overig
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Tdarr
+      - homepage.icon=tdarr.png
+      - homepage.href=http://tdarr.${DOMAIN}/
+      - homepage.description=Automated Video Conversion
+      - homepage.widget.fields=["queue", "errored", "saved"]
+      - homepage.widget.type=tdarr
+      - homepage.widget.url=http://tdarr:8265
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
