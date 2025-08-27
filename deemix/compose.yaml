@@ -1,6 +1,6 @@
 services:
   deemix:
-    image: registry.gitlab.com/bockiii/deemix-docker:2022.12.14
+    image: registry.gitlab.com/bockiii/deemix-docker:2022.12.14-r222.5d447b6035
     container_name: deemix
     environment:
       - PUID=${PUID}
