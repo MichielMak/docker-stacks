@@ -1,0 +1,23 @@
+services:
+  cloudcmd:
+    container_name: cloudcmd
+    volumes:
+      - ${MEDIA_DIR}:/media
+      - ${OVERIG_DIR}:/overig
+      - ${DEEMIX_DIR}:/deemix
+    image: coderaiser/cloudcmd:18.7.3
+    environment:
+      - CLOUDCMD_THEME=dark
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Cloudcommander
+      - homepage.icon=cloudcmd.png
+      - homepage.href=https://cloudcmd.${DOMAIN}/
+      - homepage.description=Filemanager
+    restart: unless-stopped
+    user: ${PUID}:${PGID}
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
