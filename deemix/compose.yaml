@@ -1,0 +1,27 @@
+services:
+  deemix:
+    image: registry.gitlab.com/bockiii/deemix-docker:2022.12.14
+    container_name: deemix
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - UMASK_SET=022
+      - DEEMIX_SINGLE_USER=true
+    volumes:
+      - ${DOCKER_DATA_DIR}/deemix/config:/config
+      - ${DEEMIX_DOWNLOAD_DIR}:/downloads
+    #    ports:
+    #      - 6595:6595
+    labels:
+      - homepage.group=Media
+      - homepage.name=Deemix
+      - homepage.icon=deemix.png
+      - homepage.href=http://deemix.${DOMAIN}/
+      - homepage.description=A renowned music downloader
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
