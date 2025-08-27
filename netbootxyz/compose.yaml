@@ -1,6 +1,6 @@
 services:
   netbootxyz:
-    image: ghcr.io/netbootxyz/netbootxyz:2.0.88
+    image: ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz7
     container_name: netbootxyz
     environment:
       - PUID=${PUID}
