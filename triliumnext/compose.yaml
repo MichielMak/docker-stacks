@@ -1,6 +1,6 @@
 services:
   triliumnext:
-    image: triliumnext/trilium:v0.98.0@sha256:30d82dbbfc0d7918264684d076fd4058665d7ad623edbe6d7e510a2d5cb24746
+    image: triliumnext/trilium:v0.98.1@sha256:700bf0d282a97bcf3dd4b4051c1d7303bdec9984b4601d94f80a114c84b2f962
     restart: unless-stopped
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
