@@ -1,6 +1,6 @@
 services:
   diun:
-    image: crazymax/diun:4.29.0
+    image: crazymax/diun:4.29.0@sha256:49d0b7f7010da5fa6ad75819eca5af44b4680b1df4c9bbbbdcb8bf5a8257958b
     container_name: diun
     command: serve
     volumes:
