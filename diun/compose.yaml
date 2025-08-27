@@ -1,6 +1,6 @@
 services:
   diun:
-    image: crazymax/diun:v4.29.0
+    image: crazymax/diun:4.29.0
     container_name: diun
     command: serve
     volumes:
