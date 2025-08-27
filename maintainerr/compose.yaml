@@ -1,6 +1,6 @@
 services:
   maintainerr:
-    image: ghcr.io/jorenn92/maintainerr:v2.19.0 # or jorenn92/maintainerr:latest
+    image: ghcr.io/jorenn92/maintainerrv2.19.0 # or jorenn92/maintainerr:latest
     container_name: maintainerr
     user: ${PUID}:${PGID}
     volumes:
