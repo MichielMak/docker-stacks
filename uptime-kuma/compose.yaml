@@ -1,0 +1,25 @@
+services:
+  uptime-kuma:
+    restart: unless-stopped
+    #    ports:
+    #      - 3001:3001
+    environment:
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/uptime-kuma/config:/app/data
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:1.23.16
+    networks:
+      - npm
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Uptime Kuma
+      - homepage.icon=uptime-kuma.png
+      - homepage.href=http://uptime.${DOMAIN}/
+      - homepage.description=A fancy self-hosted monitoring tool
+      - homepage.widget.type=uptimekuma
+      - homepage.widget.url=http://uptime-kuma:3001
+      - homepage.widget.slug=uptime-local
+networks:
+  npm:
+    external: true
