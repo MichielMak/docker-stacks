@@ -1,6 +1,6 @@
 services:
   byparr:
-    image: ghcr.io/thephaseless/byparr:v1.2.1 
+    image: ghcr.io/thephaseless/byparr:1.2.1 
     container_name: byparr
     restart: unless-stopped
     shm_size: 2gb
