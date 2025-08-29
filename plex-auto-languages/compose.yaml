@@ -1,0 +1,17 @@
+services:
+  plexautolanguages:
+    image: journeyover/plex-auto-languages:latest
+    environment:
+      - PLEX_URL=http://plex:32400
+      - PLEX_TOKEN=${MY_PLEX_TOKEN}
+      - NOTIFICATIONS_ENABLE=true
+      - NOTIFICATIONS_APPRISE_CONFIGS_URLS=${APPRISE_CONFIGS_URLS}
+      - TZ=Europe/Amsterdam
+    volumes:
+      - ${DOCKER_DATA_DIR}/plexautolanguages/config:/config
+    networks:
+      - npm
+    restart: unless-stopped
+networks:
+  npm:
+    external: true
