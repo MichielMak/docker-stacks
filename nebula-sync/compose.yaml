@@ -1,6 +1,6 @@
 services:
   nebula-sync:
-    image: ghcr.io/lovelaze/nebula-sync:v0.11.0
+    image: ghcr.io/lovelaze/nebula-sync:v0.11.0@sha256:17177eb65637d73eee7169a789e69eda8395d4d4398cc0cd08e2cbeb7c2910f1
     container_name: nebula-sync
     environment:
       - PRIMARY=http://pihole:8080|${PIHOLE_PW}
