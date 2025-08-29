@@ -1,0 +1,11 @@
+services:
+  byparr:
+    image: ghcr.io/thephaseless/byparr:v1.2.1 
+    container_name: byparr
+    restart: unless-stopped
+    shm_size: 2gb
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
