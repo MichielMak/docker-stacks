@@ -1,6 +1,6 @@
 services:
   papra:
-    image: ghcr.io/papra-hq/papra:latest
+    image: ghcr.io/papra-hq/papra:latest@sha256:6fdc2208f403882f4a3b8103a8aa7c2832e285f01205d54c24a9458c66607ba0
     container_name: papra
     restart: unless-stopped
 #    ports:
