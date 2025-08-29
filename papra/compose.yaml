@@ -1,6 +1,6 @@
 services:
   papra:
-    image: ghcr.io/papra-hq/papra:latest
+    image: ghcr.io/papra-hq/papra:@papra/app-server@0.8.2
     container_name: papra
     restart: unless-stopped
 #    ports:
