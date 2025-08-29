@@ -1,0 +1,26 @@
+services:
+  rustdesk:
+    container_name: rustdesk
+    image: ich777/rustdesk-server-aio:amd64_1.1.14
+    ports:
+      - 21115-21119:21115-21119/udp
+      - 21116:21116/udp
+    environment:
+      - HBBS_ENABLED=true
+      - HBBR_ENABLED=true
+      - UID=${PUID}
+      - GID=${PGID}
+      - DATA_PERM=770
+      - UMASK=000
+    volumes:
+      - ${DOCKER_DATA_DIR}/rustdesk/config:/rustdesk-server
+    restart: unless-stopped
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${IPV4_ADDRESS}
+      npm: null
+networks:
+  npm:
+    external: true
+  my-macvlan-net:
+    external: true
