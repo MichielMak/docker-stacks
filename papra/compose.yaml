@@ -1,0 +1,18 @@
+services:
+  papra:
+    image: ghcr.io/papra-hq/papra:latest
+    container_name: papra
+    restart: unless-stopped
+#    ports:
+#      - 1221:1221
+    environment:
+      - AUTH_SECRET=${AUTH_SECRET}
+      - APP_BASE_URL=https://papra.${DOMAIN}
+    volumes:
+      - ${DOCKER_DATA_DIR}/papra/config:/app/app-data
+    user: ${PUID}:${PGID}
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
