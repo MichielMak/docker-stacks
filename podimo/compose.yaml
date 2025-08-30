@@ -1,0 +1,20 @@
+services:
+  podimo:
+    environment:
+      - PODIMO_BIND_HOST=0.0.0.0:12104
+      - PODIMO_PROTOCOL=https
+      - LOCAL_CREDENTIALS=false
+      - PODIMO_HOSTNAME=podimo.${DOMAIN}
+      - PODIMO_EMAIL="${PODIMO_EMAIL}"
+      - PODIMO_PASSWORD="${PODIMO_PASSWORD}"
+    #    ports:
+    #      - 12104:12104
+    volumes:
+      - ${DOCKER_DATA_DIR}/podimo/cache:/src/cache
+    image: ghcr.io/thijsray/podimo:0.4.5
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
