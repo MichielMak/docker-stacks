@@ -1,0 +1,26 @@
+services:
+  handbrake:
+    tty: true
+    container_name: handbrake
+    devices:
+      - /dev/dri/:/dev/dri/
+    #    ports:
+    #      - 5800:5800
+    volumes:
+      - ${DOCKER_DATA_DIR}/handbrake/config:/config:rw
+      - ${OVERIG_DIR}:/storage:ro
+      - ${MEDIA_DIR}:/mnt/media:ro
+      - ${OVERIG_DIR}/prestage:/output:rw
+    environment:
+      - USER_ID=${PUID}
+      - GROUP_ID=${PGID}
+      - HANDBRAKE_GUI=1
+      - TZ=Europe/Amsterdam
+      - DARK_MODE=1
+    image: jlesage/handbrake:v25.07.2
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
