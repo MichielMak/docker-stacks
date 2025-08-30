@@ -1,0 +1,18 @@
+services:
+  tailscale_docker_proxy:
+    container_name: tailscale_docker_proxy
+    image: almeidapaulopt/tsdproxy:1.4.7-amd64
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - tsdpdatadir:/data
+      - ${DOCKER_DATA_DIR}/tsdproxy/config:/config
+    restart: unless-stopped
+    networks:
+      - npm
+#    ports:
+#      - 8080:8080
+volumes:
+  tsdpdatadir: null
+networks:
+  npm:
+    external: true
