@@ -11,7 +11,7 @@ services:
     #      - 12104:12104
     volumes:
       - ${DOCKER_DATA_DIR}/podimo/cache:/src/cache
-    image: ghcr.io/thijsray/podimo:v0.4.5
+    image: ghcr.io/thijsray/podimo:v0.4.6
     restart: unless-stopped
     networks:
       - npm
