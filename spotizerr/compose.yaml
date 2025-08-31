@@ -7,7 +7,7 @@ services:
       - ${DOCKER_DATA_DIR}/spotizerr/creds:/app/creds
       - ${DOCKER_DATA_DIR}/spotizerr/logs:/app/logs
       - ${DEEMIX_DIR}:/app/downloads
-    image: https://lavaforge.org/spotizerr/spotizerr
+    image: lavaforge.org/spotizerr/spotizerr:latest
 #    ports:
 #      - 7171:7171
     restart: unless-stopped
