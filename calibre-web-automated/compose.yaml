@@ -6,6 +6,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=Europe/Amsterdam
+      - EXT_BYPASSER_URL=http://byparr:8191/
     volumes:
       - ${DOCKER_DATA_DIR}/calibre-web-automated/config:/config
       - ${MEDIA_DIR}/downloads/usenet/books:/cwa-book-ingest
