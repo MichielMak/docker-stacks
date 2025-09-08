@@ -2,7 +2,7 @@ services:
   db_recipes:
     container_name: db_recipes
     restart: unless-stopped
-    image: postgres:16-alpine@sha256:8ffca822c1933bdc8be7dbbe9c2330974bdb43f5027f47717772fa35925412b0
+    image: postgres:16-alpine@sha256:c7678a4c597b335472988a1b9d6607c067654c71a4b52f60e223cedeb057707c
     volumes:
       - ${DOCKER_DATA_DIR}/tandoor/postgresql:/var/lib/postgresql/data
     environment:
@@ -36,7 +36,7 @@ services:
     depends_on:
       - db_recipes
     container_name: web_recipes
-    image: vabene1111/recipes:2.1.0@sha256:9e3404a9d6ff466c22328fdb03d741e08d4a045625b0760f49b0c3bf33f9777f
+    image: vabene1111/recipes:2.1.1@sha256:d352711c4377f22c66e8fda62cdc1cb16362b5edf05fc3dcf7a153a248fb6131
     restart: unless-stopped
     networks:
       - npm
