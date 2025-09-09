@@ -1,10 +1,10 @@
 services:
   booklore:
-    image: booklore/booklore:v1.2.0@sha256:511bbf96222e42a4693fee170026add38813adecb104ee216770b58ecd87e954
+    image: booklore/booklore:v1.2.1
     container_name: booklore
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
+      - USER_ID=${PUID}
+      - GROUP_ID=${PGID}
       - TZ=Europe/Amsterdam
       - DATABASE_URL=jdbc:mariadb://bookloremariadb:3306/booklore
       - DATABASE_USERNAME=booklore
