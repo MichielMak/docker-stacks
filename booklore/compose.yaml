@@ -15,6 +15,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/booklore/config:/app/data
       - ${MEDIA_DIR}/books:/books:ro
+      - ${MEDIA_DIR}/downloads/bookdrop:/bookdrop
     restart: unless-stopped
     networks:
       - npm
