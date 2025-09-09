@@ -2,7 +2,7 @@ services:
   db_recipes:
     container_name: db_recipes
     restart: unless-stopped
-    image: postgres:16-alpine@sha256:6259324d0c353c6f6406c2d370b069bd7a353c32ee50afc3be50c9fef3443559
+    image: postgres:16-alpine@sha256:af04f2185358fe933bb3f7fe2c42f0408b1bab4367c6d1b971bac3935636c21b
     volumes:
       - ${DOCKER_DATA_DIR}/tandoor/postgresql:/var/lib/postgresql/data
     environment:
