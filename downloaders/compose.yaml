@@ -41,7 +41,7 @@ services:
     environment:
       - TZ=Europe/Amsterdam
     volumes:
-      - ${DOCKER_DATA_DIR}/sabnzbd/config:/sabnzbd/etc
+      - sabnzbd.etc:/sabnzbd/etc
       - ${MEDIA_DIR}/downloads/usenet:/media/downloads/usenet
       - ${OVERIG_DIR}/prestage:/overig/prestage
     #    ports:
@@ -61,6 +61,8 @@ services:
     restart: unless-stopped
     networks:
       - npm
+volumes:
+  sabnzbd.etc:
   pyload:
     image: linuxserver/pyload-ng:0.5.0@sha256:2c99abd3d4f3a68ff322efb0fb0cd2da40890ed38c9c4cca0a1573ec98e5315e
     container_name: pyload
