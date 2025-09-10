@@ -38,14 +38,15 @@ services:
     image: 11notes/sabnzbd:4.5.3
     <<: *lockdown
     container_name: sabnzbd
+    user: "568:568"
     environment:
       - TZ=Europe/Amsterdam
     volumes:
       - sabnzbd.etc:/sabnzbd/etc
       - ${MEDIA_DIR}/downloads/usenet:/media/downloads/usenet
       - ${OVERIG_DIR}/prestage:/overig/prestage
-    #    ports:
-    #      - 8080:8080
+    ports:
+      - 8080:8080
     tmpfs:
       # required for read-only image
       - "/tmp:uid=568,gid=568"
