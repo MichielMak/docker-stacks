@@ -1,7 +1,7 @@
 services:
   wizarr:
     container_name: wizarr
-    image: ghcr.io/wizarrrr/wizarr:2025.9.1
+    image: ghcr.io/wizarrrr/wizarr:v2025.9.1
     #    ports:
     #      - 5690:5690
     volumes:
