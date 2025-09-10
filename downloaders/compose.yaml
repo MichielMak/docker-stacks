@@ -63,6 +63,7 @@ services:
       - npm
 volumes:
   sabnzbd.etc:
+    driver: local
   pyload:
     image: linuxserver/pyload-ng:0.5.0@sha256:2c99abd3d4f3a68ff322efb0fb0cd2da40890ed38c9c4cca0a1573ec98e5315e
     container_name: pyload
