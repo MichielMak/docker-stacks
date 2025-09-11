@@ -7,16 +7,18 @@ x-lockdown: &lockdown
 
 services:
   qbittorrent:
-    image: ghcr.io/hotio/qbittorrent:release-5.1.2@sha256:cec9ab4fbd139cd3fdc1556bb0cc498303735d427d5ceaa2e2f864341d535df1
+    image: 11notes/qbittorrent:5.1.2
+    <<: *lockdown
     container_name: qbittorrent
+    user: "568:568"
     environment:
       - TZ=Europe/Amsterdam
-      - PUID=${PUID}
-      - PGID=${PGID}
       - UMASK=002
       - WEBUI_PORTS=8080/tcp,8080/udp
       - LIBTORRENT=v1
     volumes:
+      - qbittorrent.etc:/qbittorrent/etc
+      - qbittorrent.var:/qbittorrent/var
       - ${DOCKER_DATA_DIR}/qbittorrent/config:/config
       - ${MEDIA_DIR}/downloads/torrents:/media/downloads/torrents
       - ${OVERIG_DIR}/prestage:/overig/prestage
@@ -95,4 +97,8 @@ networks:
     external: true
 volumes:
   sabnzbd.etc:
+    driver: local
+  qbittorrent.etc:
+    driver: local
+  qbittorrent.var:
     driver: local
