@@ -11,6 +11,7 @@ services:
     <<: *lockdown
     container_name: qbittorrent
     user: "568:568"
+    command: ["/usr/local/bin/qbittorrent", "--profile=/config"]
     environment:
       - TZ=Europe/Amsterdam
       - UMASK=002
