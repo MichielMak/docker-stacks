@@ -39,6 +39,7 @@ services:
     <<: *lockdown
     container_name: sabnzbd
     user: "568:568"
+    command: ["/usr/local/bin/python", "/opt/sabnzbd/SABnzbd.py", "--config-file", "/sabnzbd/etc/sabnzbd.ini", "--server", "0.0.0.0:8080", "--browser", "0", "--console", "--logging", "1", "--disable-file-log"]
     environment:
       - TZ=Europe/Amsterdam
     volumes:
