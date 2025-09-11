@@ -35,7 +35,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: 11notes/sabnzbd:4.5.3@sha256:4635ef6e08df236ba54d4f0d5e55602e91cb49438a59bb9da1df1753661edd39
+    image: 11notes/sabnzbd:4.5.3@sha256:06dcc6e572684319fde47188a46885fa2de21d712a91aa72fd437de918220597
     <<: *lockdown
     container_name: sabnzbd
     user: "568:568"
