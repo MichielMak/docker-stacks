@@ -1,6 +1,6 @@
 services:
   plexautolanguages:
-    image: journeyover/plex-auto-languages:1.3.10@sha256:697cbaa5c2deeb86a97d268a0b7991d4d91aaebe78b1952b10d0cff461c6ca9f
+    image: journeyover/plex-auto-languages:1.3.11@sha256:617eb7a19277e81d119fbc96160659b74ae5594fac19770567b0ed1c1b3dae54
     environment:
       - PLEX_URL=http://plex:32400
       - PLEX_TOKEN=${MY_PLEX_TOKEN}
