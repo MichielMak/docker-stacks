@@ -7,7 +7,7 @@ x-lockdown: &lockdown
 
 services:
   qbittorrent:
-    image: 11notes/qbittorrent:5.1.2@sha256:a3241b453a2af2861ebc9503e617a23fb05ef85f94735b21ca9811acdbb2f11f
+    image: 11notes/qbittorrent:5.1.2@sha256:2e15063cde7257bdf4f685c5b8c8b8e62400205b195332b354a193b9ff55526e
     <<: *lockdown
     container_name: qbittorrent
     user: "568:568"
@@ -38,7 +38,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: 11notes/sabnzbd:4.5.3@sha256:06dcc6e572684319fde47188a46885fa2de21d712a91aa72fd437de918220597
+    image: 11notes/sabnzbd:4.5.3@sha256:86d343547048e96e929df555c6acd01c908c51c39f0e76c8806819fd6083395c
     <<: *lockdown
     container_name: sabnzbd
     user: "568:568"
