@@ -35,7 +35,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/authentik/redis:/data
   server:
-    image: ghcr.io/goauthentik/server:2025.8.2@sha256:92af86f9c4643d739af0d67adefe1f97379ea7886f66189b61b886b90f20b0e5
+    image: ghcr.io/goauthentik/server:2025.8.3@sha256:6bff6f23e02de8f045e1c5c15891cfc702cc02edf79b45c60103bc57ffd88ebb
     restart: unless-stopped
     command: server
     volumes:
@@ -67,7 +67,7 @@ services:
       - homepage.widget.url={AUTHENTIK_INTERNAL_URL}
       - homepage.widget.key=${AUTHENTIK_API}
   worker:
-    image: ghcr.io/goauthentik/server:2025.8.2@sha256:92af86f9c4643d739af0d67adefe1f97379ea7886f66189b61b886b90f20b0e5
+    image: ghcr.io/goauthentik/server:2025.8.3@sha256:6bff6f23e02de8f045e1c5c15891cfc702cc02edf79b45c60103bc57ffd88ebb
     restart: unless-stopped
     command: worker
     user: root
