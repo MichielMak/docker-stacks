@@ -7,7 +7,7 @@ x-lockdown: &lockdown
 
 services:
   qbittorrent:
-    image: 11notes/qbittorrent:5.1.2@sha256:b8a6a4ec41ad7c9d160fdd81880a759a8260d122c026dfe7677baabae50eab9e
+    image: 11notes/qbittorrent:5.1.2@sha256:d169e355b0ff5f410cfd5659f498ea39941ea574a14dcc746ff6c5ece29fcb55
     <<: *lockdown
     container_name: qbittorrent
     user: "568:568"
