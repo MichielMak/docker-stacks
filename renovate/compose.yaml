@@ -32,7 +32,7 @@ services:
 
   # One-time Renovate run
   renovate:
-    image: renovate/renovate:41.118.0@sha256:f56c8cea853515ed24938d69f157b507cdb4306a050196ee4ca67cfbd502c059
+    image: renovate/renovate:41.122.0@sha256:96c85fecf451e1a07f61ce11fb2ecac5d9d44f5affc41a7e19e74f4ba96fe64c
     depends_on:
       token-generator:
         condition: service_completed_successfully
