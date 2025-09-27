@@ -7,7 +7,7 @@ x-lockdown: &lockdown
 
 services:
   qbittorrent:
-    image: 11notes/qbittorrent:5.1.2@sha256:ce37f46874878636d6b42ee4f13f988db24807b6106004665784506dd2c03080
+    image: 11notes/qbittorrent:5.1.2@sha256:f4ed9d2fe9a91948b676ef7adb6c8cb0b463781d67846dfe1b70854ed3501cf4
     <<: *lockdown
     container_name: qbittorrent
     user: "568:568"
@@ -67,7 +67,7 @@ services:
     networks:
       - npm
   pyload:
-    image: linuxserver/pyload-ng:0.5.0@sha256:1a81e7f5c4d6372b00266ffde936a4b7c2d9d57dda8f41390a554052d385c646
+    image: linuxserver/pyload-ng:0.5.0@sha256:333bb85ff883f267bd66b037e9894ae8f74a72b41b0c23656082a1527dd29bfe
     container_name: pyload
     environment:
       - PUID=${PUID}
