@@ -29,7 +29,7 @@ services:
       TZ: Europe/Amsterdam
     group_add:
       - ${PGID}
-    image: ghcr.io/moghtech/komodo-core:1.19.4@sha256:825543381b3c17b4941d1d9507a436ee992b89673253433fcc870cc37e1d0d94
+    image: ghcr.io/moghtech/komodo-core:1.19.5@sha256:a1cceb4f971443b1e9f2a767788f663d0afb6244ee2135f7fe3fd1036af37ade
     networks:
       - komodo
       - npm
@@ -46,7 +46,7 @@ services:
       MONGO_INITDB_DATABASE: komodo
       MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
       MONGO_INITDB_ROOT_USERNAME: komodo
-    image: mongo@sha256:3b8b70989461fe747cc7a14f80dda2462e7e9406d217b6db21d95b4ff772c874
+    image: mongo@sha256:3031bfad5692e3fa1defcd054d4794370889c93b2049e0c323f2b7571e495413
     networks:
       - komodo
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
       PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/data/komodo/periphery
       PERIPHERY_SSL_ENABLED: true
       TZ: Europe/Amsterdam
-    image: ghcr.io/moghtech/komodo-periphery:1.19.4@sha256:c28041c50ab7466c42160ae214c594705758d95278b999ec038e3bbc2e2948e2
+    image: ghcr.io/moghtech/komodo-periphery:1.19.5@sha256:bd79cf960ed054fe8e02384322303e462448679b1149dde48bbef151417255b1
     networks:
       - komodo
       - npm
