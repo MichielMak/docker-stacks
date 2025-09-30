@@ -47,7 +47,7 @@ services:
     networks:
       - npm
     labels:
-      - "homepage.group=Storage"
+      - "homepage.group=Media"
       - "homepage.name=ownCloud"
       - "homepage.icon=owncloud"
       - "homepage.href=${OCIS_URL}"
