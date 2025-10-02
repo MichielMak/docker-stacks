@@ -46,7 +46,7 @@ services:
       MONGO_INITDB_DATABASE: komodo
       MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
       MONGO_INITDB_ROOT_USERNAME: komodo
-    image: mongo@sha256:4a995c5ce82d50b8552ae00f884a4aaf64994490b6cd4cf1bca066ac3a1c5509
+    image: mongo@sha256:6eaaf8b194dc2c78a61deae63f1c163c2e55769c2157d6406f517d902694c792
     networks:
       - komodo
     restart: unless-stopped
