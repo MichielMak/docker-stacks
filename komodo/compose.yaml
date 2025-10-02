@@ -40,6 +40,17 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/backups:/backups
       - ${DOCKER_DATA_DIR}/data/komodo/syncs:/syncs
       - ${DOCKER_STACKS_DIR}:${DOCKER_STACKS_DIR}
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Komodo
+      - homepage.icon=komodo.png
+      - homepage.href=http://komodo.${DOMAIN}/
+      - homepage.description=A web app to provide structure for managing your servers, builds, deployments, and automated procedures.
+      - homepage.widget.type=komodo
+      - homepage.widget.fields=["running", "unhealthy"]
+      - homepage.widget.url=http://core:30160
+      - homepage.widget.key=${KOMODO_API_KEY}
+      - homepage.widget.secret=${KOMODO_API_SECRET}
   mongo:
     container_name: komodo-mongo
     environment:
