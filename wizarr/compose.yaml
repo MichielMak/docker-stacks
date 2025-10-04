@@ -1,7 +1,7 @@
 services:
   wizarr:
     container_name: wizarr
-    image: ghcr.io/wizarrrr/wizarr:v2025.10.1@sha256:a6a5b6d5e3e4a37b2bb60d9bee135717ab5c744fc55775fc1e608cff7e2f929a
+    image: ghcr.io/wizarrrr/wizarr:v2025.10.1@sha256:0681c279ebe80e73d0536a791d7ea2bcacaa4e6b865fbc026481d76315bf8e0a
     #    ports:
     #      - 5690:5690
     volumes:
