@@ -47,9 +47,37 @@
       "allowedVersions": "/^16(?:\\.\\d+){0,2}(?:-[A-Za-z0-9.-]+)?$/"
     },
     {
+      "description": "Immich Infrastructure: Ignore Redis/Valkey and PostgreSQL updates",
+      "matchFileNames": ["**/immich-app/compose.yaml", "**/immich-app/compose.yml", "**/immich-app/docker-compose.yaml", "**/immich-app/docker-compose.yml"],
+      "matchPackageNames": [
+        "/^docker\\.io\\/valkey\\//",
+        "/^docker\\.io\\/redis\\//", 
+        "/^ghcr\\.io\\/immich-app\\/postgres/"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Immich Apps: Group only immich-server and immich-machine-learning together",
+      "matchFileNames": ["**/immich-app/compose.yaml", "**/immich-app/compose.yml", "**/immich-app/docker-compose.yaml", "**/immich-app/docker-compose.yml"],
+      "matchPackageNames": [
+        "/^ghcr\\.io\\/immich-app\\/immich-server/",
+        "/^ghcr\\.io\\/immich-app\\/immich-machine-learning/"
+      ],
+      "groupName": "immich-apps",
+      "groupSlug": "immich-apps",
+      "addLabels": ["immich-apps"]
+    },
+    {
       "description": "Group updates strictly per compose file directory",
       "matchManagers": ["docker-compose"],
       "matchFileNames": ["**/compose.yaml", "**/compose.yml", "**/docker-compose.yaml", "**/docker-compose.yml"],
+      "excludePackageNames": [
+        "/^docker\\.io\\/valkey\\//",
+        "/^docker\\.io\\/redis\\//", 
+        "/^ghcr\\.io\\/immich-app\\/postgres/",
+        "/^ghcr\\.io\\/immich-app\\/immich-server/",
+        "/^ghcr\\.io\\/immich-app\\/immich-machine-learning/"
+      ],
       "groupName": "stack: {{parentDir}}",
       "groupSlug": "stack-{{parentDir}}",
       "addLabels": ["stack:{{parentDir}}"]
