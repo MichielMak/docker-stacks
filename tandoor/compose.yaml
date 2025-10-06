@@ -36,7 +36,7 @@ services:
     depends_on:
       - db_recipes
     container_name: web_recipes
-    image: vabene1111/recipes:2.2.7@sha256:bbafaa18a39292e3e2cf032e090d17d0fcc1deb71a2b98425fec99cb05e8532d
+    image: vabene1111/recipes:2.3.0@sha256:94a048d2ca34209654ecb984e29de1f621625b632925b28243735f1de4187d58
     restart: unless-stopped
     networks:
       - npm
