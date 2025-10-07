@@ -1,6 +1,6 @@
 services:
   booklore:
-    image: booklore/booklore:v1.4.1@sha256:0a8aeea39aa54ebd11c9e0982578f179351dca8fa08ed8232af0e148418fe442
+    image: booklore/booklore:v1.5.0@sha256:6a823ab2e0a79cdc02963721b51d7bbb2111e91d261afa10775fbdfcb2060bc7
     container_name: booklore
     environment:
       - USER_ID=${PUID}
@@ -20,7 +20,7 @@ services:
     networks:
       - npm
   bookloremariadb:
-    image: linuxserver/mariadb:11.4.8@sha256:c7ca780abe5aba6d6a7643570ea30679aa0705da21c392355138660d8a5b6def
+    image: linuxserver/mariadb:11.4.8@sha256:caa3b6d9165a7bd44f7247dbb703aa8bc99988dea469983b73397f3cc0adb6ea
     container_name: bookloremariadb
     environment:
       - PUID=${PUID}
