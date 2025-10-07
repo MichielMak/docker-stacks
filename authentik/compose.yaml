@@ -64,7 +64,7 @@ services:
       - homepage.href=http://auth.${DOMAIN}/
       - homepage.description=IAM
       - homepage.widget.type=authentik
-      - homepage.widget.url={AUTHENTIK_INTERNAL_URL}
+      - homepage.widget.url=${AUTHENTIK_INTERNAL_URL}
       - homepage.widget.key=${AUTHENTIK_API}
       - homepage.widget.version=2
   worker:
