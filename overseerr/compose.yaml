@@ -25,7 +25,7 @@ services:
     networks:
       - npm
   overseerr_private:
-    image: fallenbagel/jellyseerr:preview-seerr
+    image: fallenbagel/jellyseerr:preview-seerr@sha256:16177e553f7d1c2bcc967a68819da4ba1841b3bd36a40753e962cdb9072f59ef
     container_name: overseerr_private
     environment:
       - PUID=${PUID}
