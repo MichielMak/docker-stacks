@@ -1,6 +1,6 @@
 services:
   tautulli:
-    image: linuxserver/tautulli:2.16.0@sha256:173e2a76d7e83d31d0dc002e569a1a476cf6d474a65a6b1acc7dbceb41183eb2
+    image: ghcr.io/tautulli/tautulli:2.16.0
     container_name: tautulli
     environment:
       - PUID=${PUID}
