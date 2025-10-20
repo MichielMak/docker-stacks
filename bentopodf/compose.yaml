@@ -1,0 +1,20 @@
+services:
+  bentopdf:
+    image: bentopdf/bentopdf:1.0.0
+    container_name: bentopdf
+    restart: unless-stopped
+#    ports:
+#      - '3000:80'
+    environment:
+      - SIMPLE_MODE=${SIMPLE_MODE:-false}
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=BentoPDF
+      - homepage.icon=mdi-file-pdf-box
+      - homepage.href=http://pdf.${DOMAIN}/
+      - homepage.description=A powerful, privacy-first, client-side PDF toolkit
+networks:
+  npm:
+    external: true
