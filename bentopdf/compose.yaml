@@ -1,12 +1,10 @@
 services:
   bentopdf:
-    image: bentopdf/bentopdf:v1.0.2@sha256:bae7c8646d98f769c9aec99180f4df8d406899524e97a68ab819173257814c2a
+    image: bentopdf/bentopdf-simple:v1.0.2
     container_name: bentopdf
     restart: unless-stopped
 #    ports:
 #      - '3000:80'
-    environment:
-      - SIMPLE_MODE=${SIMPLE_MODE:-true}
     networks:
       - npm
     labels:
