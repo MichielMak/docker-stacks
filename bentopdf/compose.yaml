@@ -12,7 +12,7 @@ services:
     labels:
       - homepage.group=Media
       - homepage.name=BentoPDF
-      - homepage.icon=bentopdf-dark.png
+      - homepage.icon=sh-bentopdf-dark.png
       - homepage.href=http://pdf.${DOMAIN}/
       - homepage.description=A powerful, privacy-first, client-side PDF toolkit
 networks:
