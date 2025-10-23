@@ -1,6 +1,6 @@
 services:
   postgresql:
-    image: docker.io/library/postgres:16.10-alpine@sha256:7898d413578ff5fa67ce49233cc9743e282010eb2ec6ebf7834a63f4a60b05f0
+    image: docker.io/library/postgres:16.10-alpine@sha256:03379eed4ab21d32530f0a832017f06f79313f86276eab0b762c7c7e1eb998ff
     restart: unless-stopped
     healthcheck:
       test:
