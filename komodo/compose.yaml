@@ -51,6 +51,11 @@ services:
       - homepage.widget.url=http://core:30160
       - homepage.widget.key=${KOMODO_API_KEY}
       - homepage.widget.secret=${KOMODO_API_SECRET}
+      - traefik.enable=true
+      - traefik.http.routers.komodo.rule=Host(`komodo.${DOMAIN}`)
+      - traefik.http.routers.komodo.entrypoints=websecure
+      - traefik.http.routers.komodo.tls=true
+      - traefik.http.services.komodo.loadbalancer.server.port=30160
   mongo:
     container_name: komodo-mongo
     environment:
