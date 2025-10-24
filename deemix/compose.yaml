@@ -19,6 +19,12 @@ services:
       - homepage.icon=deemix.png
       - homepage.href=http://deemix.${DOMAIN}/
       - homepage.description=A renowned music downloader
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.deemix.rule=Host(`deemix.${DOMAIN}`)
+      - traefik.http.routers.deemix.entrypoints=websecure
+      - traefik.http.routers.deemix.tls=true
+      - traefik.http.services.deemix.loadbalancer.server.port=6595
     restart: unless-stopped
     networks:
       - npm

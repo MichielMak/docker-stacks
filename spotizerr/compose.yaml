@@ -38,6 +38,12 @@ services:
       - homepage.href=https://spotizerr.${DOMAIN}/
       - homepage.description=Music downloader which combines Spotify's catalog
         and Deezer's quality
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.spotizerr.rule=Host(`spotizerr.${DOMAIN}`)
+      - traefik.http.routers.spotizerr.entrypoints=websecure
+      - traefik.http.routers.spotizerr.tls=true
+      - traefik.http.services.spotizerr.loadbalancer.server.port=7171
     depends_on:
       - spotizerr-redis
     user: "568:568"
