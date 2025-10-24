@@ -11,6 +11,12 @@ services:
       - PGID=${PGID}
       - PUID=${PUID}
       - HOMEPAGE_ALLOWED_HOSTS=${DOMAIN}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.homepage.entrypoints=websecure
+      - traefik.http.routers.homepage.tls=true
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
 networks:
   npm:
     external: true
