@@ -52,6 +52,7 @@ services:
       - homepage.widget.key=${KOMODO_API_KEY}
       - homepage.widget.secret=${KOMODO_API_SECRET}
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.komodo.rule=Host(`komodo.${DOMAIN}`)
       - traefik.http.routers.komodo.entrypoints=websecure
       - traefik.http.routers.komodo.tls=true
