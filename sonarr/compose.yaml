@@ -28,6 +28,12 @@ services:
       - homepage.widget.type=sonarr
       - homepage.widget.url=http://sonarr:8989
       - homepage.widget.key=${SONARR_API}
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.tls=true
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
     restart: unless-stopped
     networks:
       - npm
@@ -52,6 +58,12 @@ services:
       - homepage.widget.type=sonarr
       - homepage.widget.url=http://sonarrexternal:8989
       - homepage.widget.key=${SONARREXTERNAL_API}
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.sonarrexternal.rule=Host(`sonarrexternal.${DOMAIN}`)
+      - traefik.http.routers.sonarrexternal.entrypoints=websecure
+      - traefik.http.routers.sonarrexternal.tls=true
+      - traefik.http.services.sonarrexternal.loadbalancer.server.port=8989
     restart: unless-stopped
     networks:
       - npm
