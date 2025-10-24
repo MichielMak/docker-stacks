@@ -30,7 +30,7 @@ services:
       - traefik.http.routers.booklore.rule=Host(`booklore.${DOMAIN}`)
       - traefik.http.routers.booklore.entrypoints=websecure
       - traefik.http.routers.booklore.tls=true
-      - traefik.http.services.booklore.loadbalancer.server.port=8080
+      - traefik.http.services.booklore.loadbalancer.server.port=6060
   bookloremariadb:
     image: linuxserver/mariadb:11.4.8@sha256:9482071902026313b72da17eb5d0c73d08315e0b276a77f327adf8950e782635
     container_name: bookloremariadb
