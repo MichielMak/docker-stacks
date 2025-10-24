@@ -38,6 +38,8 @@ services:
       - traefik.http.routers.nextcloud.tls=true
       - traefik.http.services.nextcloud.loadbalancer.server.port=443
       - traefik.http.services.nextcloud.loadbalancer.server.scheme=https
+      - traefik.http.services.nextcloud.loadbalancer.serverstransport=nextcloud-transport
+      - traefik.http.servertransports.nextcloud-transport.insecureskipverify=true
   nextclouddb:
     image: linuxserver/mariadb:11.4.8@sha256:9482071902026313b72da17eb5d0c73d08315e0b276a77f327adf8950e782635
     container_name: nextclouddb
