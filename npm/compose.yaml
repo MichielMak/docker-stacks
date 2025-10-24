@@ -4,7 +4,7 @@
       image: ghcr.io/zoeyvid/npmplus:latest
       restart: unless-stopped
       ports:
-#        - 82:81 # Nginx Proxy Manager UI
+        - 82:81 # Nginx Proxy Manager UI
         - 443:443 # Nginx Proxy Manager SSL
         - 80:80 # Nginx Proxy Manager HTTP
       networks:
