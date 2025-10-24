@@ -34,6 +34,11 @@ services:
       - homepage.description=Torrent client
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:8080
+      - traefik.enable=true
+      - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.tls=true
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
     restart: unless-stopped
     networks:
       - npm
@@ -63,6 +68,11 @@ services:
       - homepage.widget.type=sabnzbd
       - homepage.widget.url=http://sabnzbd:8080
       - homepage.widget.key=${SABNZBD_API}
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.${DOMAIN}`)
+      - traefik.http.routers.sabnzbd.entrypoints=websecure
+      - traefik.http.routers.sabnzbd.tls=true
+      - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
     restart: unless-stopped
     networks:
       - npm
@@ -93,6 +103,11 @@ services:
       - homepage.widget.url=http://pyload:8000
       - homepage.widget.username=pyload
       - homepage.widget.password=${PYLOAD_PW}
+      - traefik.enable=true
+      - traefik.http.routers.pyload.rule=Host(`pyload.${DOMAIN}`)
+      - traefik.http.routers.pyload.entrypoints=websecure
+      - traefik.http.routers.pyload.tls=true
+      - traefik.http.services.pyload.loadbalancer.server.port=8000
 networks:
   npm:
     external: true

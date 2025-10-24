@@ -28,6 +28,11 @@ services:
       - homepage.widget.fields=["movies", "tv"]
       - homepage.widget.url=http://plex:32400
       - homepage.widget.key=${PLEX_TOKEN}
+      - traefik.enable=true
+      - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.routers.plex.tls=true
+      - traefik.http.services.plex.loadbalancer.server.port=32400
     restart: unless-stopped
 networks:
   npm:
