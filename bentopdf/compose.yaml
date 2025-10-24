@@ -1,6 +1,6 @@
 services:
   bentopdf:
-    image: bentopdf/bentopdf-simple:v1.1.1@sha256:9d678d2097ac4b7f44c30d0e9e25f0b6af679ecef15fb18e1ed2b0b88a422d37
+    image: bentopdf/bentopdf-simple:v1.1.2@sha256:dbf789b538b68fecca3d26ac1b3975bc3268c93554ed3cb5dbfab2a1619213c9
     container_name: bentopdf
     restart: unless-stopped
 #    ports:
@@ -13,6 +13,12 @@ services:
       - homepage.icon=sh-bentopdf-dark.png
       - homepage.href=http://pdf.${DOMAIN}/
       - homepage.description=A powerful, privacy-first, client-side PDF toolkit
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.bentopdf.rule=Host(`pdf.${DOMAIN}`)
+      - traefik.http.routers.bentopdf.entrypoints=websecure
+      - traefik.http.routers.bentopdf.tls=true
+      - traefik.http.services.bentopdf.loadbalancer.server.port=80
 networks:
   npm:
     external: true
