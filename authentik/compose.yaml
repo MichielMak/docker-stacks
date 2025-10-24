@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.authentik.rule=Host(`auth.${DOMAIN}`)
       - traefik.http.routers.authentik.entrypoints=websecure
       - traefik.http.routers.authentik.tls=true
-      - traefik.http.routers.authentik.tls.certresolver=letsencrypt
       - traefik.http.routers.authentik.service=authentik
       - traefik.http.services.authentik.loadbalancer.server.port=9000
       - traefik.http.services.authentik.loadbalancer.server.scheme=http
