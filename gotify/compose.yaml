@@ -16,6 +16,12 @@ services:
       - homepage.widget.url=http://gotify:80
       - homepage.widget.fields=["messages"]
       - homepage.widget.key=${GOTIFY_API}
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.gotify.rule=Host(`notifications.${DOMAIN}`)
+      - traefik.http.routers.gotify.entrypoints=websecure
+      - traefik.http.routers.gotify.tls=true
+      - traefik.http.services.gotify.loadbalancer.server.port=80
     restart: unless-stopped
     networks:
       - npm
