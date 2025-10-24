@@ -40,6 +40,13 @@ services:
     restart: unless-stopped
     networks:
       - npm
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.tandoor.rule=Host(`tandoor.${DOMAIN}`)
+      - traefik.http.routers.tandoor.entrypoints=websecure
+      - traefik.http.routers.tandoor.tls=true
+      - traefik.http.services.tandoor.loadbalancer.server.port=80
 volumes:
   nginx_config: null
   staticfiles: null
