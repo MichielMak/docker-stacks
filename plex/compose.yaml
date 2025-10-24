@@ -29,6 +29,7 @@ services:
       - homepage.widget.url=http://plex:32400
       - homepage.widget.key=${PLEX_TOKEN}
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.routers.plex.tls=true
