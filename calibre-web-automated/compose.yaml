@@ -23,6 +23,11 @@ services:
       - homepage.widget.type=calibreweb
       - homepage.widget.fields=["books", "authors"]
       - homepage.widget.url=http://calibre-web-automated:8083
+      - traefik.enable=true
+      - traefik.http.routers.calibre-web.rule=Host(`books.${DOMAIN}`)
+      - traefik.http.routers.calibre-web.entrypoints=websecure
+      - traefik.http.routers.calibre-web.tls=true
+      - traefik.http.services.calibre-web.loadbalancer.server.port=8083
     restart: unless-stopped
     networks:
       - npm
