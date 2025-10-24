@@ -38,6 +38,9 @@ services:
     image: ghcr.io/goauthentik/server:2025.8.4@sha256:a10398480e7f8292dbcc27b64fe572f6abed6220bd40f4b6d28e9c12d4b78dca
     restart: unless-stopped
     command: server
+    networks:
+      - default
+      - npm
     volumes:
       - ${DOCKER_DATA_DIR}/authentik/media:/media
       - ${DOCKER_DATA_DIR}/authentik/custom-templates:/templates
@@ -58,15 +61,29 @@ services:
       - postgresql
       - redis
     labels:
+      # Homepage
       - homepage.group=Infra
       - homepage.name=Authentik
       - homepage.icon=authentik.png
-      - homepage.href=http://auth.${DOMAIN}/
+      - homepage.href=https://auth.${DOMAIN}/
       - homepage.description=IAM
       - homepage.widget.type=authentik
       - homepage.widget.url=${AUTHENTIK_INTERNAL_URL}
       - homepage.widget.key=${AUTHENTIK_API}
       - homepage.widget.version=2
+
+      # Traefik
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.authentik.rule=Host(`auth.${DOMAIN}`)
+      - traefik.http.routers.authentik.entrypoints=websecure
+      - traefik.http.routers.authentik.tls=true
+      - traefik.http.routers.authentik.tls.certresolver=letsencrypt
+      - traefik.http.routers.authentik.service=authentik
+      - traefik.http.services.authentik.loadbalancer.server.port=9000
+      - traefik.http.services.authentik.loadbalancer.server.scheme=http
+      - traefik.http.routers.authentik.middlewares=sec-headers@docker
+
   worker:
     image: ghcr.io/goauthentik/server:2025.8.4@sha256:a10398480e7f8292dbcc27b64fe572f6abed6220bd40f4b6d28e9c12d4b78dca
     restart: unless-stopped
@@ -97,3 +114,6 @@ volumes:
     driver: local
   redis:
     driver: local
+networks:
+  npm:
+    external: true
