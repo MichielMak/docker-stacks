@@ -1,30 +1,29 @@
-services:
-  npm:
-    container_name: npm
-    image: jc21/nginx-proxy-manager:2.12.6@sha256:6ab097814f54b1362d5fd3c5884a01ddd5878aaae9992ffd218439180f0f92f3
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 82:81
-      - 443:443
-    environment:
-      - TP_THEME=dark
-    volumes:
-      - ${DOCKER_DATA_DIR}/npm/data:/data
-      - ${DOCKER_DATA_DIR}/npm/letsencrypt:/etc/letsencrypt
-      - ${DOCKER_DATA_DIR}/npm/themepark/98-themepark:/etc/cont-init.d/98-themepark #darkmode (https://github.com/NginxProxyManager/nginx-proxy-manager/issues/4314#issuecomment-2888707741)
-    labels:
-      - homepage.group=Infra
-      - homepage.name=NPM
-      - homepage.icon=nginx-proxy-manager.png
-      - homepage.href=https://npm.${DOMAIN}/
-      - homepage.description=Nginx Proxy Manager
-      - homepage.widget.type=npm
-      - homepage.widget.url=http://npm:81
-      - homepage.widget.username=${NPM_USERNAME}
-      - homepage.widget.password=${NPM_PASSWORD}
-    networks:
-      - npm
-networks:
-  npm:
-    external: true
+  services:
+    npmplus:
+      container_name: npmplus
+      image: ghcr.io/zoeyvid/npmplus:latest
+      restart: unless-stopped
+      ports:
+#        - 82:81 # Nginx Proxy Manager UI
+        - 443:443 # Nginx Proxy Manager SSL
+        - 80:80 # Nginx Proxy Manager HTTP
+      networks:
+        - npm
+      volumes:
+        - ${DOCKER_DATA_DIR}/npmplus/data:/data
+      environment:
+        - TZ=Europe/Amsterdam
+        - ACME_EMAIL=${EMAIL}
+      labels:
+        - homepage.group=Infra
+        - homepage.name=NPM
+        - homepage.icon=nginx-proxy-manager.png
+        - homepage.href=https://npm.${DOMAIN}/
+        - homepage.description=Nginx Proxy Manager
+        - homepage.widget.type=npm
+        - homepage.widget.url=https://npmplus:81
+        - homepage.widget.username=${NPM_USERNAME}
+        - homepage.widget.password=${NPM_PASSWORD}
+  networks:
+    npm:
+      external: true
