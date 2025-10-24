@@ -48,6 +48,23 @@ services:
     restart: unless-stopped
     networks:
       - npm
+  onlyoffice-document-server:
+    container_name: onlyoffice-document-server
+    image: onlyoffice/documentserver:9.1.0
+    restart: unless-stopped
+    environment:
+      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET}
+    expose:
+      - '80'
+      - '443'
+    networks:
+      - npm
+    volumes:
+      - document_data:/var/www/onlyoffice/Data
+      - document_log:/var/log/onlyoffice
 networks:
   npm:
     external: true
+volumes:
+  document_data:
+  document_log:
