@@ -25,6 +25,12 @@ services:
       - homepage.widget.fields=["podcasts", "books"]
       - homepage.widget.url=http://audiobookshelf:80
       - homepage.widget.key=${AUDIOBOOKSELF_API}
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.audiobookshelf.rule=Host(`audiobookshelf.${DOMAIN}`)
+      - traefik.http.routers.audiobookshelf.entrypoints=websecure
+      - traefik.http.routers.audiobookshelf.tls=true
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=80
     restart: unless-stopped
 networks:
   npm:
