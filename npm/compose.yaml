@@ -1,7 +1,7 @@
   services:
     npmplus:
       container_name: npmplus
-      image: ghcr.io/zoeyvid/npmplus:latest
+      image: ghcr.io/zoeyvid/npmplus:latest@sha256:2d950075a98c3aece33e3f771abc0ecabfba4e428fad6f55db7f75c7c637ed81
       restart: unless-stopped
       ports:
         - 82:81 # Nginx Proxy Manager UI
