@@ -1,6 +1,6 @@
 services:
   spotweb:
-    image: jgeusebroek/spotweb:latest@sha256:cad1123e4abea62bf2f9daf6612fa03b4e92e2fb8826ce0bb15e6a2275f24b2a
+    image: jgeusebroek/spotweb:latest@sha256:cc215d51348f0daba98ab7bec4be2dfbe845b7a5f909315d0331d74ca772394e
     container_name: spotweb
     restart: unless-stopped
     environment:
@@ -28,6 +28,12 @@ services:
       - homepage.icon=https://raw.githubusercontent.com/spotweb/spotweb/refs/heads/develop/images/spotnet.gif
       - homepage.href=https://spotweb.${DOMAIN}/
       - homepage.description=Decentralized alternative to usenet indexing
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.spotweb.rule=Host(`spotweb.${DOMAIN}`)
+      - traefik.http.routers.spotweb.entrypoints=websecure
+      - traefik.http.routers.spotweb.tls=true
+      - traefik.http.services.spotweb.loadbalancer.server.port=80
   spotweb_db:
     image: linuxserver/mariadb:11.4.8@sha256:9482071902026313b72da17eb5d0c73d08315e0b276a77f327adf8950e782635
     container_name: spotwebdb
