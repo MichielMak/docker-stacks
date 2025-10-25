@@ -32,16 +32,6 @@ services:
       - homepage.widget.fields=["freespace", "numfiles"]
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
-      - traefik.enable=true
-      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
-      - traefik.http.routers.nextcloud.entrypoints=websecure
-      - traefik.http.routers.nextcloud.tls=true
-      - traefik.docker.network=npm
-      - traefik.http.services.nextcloud.loadbalancer.server.port=443
-      - traefik.http.services.nextcloud.loadbalancer.server.scheme=https
-      - traefik.http.services.nextcloud.loadbalancer.serverstransport=nextcloud-transport
-      - traefik.http.serverstransports.nextcloud-transport.insecureskipverify=true
-      - traefik.http.services.nextcloud.loadbalancer.passhostheader=true
   nextclouddb:
     image: linuxserver/mariadb:11.4.8@sha256:9482071902026313b72da17eb5d0c73d08315e0b276a77f327adf8950e782635
     container_name: nextclouddb
