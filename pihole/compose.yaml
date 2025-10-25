@@ -23,6 +23,12 @@ services:
       - homepage.widget.url=http://pihole:8080
       - homepage.widget.key=${PIHOLE_API}
       - homepage.widget.version=6
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.routers.pihole.entrypoints=websecure
+      - traefik.http.routers.pihole.tls=true
+      - traefik.http.services.pihole.loadbalancer.server.port=8080
     restart: unless-stopped
 networks:
   my-macvlan-net:
