@@ -1,7 +1,7 @@
 http:
   routers:
     ha:
-      rule: "Host(`hass.${DOMAIN}`)"
+      rule: "Host(`hass.{{ env "DOMAIN" }}`)"
       entryPoints:
         - websecure
       service: ha
@@ -14,7 +14,7 @@ http:
     ha:
       loadBalancer:
         servers:
-          - url: "http://${HASS_IP}:8123"
+          - url: "http://{{ env "HASS_IP" }}:8123"
 
   middlewares:
     ha-sec:
