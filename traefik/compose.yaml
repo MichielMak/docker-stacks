@@ -68,28 +68,28 @@ services:
       traefik.http.middlewares.sec-headers.headers.permissionsPolicy: geolocation=(), microphone=(), camera=()
 
             # Router (HTTPS)
-      traefik.http.routers.ha.rule=Host(`hass.${DOMAIN}`)
-      traefik.http.routers.ha.entrypoints=websecure
-      traefik.http.routers.ha.tls=true
-      traefik.http.routers.ha.tls.certresolver=letsencrypt
+      traefik.http.routers.ha.rule: Host(`hass.${DOMAIN}`)
+      traefik.http.routers.ha.entrypoints: websecure
+      traefik.http.routers.ha.tls: "true"
+      traefik.http.routers.ha.tls.certresolver: letsencrypt
 
       # Service -> HTTP backend on the NUC
-      traefik.http.services.ha.loadbalancer.server.scheme=http
-      traefik.http.services.ha.loadbalancer.server.port=8123
-      traefik.http.services.ha.loadbalancer.servers.0.url=http://${HASS_IP}:8123
+      traefik.http.services.ha.loadbalancer.server.scheme: http
+      traefik.http.services.ha.loadbalancer.server.port: "8123"
+      traefik.http.services.ha.loadbalancer.servers.0.url: http://${HASS_IP}:8123
       # Optional: if you later enable HTTPS on HA itself, flip scheme to https and (if self-signed) add a serversTransport with insecureSkipVerify=true
 
       # Middlewares (pick/adjust)
       # Security headers
-      traefik.http.middlewares.ha-sec.headers.stsSeconds=31536000
-      traefik.http.middlewares.ha-sec.headers.stsIncludeSubdomains=true
-      traefik.http.middlewares.ha-sec.headers.stsPreload=true
-      traefik.http.middlewares.ha-sec.headers.contentTypeNosniff=true
-      traefik.http.middlewares.ha-sec.headers.referrerPolicy=no-referrer
-      traefik.http.middlewares.ha-sec.headers.customRequestHeaders.X-Forwarded-Proto=https
+      traefik.http.middlewares.ha-sec.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.ha-sec.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.ha-sec.headers.stsPreload: "true"
+      traefik.http.middlewares.ha-sec.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.ha-sec.headers.referrerPolicy: no-referrer
+      traefik.http.middlewares.ha-sec.headers.customRequestHeaders.X-Forwarded-Proto: https
 
       # Attach chosen middlewares
-      traefik.http.routers.ha.middlewares=ha-sec
+      traefik.http.routers.ha.middlewares: ha-sec
       # or, if using SSO:
       # - traefik.http.routers.ha.middlewares=ha-auth,ha-sec,ha-rl
 
