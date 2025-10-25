@@ -80,4 +80,4 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOCKER_DATA_DIR}/traefik/letsencrypt:/letsencrypt
-      - ${DOCKER_DATA_DIR}/traefik/dynamic:/dynamic:ro
+      - ./dynamic:/dynamic:ro
