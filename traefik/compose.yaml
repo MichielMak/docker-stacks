@@ -16,6 +16,9 @@ services:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}   # Cloudflare token (DNS:Edit + Zone:Read)
       DOMAIN: ${DOMAIN}
       HASS_IP: ${HASS_IP}
+      UNIFI_IP: ${UNIFI_IP}
+      PVE_IP: ${PVE_IP}
+      TRUENAS_IP: ${TRUENAS_IP}
     command:
       # Providers
       - --providers.docker=true

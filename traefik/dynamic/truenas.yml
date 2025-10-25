@@ -1,0 +1,33 @@
+http:
+  routers:
+    truenas:
+      rule: "Host(`truenas.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: truenas
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - truenas-sec
+
+  services:
+    truenas:
+      loadBalancer:
+        serversTransport: truenas-transport
+        servers:
+          - url: "http://{{ env "TRUENAS_IP" }}:444"
+
+  serversTransports:
+    truenas-transport:
+      insecureSkipVerify: true
+
+  middlewares:
+    truenas-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"

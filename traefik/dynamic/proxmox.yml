@@ -1,0 +1,33 @@
+http:
+  routers:
+    proxmox:
+      rule: "Host(`pve.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: proxmox
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - proxmox-sec
+
+  services:
+    proxmox:
+      loadBalancer:
+        serversTransport: proxmox-transport
+        servers:
+          - url: "https://{{ env "PVE_IP" }}:8006"
+
+  serversTransports:
+    proxmox-transport:
+      insecureSkipVerify: true
+
+  middlewares:
+    proxmox-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"

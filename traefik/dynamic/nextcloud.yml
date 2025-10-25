@@ -1,0 +1,33 @@
+http:
+  routers:
+    nextcloud:
+      rule: "Host(`nextcloud.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: nextcloud
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - nextcloud-sec
+
+  services:
+    nextcloud:
+      loadBalancer:
+        serversTransport: nextcloud-transport
+        servers:
+          - url: "https://nextcloud:443"
+
+  serversTransports:
+    nextcloud-transport:
+      insecureSkipVerify: true
+
+  middlewares:
+    nextcloud-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        customFrameOptionsValue: "SAMEORIGIN"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"

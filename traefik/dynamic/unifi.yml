@@ -1,0 +1,33 @@
+http:
+  routers:
+    unifi:
+      rule: "Host(`unifi.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: unifi
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - unifi-sec
+
+  services:
+    unifi:
+      loadBalancer:
+        serversTransport: unifi-transport
+        servers:
+          - url: "https://{{ env "UNIFI_IP" }}"
+
+  serversTransports:
+    unifi-transport:
+      insecureSkipVerify: true
+
+  middlewares:
+    unifi-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
