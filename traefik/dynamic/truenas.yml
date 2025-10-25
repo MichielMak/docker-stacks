@@ -15,7 +15,7 @@ http:
       loadBalancer:
         serversTransport: truenas-transport
         servers:
-          - url: "http://{{ env "TRUENAS_IP" }}:444"
+          - url: "https://{{ env "TRUENAS_IP" }}:444"
 
   serversTransports:
     truenas-transport:
