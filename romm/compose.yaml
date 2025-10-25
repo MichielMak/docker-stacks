@@ -40,11 +40,11 @@ services:
       - homepage.widget.fields=["platforms", "totalRoms"]
       - homepage.widget.username=${ROMM_USER}
       - homepage.widget.password=${ROMM_PASSWORD}
-      - "traefik.enable=true"
-      - "traefik.http.routers.romm.rule=Host(`romm.${DOMAIN}`)"
-      - "traefik.http.routers.romm.entrypoints=websecure"
-      - "traefik.http.routers.romm.tls=true"
-      - "traefik.http.services.romm.loadbalancer.server.port=8080"
+      - traefik.enable=true
+      - traefik.http.routers.romm.rule=Host(`romm.${DOMAIN}`)
+      - traefik.http.routers.romm.entrypoints=websecure
+      - traefik.http.routers.romm.tls=true
+      - traefik.http.services.romm.loadbalancer.server.port=8080
     depends_on:
       - romm-db
     networks:
