@@ -19,6 +19,7 @@ services:
       UNIFI_IP: ${UNIFI_IP}
       PVE_IP: ${PVE_IP}
       TRUENAS_IP: ${TRUENAS_IP}
+      PIHOLE2_IP: ${PIHOLE2_IP}
     command:
       # Providers
       - --providers.docker=true

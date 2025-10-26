@@ -1,0 +1,28 @@
+http:
+  routers:
+    ha:
+      rule: "Host(`pihole2.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: ha
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - ha-sec
+
+  services:
+    ha:
+      loadBalancer:
+        servers:
+          - url: "http://{{ env "PIHOLE2_IP" }}:80"
+
+  middlewares:
+    ha-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
