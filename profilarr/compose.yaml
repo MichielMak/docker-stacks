@@ -16,6 +16,11 @@ services:
       - homepage.icon=https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4d2.png
       - homepage.href=http://profilarr.${DOMAIN}/
       - homepage.description=Config management for -arr suite
+      - traefik.enable=true
+      - traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN}`)
+      - traefik.http.routers.profilarr.entrypoints=websecure
+      - traefik.http.routers.profilarr.tls=true
+      - traefik.http.services.profilarr.loadbalancer.server.port=6868
 networks:
   npm:
     external: true
