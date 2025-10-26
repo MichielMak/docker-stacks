@@ -1,23 +1,23 @@
 http:
   routers:
-    ha:
+    pihole2:
       rule: "Host(`pihole2.{{ env "DOMAIN" }}`)"
       entryPoints:
         - websecure
-      service: ha
+      service: pihole2
       tls:
         certResolver: letsencrypt
       middlewares:
-        - ha-sec
+        - pihole2-sec
 
   services:
-    ha:
+    pihole2:
       loadBalancer:
         servers:
           - url: "http://{{ env "PIHOLE2_IP" }}:80"
 
   middlewares:
-    ha-sec:
+    pihole2-sec:
       headers:
         stsSeconds: 31536000
         stsIncludeSubdomains: true
