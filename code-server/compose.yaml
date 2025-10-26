@@ -1,6 +1,6 @@
 services:
   code-server:
-    image: linuxserver/code-server:4.105.1@sha256:aea1f1c92e70b84204e928d73378e8782b3a23af73b419efff0ac7f39b6c73f2
+    image: linuxserver/code-server:4.105.1@sha256:c7c66416238b70312df90b5936ea4adb6108552d866dd00a804c86c599b2ab6c
     container_name: code-server
     environment:
       - PUID=${PUID}
@@ -18,6 +18,11 @@ services:
       - homepage.icon=vscode.png
       - homepage.href=http://codeserver.${DOMAIN}/
       - homepage.description=VS Code in the browser
+      - traefik.enable=true
+      - traefik.http.routers.code-server.rule=Host(`codeserver.${DOMAIN}`)
+      - traefik.http.routers.code-server.entrypoints=websecure
+      - traefik.http.routers.code-server.tls=true
+      - traefik.http.services.code-server.loadbalancer.server.port=8443
     restart: unless-stopped
     networks:
       - npm
