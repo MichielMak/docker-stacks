@@ -62,6 +62,12 @@ services:
     volumes:
       - document_data:/var/www/onlyoffice/Data
       - document_log:/var/log/onlyoffice
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.documentserver.rule=Host(`documentserver.${DOMAIN}`)
+      - traefik.http.routers.documentserver.entrypoints=websecure
+      - traefik.http.routers.documentserver.tls=true
+      - traefik.http.services.documentserver.loadbalancer.server.port=80
 networks:
   npm:
     external: true
