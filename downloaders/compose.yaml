@@ -43,7 +43,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: ghcr.io/11notes/sabnzbd:4.5.5
+    image: ghcr.io/11notes/sabnzbd:1.1.6
     <<: *lockdown
     container_name: sabnzbd
     user: "568:568"
