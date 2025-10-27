@@ -68,6 +68,9 @@ services:
       - traefik.http.routers.documentserver.entrypoints=websecure
       - traefik.http.routers.documentserver.tls=true
       - traefik.http.services.documentserver.loadbalancer.server.port=80
+      - traefik.http.middlewares.documentserver-forward.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.documentserver-forward.headers.customRequestHeaders.X-Forwarded-Host={host}
+      - traefik.http.routers.documentserver.middlewares=documentserver-forward
 networks:
   npm:
     external: true
