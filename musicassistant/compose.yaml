@@ -25,6 +25,12 @@ services:
       - homepage.icon=https://www.music-assistant.io/assets/transparent-logo.png
       - homepage.href=http://musicassistant.${DOMAIN:?DOMAIN is not set}/
       - homepage.description=Music library manager for offline & online sources
+      - traefik.enable=true
+      - traefik.http.routers.musicassistant.rule=Host(`musicassistant.${DOMAIN}`)
+      - traefik.docker.network=npm
+      - traefik.http.routers.musicassistant.entrypoints=websecure
+      - traefik.http.routers.musicassistant.tls=true
+      - traefik.http.services.musicassistant.loadbalancer.server.port=8095
 networks:
   my-macvlan-net:
     external: true
