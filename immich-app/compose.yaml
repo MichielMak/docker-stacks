@@ -41,7 +41,7 @@ services:
       - homepage.widget.fields=["photos", "storage"]
       - homepage.widget.url=http://immich-server:2283
       - homepage.widget.key=${IMMICH_API}
-      - traefik.http.routers.immich.rule=Host(`immich.${DOMAIN}`)
+      - traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)
       - traefik.docker.network=npm
       - traefik.http.routers.immich.entrypoints=websecure
       - traefik.http.routers.immich.tls=true
