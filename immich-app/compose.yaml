@@ -41,6 +41,11 @@ services:
       - homepage.widget.fields=["photos", "storage"]
       - homepage.widget.url=http://immich-server:2283
       - homepage.widget.key=${IMMICH_API}
+      - traefik.http.routers.immich.rule=Host(`immich.${DOMAIN}`)
+      - traefik.docker.network=npm
+      - traefik.http.routers.immich.entrypoints=websecure
+      - traefik.http.routers.immich.tls=true
+      - traefik.http.services.immich.loadbalancer.server.port=2283
     restart: always
   immich-machine-learning:
     container_name: immich_machine_learning
