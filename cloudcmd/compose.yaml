@@ -14,6 +14,11 @@ services:
       - homepage.icon=cloudcmd.png
       - homepage.href=https://cloudcmd.${DOMAIN}/
       - homepage.description=Filemanager
+      - traefik.enable=true
+      - traefik.http.routers.cloudcmd.rule=Host(`cloudcmd.${DOMAIN}`)
+      - traefik.http.routers.cloudcmd.entrypoints=websecure
+      - traefik.http.routers.cloudcmd.tls=true
+      - traefik.http.services.cloudcmd.loadbalancer.server.port=8000
     restart: unless-stopped
     user: ${PUID}:${PGID}
     networks:
