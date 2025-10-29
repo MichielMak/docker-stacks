@@ -18,7 +18,7 @@ services:
       - traefik.http.routers.bentopdf.rule=Host(`pdf.${DOMAIN}`)
       - traefik.http.routers.bentopdf.entrypoints=websecure
       - traefik.http.routers.bentopdf.tls=true
-      - traefik.http.services.bentopdf.loadbalancer.server.port=80
+      - traefik.http.services.bentopdf.loadbalancer.server.port=8080
 networks:
   npm:
     external: true
