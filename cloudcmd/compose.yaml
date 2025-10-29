@@ -17,6 +17,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.cloudcmd.rule=Host(`cloudcmd.${DOMAIN}`)
       - traefik.http.routers.cloudcmd.entrypoints=websecure
+      - traefik.http.routers.cloudcmd.middlewares=authentik-forwardauth@docker
       - traefik.http.routers.cloudcmd.tls=true
       - traefik.http.services.cloudcmd.loadbalancer.server.port=8000
     restart: unless-stopped
