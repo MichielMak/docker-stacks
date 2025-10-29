@@ -9,6 +9,13 @@ services:
       - DATABASE_URL=jdbc:mariadb://bookloremariadb:3306/booklore
       - DATABASE_USERNAME=booklore
       - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - REMOTE_AUTH_ENABLED=true
+      - REMOTE_AUTH_CREATE_NEW_USERS=true
+      - REMOTE_AUTH_HEADER_NAME=Remote-Name
+      - REMOTE_AUTH_HEADER_USER=Remote-User
+      - REMOTE_AUTH_HEADER_EMAIL=Remote-Email
+      - REMOTE_AUTH_HEADER_GROUPS=Remote-Groups
+      - REMOTE_AUTH_ADMIN_GROUP=admin
     depends_on:
       bookloremariadb:
         condition: service_healthy
@@ -25,12 +32,24 @@ services:
       - homepage.icon=booklore.png
       - homepage.href=http://booklore.${DOMAIN}/
       - homepage.description=Personal digital library for ebooks and audiobooks
+      # Main router for booklore.${DOMAIN}
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.booklore.rule=Host(`booklore.${DOMAIN}`)
       - traefik.http.routers.booklore.entrypoints=websecure
       - traefik.http.routers.booklore.tls=true
       - traefik.http.services.booklore.loadbalancer.server.port=6060
+      # Test router for books.${DOMAIN} with guest auto-login
+      - traefik.http.routers.booklore-test.rule=Host(`books.${DOMAIN}`)
+      - traefik.http.routers.booklore-test.entrypoints=websecure
+      - traefik.http.routers.booklore-test.tls=true
+      - traefik.http.routers.booklore-test.service=booklore
+      - traefik.http.routers.booklore-test.middlewares=booklore-guest-auth
+      # Guest auth middleware using headers
+      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-User=guest
+      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Name=Guest User
+      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
+      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Groups=
   bookloremariadb:
     image: linuxserver/mariadb:11.4.8@sha256:195b6be2d3e2dd0744a54ba2542a136c572b3375bc7f019e37a505da5da3022b
     container_name: bookloremariadb
@@ -42,13 +61,6 @@ services:
       - MYSQL_DATABASE=booklore
       - MYSQL_USER=booklore
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - REMOTE_AUTH_ENABLED=true
-      - REMOTE_AUTH_CREATE_NEW_USERS=true
-      - REMOTE_AUTH_HEADER_NAME=Remote-Name
-      - REMOTE_AUTH_HEADER_USER=Remote-User
-      - REMOTE_AUTH_HEADER_EMAIL=Remote-Email
-      - REMOTE_AUTH_HEADER_GROUPS=Remote-Groups
-      - REMOTE_AUTH_ADMIN_GROUP=admin
     volumes:
       - ${DOCKER_DATA_DIR}/bookloremariadb/config:/config
     restart: unless-stopped

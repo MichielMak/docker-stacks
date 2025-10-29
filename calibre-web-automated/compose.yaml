@@ -17,14 +17,14 @@ services:
       - homepage.group=Media
       - homepage.name=Calibre-web
       - homepage.icon=calibre-web.png
-      - homepage.href=http://books.${DOMAIN}/
+      - homepage.href=http://cwa.${DOMAIN}/
       - homepage.description=Web app for browsing, reading and downloading
         eBooks stored in a Calibre database
       - homepage.widget.type=calibreweb
       - homepage.widget.fields=["books", "authors"]
       - homepage.widget.url=http://calibre-web-automated:8083
       - traefik.enable=true
-      - traefik.http.routers.calibre-web.rule=Host(`books.${DOMAIN}`)
+      - traefik.http.routers.calibre-web.rule=Host(`cwa.${DOMAIN}`)
       - traefik.http.routers.calibre-web.entrypoints=websecure
       - traefik.http.routers.calibre-web.tls=true
       - traefik.http.services.calibre-web.loadbalancer.server.port=8083
