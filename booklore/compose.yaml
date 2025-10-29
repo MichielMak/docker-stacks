@@ -21,8 +21,8 @@ services:
         condition: service_healthy
     volumes:
       - ${DOCKER_DATA_DIR}/booklore/config:/app/data
-      - ${MEDIA_DIR}/books:/books:ro
-      - ${MEDIA_DIR}/downloads/bookdrop:/bookdrop
+      - ${MEDIA_DIR}/books:/books
+      - ${MEDIA_DIR}/downloads/usenet/books:/bookdrop
     restart: unless-stopped
     networks:
       - npm
