@@ -29,7 +29,7 @@ services:
     labels:
       - homepage.group=Media
       - homepage.name=BookLore
-      - homepage.icon=booklore.png
+      - homepage.icon=sh-booklore.png
       - homepage.href=http://booklore.${DOMAIN}/
       - homepage.description=Personal digital library for ebooks and audiobooks
       # Main router for booklore.${DOMAIN}
