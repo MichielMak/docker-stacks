@@ -17,7 +17,7 @@ services:
       - homepage.group=Infra
       - homepage.name=Pihole
       - homepage.icon=pi-hole.png
-      - homepage.href=http://pihole.${DOMAIN}/admin
+      - homepage.href=https://pihole.${DOMAIN}/admin
       - homepage.description=DNS sinkhole
       - homepage.widget.type=pihole
       - homepage.widget.url=http://pihole:8080
