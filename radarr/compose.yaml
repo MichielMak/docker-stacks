@@ -31,9 +31,17 @@ services:
       - homepage.widget.key=${RADARR_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.radarr-api.rule=Host(`radarr.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.radarr-api.entrypoints=websecure
+      - traefik.http.routers.radarr-api.priority=100
+      - traefik.http.routers.radarr-api.tls=true
+      - traefik.http.routers.radarr-api.service=radarr
       - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
       - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.priority=99
       - traefik.http.routers.radarr.tls=true
+      - traefik.http.routers.radarr.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.radarr.service=radarr
       - traefik.http.services.radarr.loadbalancer.server.port=7878
     restart: unless-stopped
     networks:
@@ -64,9 +72,17 @@ services:
       - tsdproxy.container_port=7878
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.radarrexternal-api.rule=Host(`radarrexternal.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.radarrexternal-api.entrypoints=websecure
+      - traefik.http.routers.radarrexternal-api.priority=100
+      - traefik.http.routers.radarrexternal-api.tls=true
+      - traefik.http.routers.radarrexternal-api.service=radarrexternal
       - traefik.http.routers.radarrexternal.rule=Host(`radarrexternal.${DOMAIN}`)
       - traefik.http.routers.radarrexternal.entrypoints=websecure
+      - traefik.http.routers.radarrexternal.priority=99
       - traefik.http.routers.radarrexternal.tls=true
+      - traefik.http.routers.radarrexternal.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.radarrexternal.service=radarrexternal
       - traefik.http.services.radarrexternal.loadbalancer.server.port=7878
     restart: unless-stopped
     networks:

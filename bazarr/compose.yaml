@@ -21,9 +21,17 @@ services:
       - homepage.widget.key=${BAZARR_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.bazarr-api.rule=Host(`bazarr.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.bazarr-api.entrypoints=websecure
+      - traefik.http.routers.bazarr-api.priority=100
+      - traefik.http.routers.bazarr-api.tls=true
+      - traefik.http.routers.bazarr-api.service=bazarr
       - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
       - traefik.http.routers.bazarr.entrypoints=websecure
+      - traefik.http.routers.bazarr.priority=99
       - traefik.http.routers.bazarr.tls=true
+      - traefik.http.routers.bazarr.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.bazarr.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
     restart: unless-stopped
     networks:
@@ -50,9 +58,17 @@ services:
       - homepage.widget.key=${BAZARREXTERNAL_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.bazarrexternal-api.rule=Host(`bazarrexternal.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.bazarrexternal-api.entrypoints=websecure
+      - traefik.http.routers.bazarrexternal-api.priority=100
+      - traefik.http.routers.bazarrexternal-api.tls=true
+      - traefik.http.routers.bazarrexternal-api.service=bazarrexternal
       - traefik.http.routers.bazarrexternal.rule=Host(`bazarrexternal.${DOMAIN}`)
       - traefik.http.routers.bazarrexternal.entrypoints=websecure
+      - traefik.http.routers.bazarrexternal.priority=99
       - traefik.http.routers.bazarrexternal.tls=true
+      - traefik.http.routers.bazarrexternal.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.bazarrexternal.service=bazarrexternal
       - traefik.http.services.bazarrexternal.loadbalancer.server.port=6767
     restart: unless-stopped
     networks:

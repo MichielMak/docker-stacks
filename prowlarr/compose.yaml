@@ -26,9 +26,17 @@ services:
       - tsdproxy.container_port=9696
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.prowlarr-api.rule=Host(`prowlarr.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.prowlarr-api.entrypoints=websecure
+      - traefik.http.routers.prowlarr-api.priority=100
+      - traefik.http.routers.prowlarr-api.tls=true
+      - traefik.http.routers.prowlarr-api.service=prowlarr
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.priority=99
       - traefik.http.routers.prowlarr.tls=true
+      - traefik.http.routers.prowlarr.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.prowlarr.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
     restart: unless-stopped
     networks:

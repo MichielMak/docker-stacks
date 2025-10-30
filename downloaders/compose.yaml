@@ -35,9 +35,17 @@ services:
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:8080
       - traefik.enable=true
+      - traefik.http.routers.qbittorrent-api.rule=Host(`qbittorrent.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.qbittorrent-api.entrypoints=websecure
+      - traefik.http.routers.qbittorrent-api.priority=100
+      - traefik.http.routers.qbittorrent-api.tls=true
+      - traefik.http.routers.qbittorrent-api.service=qbittorrent
       - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.priority=99
       - traefik.http.routers.qbittorrent.tls=true
+      - traefik.http.routers.qbittorrent.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.qbittorrent.service=qbittorrent
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
     restart: unless-stopped
     networks:
@@ -69,9 +77,17 @@ services:
       - homepage.widget.url=http://sabnzbd:8080
       - homepage.widget.key=${SABNZBD_API}
       - traefik.enable=true
+      - traefik.http.routers.sabnzbd-api.rule=Host(`sabnzbd.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.sabnzbd-api.entrypoints=websecure
+      - traefik.http.routers.sabnzbd-api.priority=100
+      - traefik.http.routers.sabnzbd-api.tls=true
+      - traefik.http.routers.sabnzbd-api.service=sabnzbd
       - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.${DOMAIN}`)
       - traefik.http.routers.sabnzbd.entrypoints=websecure
+      - traefik.http.routers.sabnzbd.priority=99
       - traefik.http.routers.sabnzbd.tls=true
+      - traefik.http.routers.sabnzbd.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.sabnzbd.service=sabnzbd
       - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
     restart: unless-stopped
     networks:
@@ -104,9 +120,17 @@ services:
       - homepage.widget.username=pyload
       - homepage.widget.password=${PYLOAD_PW}
       - traefik.enable=true
+      - traefik.http.routers.pyload-api.rule=Host(`pyload.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.pyload-api.entrypoints=websecure
+      - traefik.http.routers.pyload-api.priority=100
+      - traefik.http.routers.pyload-api.tls=true
+      - traefik.http.routers.pyload-api.service=pyload
       - traefik.http.routers.pyload.rule=Host(`pyload.${DOMAIN}`)
       - traefik.http.routers.pyload.entrypoints=websecure
+      - traefik.http.routers.pyload.priority=99
       - traefik.http.routers.pyload.tls=true
+      - traefik.http.routers.pyload.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.pyload.service=pyload
       - traefik.http.services.pyload.loadbalancer.server.port=8000
 networks:
   npm:

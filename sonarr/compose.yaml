@@ -30,9 +30,17 @@ services:
       - homepage.widget.key=${SONARR_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.sonarr-api.rule=Host(`sonarr.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.sonarr-api.entrypoints=websecure
+      - traefik.http.routers.sonarr-api.priority=100
+      - traefik.http.routers.sonarr-api.tls=true
+      - traefik.http.routers.sonarr-api.service=sonarr
       - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
       - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.priority=99
       - traefik.http.routers.sonarr.tls=true
+      - traefik.http.routers.sonarr.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.sonarr.service=sonarr
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
     restart: unless-stopped
     networks:
@@ -60,9 +68,17 @@ services:
       - homepage.widget.key=${SONARREXTERNAL_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.sonarrexternal-api.rule=Host(`sonarrexternal.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.sonarrexternal-api.entrypoints=websecure
+      - traefik.http.routers.sonarrexternal-api.priority=100
+      - traefik.http.routers.sonarrexternal-api.tls=true
+      - traefik.http.routers.sonarrexternal-api.service=sonarrexternal
       - traefik.http.routers.sonarrexternal.rule=Host(`sonarrexternal.${DOMAIN}`)
       - traefik.http.routers.sonarrexternal.entrypoints=websecure
+      - traefik.http.routers.sonarrexternal.priority=99
       - traefik.http.routers.sonarrexternal.tls=true
+      - traefik.http.routers.sonarrexternal.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.sonarrexternal.service=sonarrexternal
       - traefik.http.services.sonarrexternal.loadbalancer.server.port=8989
     restart: unless-stopped
     networks:
