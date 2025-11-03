@@ -24,6 +24,11 @@ services:
       - homepage.icon=duplicacy.png
       - homepage.href=http://duplicacy.${DOMAIN}/
       - homepage.description=A new generation cloud backup tool
+      - traefik.enable=true
+      - traefik.http.routers.duplicacy.rule=Host(`duplicacy.${DOMAIN}`)
+      - traefik.http.routers.duplicacy.entrypoints=websecure
+      - traefik.http.routers.duplicacy.tls=true
+      - traefik.http.services.duplicacy.loadbalancer.server.port=3875
     restart: unless-stopped
     networks:
       - npm
