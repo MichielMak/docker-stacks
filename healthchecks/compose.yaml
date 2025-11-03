@@ -32,6 +32,11 @@ services:
       - homepage.widget.type=healthchecks
       - homepage.widget.url=http://healthchecks:8000
       - homepage.widget.key=${HEALTHCHECKS_API}
+      - traefik.enable=true
+      - traefik.http.routers.healthchecks.rule=Host(`healthchecks.${DOMAIN}`)
+      - traefik.http.routers.healthchecks.entrypoints=websecure
+      - traefik.http.routers.healthchecks.tls=true
+      - traefik.http.services.healthchecks.loadbalancer.server.port=8000
 networks:
   npm:
     external: true
