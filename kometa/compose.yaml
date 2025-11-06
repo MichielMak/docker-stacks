@@ -4,8 +4,26 @@ services:
     environment:
 #      - KOMETA_RUN=true
       - TZ=Europe/Amsterdam
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - TAUTULLI_URL=${TAUTULLI_URL}
+      - TAUTULLI_API_KEY=${TAUTULLI_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - OMDB_API_KEY=${OMDB_API_KEY}
+      - GOTIFY_URL=${GOTIFY_URL}
+      - GOTIFY_TOKEN=${GOTIFY_TOKEN}
+      - RADARR_URL=${RADARR_URL}
+      - RADARR_TOKEN=${RADARR_TOKEN}
+      - SONARR_URL=${SONARR_URL}
+      - SONARR_TOKEN=${SONARR_TOKEN}
+      - TRAKT_CLIENT_ID=${TRAKT_CLIENT_ID}
+      - TRAKT_CLIENT_SECRET=${TRAKT_CLIENT_SECRET}
+      - TRAKT_ACCESS_TOKEN=${TRAKT_ACCESS_TOKEN}
+      - TRAKT_REFRESH_TOKEN=${TRAKT_REFRESH_TOKEN}
     container_name: kometa
     volumes:
+      - ./config.yml:/config/config.yml:ro
       - ${DOCKER_DATA_DIR}/kometa/config:/config
     restart: unless-stopped
     networks:
