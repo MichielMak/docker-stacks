@@ -20,6 +20,11 @@ services:
       - homepage.widget.accountid=${ACCOUNTID}
       - homepage.widget.tunnelid=${TUNNELID}
       - homepage.widget.key=${CLOUDFLAREAPITOKEN}
+      - traefik.enable=true
+      - traefik.http.routers.cloudflared.rule=Host(`cloudflared.${DOMAIN}`)
+      - traefik.http.routers.cloudflared.entrypoints=websecure
+      - traefik.http.routers.cloudflared.tls=true
+      - traefik.http.services.cloudflared.loadbalancer.server.port=14333
 networks:
   npm:
     external: true
