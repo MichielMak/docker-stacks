@@ -134,7 +134,8 @@
       "matchDatasources": [
         "docker"
       ],
-      "minimumReleaseAge": "12 hours"
+      "minimumReleaseAge": "12 hours",
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
     },
     {
       "description": "Open PRs immediately for digest/minor/patch; majors stay separate",
