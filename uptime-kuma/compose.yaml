@@ -19,7 +19,7 @@ services:
       - homepage.description=A fancy self-hosted monitoring tool
       - homepage.widget.type=uptimekuma
       - homepage.widget.url=http://uptime-kuma:3001
-      - homepage.widget.slug=uptime-local
+      - homepage.widget.slug=public
       - traefik.enable=true
       - traefik.http.routers.uptime.rule=Host(`uptime.${DOMAIN}`)
       - traefik.http.routers.uptime.entrypoints=websecure
