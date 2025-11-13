@@ -1,6 +1,6 @@
 services:
   bentopdf:
-    image: bentopdf/bentopdf-simple:v1.6.1@sha256:14dd216ac86c3c6fbbf1935e50ad5796bf40065fe3bfb281e5b2f88f68579be7
+    image: bentopdf/bentopdf-simple:v1.6.2@sha256:4cf5074c153089488d56325961fc8437d6c82d4bda97892c3d9f5d4eb1bc1cd6
     container_name: bentopdf
     restart: unless-stopped
 #    ports:
