@@ -20,20 +20,6 @@ services:
       - AUTHENTIK_ERROR_REPORTING__ENABLED=${AUTHENTIK_ERROR_REPORTING__ENABLED}
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
-  redis:
-    image: docker.io/library/redis:8.2-alpine@sha256:28c9c4d7596949a24b183eaaab6455f8e5d55ecbf72d02ff5e2c17fe72671d31
-    command: --save 60 1 --loglevel warning
-    restart: unless-stopped
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - redis-cli ping | grep PONG
-      start_period: 20s
-      interval: 30s
-      retries: 5
-      timeout: 3s
-    volumes:
-      - ${DOCKER_DATA_DIR}/authentik/redis:/data
   server:
     image: ghcr.io/goauthentik/server:2025.10.1@sha256:8f70895ad48bb7de656a2aac7c78c2bec6a4e820e009a570b0c285fe406eadac
     restart: unless-stopped
@@ -49,7 +35,6 @@ services:
       - AUTHENTIK_ERROR_REPORTING__ENABLED=${AUTHENTIK_ERROR_REPORTING__ENABLED}
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
-      - AUTHENTIK_REDIS__HOST=redis
       - AUTHENTIK_POSTGRESQL__HOST=postgresql
       - AUTHENTIK_POSTGRESQL__USER=${PG_USER:-authentik}
       - AUTHENTIK_POSTGRESQL__NAME=${PG_DB:-authentik}
@@ -59,7 +44,6 @@ services:
       - ${COMPOSE_PORT_HTTPS:-9443}:9443
     depends_on:
       - postgresql
-      - redis
     labels:
       # Homepage
       - homepage.group=Infra
@@ -98,7 +82,6 @@ services:
       - AUTHENTIK_ERROR_REPORTING__ENABLED=${AUTHENTIK_ERROR_REPORTING__ENABLED}
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
-      - AUTHENTIK_REDIS__HOST=redis
       - AUTHENTIK_POSTGRESQL__HOST=postgresql
       - AUTHENTIK_POSTGRESQL__USER=${PG_USER:-authentik}
       - AUTHENTIK_POSTGRESQL__NAME=${PG_DB:-authentik}
@@ -106,12 +89,8 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-      redis:
-        condition: service_healthy
 volumes:
   database:
-    driver: local
-  redis:
     driver: local
 networks:
   npm:
