@@ -15,6 +15,12 @@ services:
       - ${MEDIA_DIR}/downloads/usenet/books:/cwa-book-ingest
     networks:
       - npm
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.cwa-bd.rule=Host(`cwa-bd.${DOMAIN}`)
+      - traefik.http.routers.cwa-bd.entrypoints=websecure
+      - traefik.http.routers.cwa-bd.tls=true
+      - traefik.http.services.cwa-bd.loadbalancer.server.port=8084
 networks:
   npm:
     external: true
