@@ -1,6 +1,6 @@
 services:
   openwebui:
-    image: ghcr.io/open-webui/open-webui:v0.6.36@sha256:dfe43b30a5474164b1a81e1cce298a6769bb22144f74df556beefee4ccca5394
+    image: ghcr.io/open-webui/open-webui:v0.6.37@sha256:16bb1eaa4e72d1091cd96709b038b5057f06963025f3a24acb17411bf0fee4af
     container_name: openwebui
     restart: unless-stopped
     environment:
