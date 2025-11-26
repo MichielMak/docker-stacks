@@ -1,6 +1,6 @@
 services:
   booklore:
-    image: booklore/booklore:v1.11.0@sha256:bdfcb7cb9ee85010c41ca2a9dba462a15c811c04cd6d54707baf12483e2e7396
+    image: booklore/booklore:v1.12.0@sha256:76c985ea015c447dee81b20a19780a017e6031a50232f1f8e3064bbfdfd94763
     container_name: booklore
     environment:
       - USER_ID=${PUID}
