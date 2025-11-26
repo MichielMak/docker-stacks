@@ -8,7 +8,7 @@ services:
       - ${DOCKER_DATA_DIR}/spotizerr/logs:/app/logs
       - ${DOCKER_DATA_DIR}/spotizerr/cache:/app/cache
       - ${DEEMIX_DIR}:/app/downloads
-    image: lavaforge.org/spotizerr/spotizerr:latest@sha256:d161066ab834f1b81f9cccea94fef05647ecd9cffa3dd58245a146b806a95a16
+    image: lavaforge.org/spotizerr/spotizerr:latest@sha256:80e7f932f7e67770dc715f434822459170a4682254bbc8e7bcf3fa4b35a9980c
 #    ports:
 #      - 7171:7171
     restart: unless-stopped
