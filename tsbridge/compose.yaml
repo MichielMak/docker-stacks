@@ -1,0 +1,37 @@
+services:
+  tsbridge:
+    image: ghcr.io/jtdowney/tsbridge:v0.12.3
+    command: ["--provider", "docker"]
+    volumes:
+      - tsbridge-state:/var/lib/tsbridge
+    environment:
+      - TS_OAUTH_CLIENT_ID=${TS_OAUTH_CLIENT_ID}
+      - TS_OAUTH_CLIENT_SECRET=${TS_OAUTH_CLIENT_SECRET}
+      - DOCKER_HOST=tcp://dockerproxy:2375  # Use socket proxy instead of direct mount
+    labels:
+      - "tsbridge.tailscale.oauth_client_id_env=TS_OAUTH_CLIENT_ID"
+      - "tsbridge.tailscale.oauth_client_secret_env=TS_OAUTH_CLIENT_SECRET"
+      - "tsbridge.tailscale.state_dir=/var/lib/tsbridge"
+      - "tsbridge.tailscale.default_tags=tag:michiel-docker"
+    networks:
+      - npm
+
+  # Example: Add your own services here and label them to expose via Tailscale
+  # Uncomment and customize as needed:
+  #
+  # myapp:
+  #   image: nginx:alpine
+  #   labels:
+  #     - "tsbridge.enabled=true"
+  #     - "tsbridge.service.name=myapp"          # Name in Tailscale
+  #     - "tsbridge.service.port=80"             # Internal port to expose
+  #     - "tsbridge.service.tags=tag:michiel-docker"        # Optional: Additional Tailscale tags
+  #   networks:
+  #     - npm
+
+networks:
+  npm:
+    external: true
+
+volumes:
+  tsbridge-state:
