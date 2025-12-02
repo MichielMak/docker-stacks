@@ -1,6 +1,6 @@
 services:
   lidarr:
-    image: ghcr.io/hotio/lidarr:pr-plugins-3.1.1.4881@sha256:16952b55e8603e23e11d7f1ce0d4bd62d120996c3835d8ffeeef564bdbc788c0
+    image: ghcr.io/hotio/lidarr:pr-plugins-3.1.1.4884@sha256:64d2979d6bb54d3b7ff413faa3ebbe81d71643f6bbc920e364b102782b718cdc
     container_name: lidarr
     environment:
       - PUID=${PUID}
