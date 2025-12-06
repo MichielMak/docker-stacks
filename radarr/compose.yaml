@@ -68,8 +68,6 @@ services:
       - homepage.widget.fields=["wanted", "queued", "movies"]
       - homepage.widget.url=http://radarrexternal:7878
       - homepage.widget.key=${RADARREXTERNAL_API}
-      - tsdproxy.enable=true
-      - tsdproxy.container_port=7878
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.radarrexternal-api.rule=Host(`radarrexternal.${DOMAIN}`) && PathPrefix(`/api`)
