@@ -1,0 +1,6 @@
+      labels:
+            # tsbridge will automatically discover this container
+            - "tsbridge.enabled=true"
+            - "tsbridge.service.name=whoami"
+            - "tsbridge.service.port=80"
+            - "tsbridge.service.whois_enabled=true" # Add identity headers
