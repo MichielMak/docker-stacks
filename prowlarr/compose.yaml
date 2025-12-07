@@ -22,8 +22,6 @@ services:
       - homepage.widget.fields=["numberOfGrabs", "numberOfQueries"]
       - homepage.widget.url=http://prowlarr:9696
       - homepage.widget.key=${PROWLARR_API}
-      - tsdproxy.enable=true
-      - tsdproxy.container_port=9696
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.prowlarr-api.rule=Host(`prowlarr.${DOMAIN}`) && PathPrefix(`/api`)

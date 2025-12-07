@@ -6,17 +6,9 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=Europe/Amsterdam
-      - DOCKER_MODS=ghcr.io/tailscale-dev/docker-mod:main # Tailscale integration
-      - TAILSCALE_STATE_DIR=/var/lib/tailscale  # Tailscale state directory
-      - TAILSCALE_SERVE_PORT=8989   # Port for Tailscale to serve Sonarr
-      - TAILSCALE_SERVE_MODE=https  # Use HTTPS for Tailscale serving
-      - TAILSCALE_AUTHKEY=${TAILSCALE_AUTHKEY}  # Tailscale auth key
-      - TAILSCALE_HOSTNAME=sonarr # Hostname for Tailscale
-      - TAILSCALE_USE_SSH=0 # Disable SSH for Tailscale
     volumes:
       - ${DOCKER_DATA_DIR}/sonarr/config:/config
       - ${MEDIA_DIR}:/media 
-      - ${DOCKER_DATA_DIR}/sonarr/tailscale:/var/lib/tailscale
     #    ports:
     #      - 8989:8989
     labels:
