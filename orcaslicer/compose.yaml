@@ -10,6 +10,8 @@ services:
       - TZ=Europe/Amsterdam
     volumes:
       - ${DOCKER_DATA_DIR}/orcaslicer/config:/config
+    networks:
+      - npm
     shm_size: "1gb"
     restart: unless-stopped
     labels:
