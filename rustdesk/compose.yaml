@@ -1,7 +1,7 @@
 services:
   rustdesk:
     container_name: rustdesk
-    image: ich777/rustdesk-server-aio:amd64_1.1.14@sha256:99115261f51e0e095fc447ddd3136876b177876e5282798245e105fa44af48f8
+    image: ich777/rustdesk-server-aio:amd64_1.1.14@sha256:0fbaba5140b8d6f919b3562ed18f40101dcc19186998333c5f0705675096753f
     ports:
       - 21115-21119:21115-21119/udp
       - 21116:21116/udp
