@@ -1,7 +1,7 @@
 services:
   cwa-bd:
     container_name: cwa-bd
-    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:v0.3.1@sha256:48bd39f93913a5d290701c15a6bb7099e9ca7989087044af7762e045a8045eeb
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:v0.3.3@sha256:1f31289a7982dfdd1bfb965f9bb23e39c56288d7cdb033647365e1b386fdba62
     environment:
       UID: ${UID}
       GID: ${GID}
