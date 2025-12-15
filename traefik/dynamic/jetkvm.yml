@@ -15,7 +15,7 @@ http:
       loadBalancer:
         serversTransport: jetkvm-transport
         servers:
-          - url: "https://{{ env "JETKVM_IP" }}:80"
+          - url: "http://{{ env "JETKVM_IP" }}:80"
 
   serversTransports:
     jetkvm-transport:
