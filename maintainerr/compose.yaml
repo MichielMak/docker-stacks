@@ -18,7 +18,7 @@ services:
     labels:
       - homepage.group=Media Management
       - homepage.name=Maintainerr
-      - homepage.icon=https://raw.githubusercontent.com/jorenn92/Maintainerr/refs/heads/main/ui/public/logo.png
+      - homepage.icon=maintainerr.png
       - homepage.href=http://maintainerr.${DOMAIN}/
       - homepage.description=Maintenance tool for the Plex ecosystem
       - traefik.enable=true
