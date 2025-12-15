@@ -1,0 +1,33 @@
+http:
+  routers:
+    jetkvm:
+      rule: "Host(`jetkvm.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: jetkvm
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - jetkvm-sec
+
+  services:
+    jetkvm:
+      loadBalancer:
+        serversTransport: jetkvm-transport
+        servers:
+          - url: "https://{{ env "JETKVM_IP" }}:80"
+
+  serversTransports:
+    jetkvm-transport:
+      insecureSkipVerify: true
+
+  middlewares:
+    jetkvm-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
