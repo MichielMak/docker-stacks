@@ -24,6 +24,7 @@ services:
     command:
       # Providers
       - --providers.docker=true
+      - --providers.docker.endpoint=tcp://dockerproxy:2375
       - --providers.file.directory=/dynamic
       - --providers.file.watch=true
       - --providers.docker.exposedbydefault=false
@@ -87,6 +88,5 @@ services:
       traefik.http.middlewares.authentik-forwardauth.forwardauth.authResponseHeaders: X-authentik-username,X-authentik-groups,X-authentik-entitlements,X-authentik-email,X-authentik-name,X-authentik-uid,X-authentik-meta-jwks,X-authentik-meta-outpost,X-authentik-meta-provider,X-authentik-meta-app,X-authentik-meta-version
 
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOCKER_DATA_DIR}/traefik/letsencrypt:/letsencrypt
       - ./dynamic:/dynamic:ro
