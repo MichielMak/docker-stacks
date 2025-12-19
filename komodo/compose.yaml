@@ -6,6 +6,7 @@ networks:
 services:
   core:
     container_name: komodo-core
+    user: "568:568"
     depends_on:
       - mongo
     environment:
@@ -72,6 +73,7 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/mongodb:/data/db
   periphery:
     container_name: komodo-periphery
+    user: "568:568"
     environment:
       PERIPHERY_PASSKEYS: ${KOMODO_PASSKEY}
       PERIPHERY_PORT: '8120'
