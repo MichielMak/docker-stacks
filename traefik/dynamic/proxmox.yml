@@ -5,8 +5,6 @@ http:
       entryPoints:
         - websecure
       service: proxmox
-      tls:
-        certResolver: letsencrypt
       middlewares:
         - proxmox-sec
 

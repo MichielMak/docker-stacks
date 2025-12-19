@@ -5,8 +5,6 @@ http:
       entryPoints:
         - websecure
       service: jetkvm
-      tls:
-        certResolver: letsencrypt
       middlewares:
         - jetkvm-sec
 

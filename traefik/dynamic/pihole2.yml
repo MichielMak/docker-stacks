@@ -5,8 +5,6 @@ http:
       entryPoints:
         - websecure
       service: pihole2
-      tls:
-        certResolver: letsencrypt
       middlewares:
         - pihole2-sec
 

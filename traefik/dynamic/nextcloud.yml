@@ -5,8 +5,6 @@ http:
       entryPoints:
         - websecure
       service: nextcloud
-      tls:
-        certResolver: letsencrypt
       middlewares:
         - nextcloud-sec
 

@@ -5,8 +5,6 @@ http:
       entryPoints:
         - websecure
       service: truenas
-      tls:
-        certResolver: letsencrypt
       middlewares:
         - truenas-sec
 
