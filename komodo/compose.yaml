@@ -6,7 +6,7 @@ networks:
 services:
   core:
     container_name: komodo-core
-    user: "568:568"
+    user: ${PUID}:${PGID}
     depends_on:
       - mongo
     environment:
@@ -73,11 +73,13 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/mongodb:/data/db
   periphery:
     container_name: komodo-periphery
-    user: "568:568"
+    user: ${PUID}:${PGID}
+    group_add:
+      - "999"  # docker group
     environment:
       PERIPHERY_PASSKEYS: ${KOMODO_PASSKEY}
       PERIPHERY_PORT: '8120'
-      PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/data/komodo/periphery
+      PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/komodo/periphery
       PERIPHERY_SSL_ENABLED: true
       TZ: Europe/Amsterdam
     image: ghcr.io/moghtech/komodo-periphery:1.19.5@sha256:bd79cf960ed054fe8e02384322303e462448679b1149dde48bbef151417255b1
