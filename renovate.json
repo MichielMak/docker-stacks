@@ -183,6 +183,12 @@
       "hostType": "docker",
       "concurrentRequestLimit": 2,
       "timeout": 120000
+    },
+    {
+      "matchHost": "dhi.io",
+      "hostType": "docker",
+      "concurrentRequestLimit": 2,
+      "timeout": 120000
     }
   ]
 }
