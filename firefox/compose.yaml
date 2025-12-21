@@ -1,6 +1,6 @@
 services:
   firefox:
-    image: linuxserver/firefox:1145.0.2@sha256:07ec253f8678102eb5b84c13785e7e17d0d22757d74c9324046e1eb901639b81
+    image: linuxserver/firefox:1146.0.1@sha256:eab6e3500de4491e87912c049d9f90c4972eb1f59a28d9db6f6a70f674f215fe
     container_name: firefox
     security_opt:
       - seccomp:unconfined #optional
