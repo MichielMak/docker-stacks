@@ -2,7 +2,7 @@ services:
   duplicacy:
     container_name: duplicacy
     hostname: duplicacy
-    image: ghcr.io/hotio/duplicacy:release-1.8.0@sha256:bc20934dfed5f08e7fc184ccfaaa2b173513188e81e5b5259370091984bd2b8a
+    image: ghcr.io/hotio/duplicacy:release-1.8.0@sha256:f5f6bdf32e61605f93c4cade256b9edae309838faa8fcb86970a23706bac67a4
     #    ports:
     #      - "3875:3875"
     environment:
