@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:32.0.3@sha256:ca64c4d003303ecc043cc624933511c275eefcecd871969ae97e3d6ebcff153c
+    image: linuxserver/nextcloud:32.0.3@sha256:c69ced01f6c70a52585f0a920dd534c91edcd65902472361ebff186e2d5547c1
     container_name: nextcloud
     restart: unless-stopped
     #    networks:
@@ -33,7 +33,7 @@ services:
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
   nextclouddb:
-    image: linuxserver/mariadb:11.4.8@sha256:1fa6fab7aed1a1acbe4a60d62bf89e9ba4d1e16b331c8a64f80b14e0117ebd88
+    image: linuxserver/mariadb:11.4.8@sha256:d3bbfa996d5c79dc87064d02fdae420bbf30f7cf171f58534c43c8c07a5ccbf4
     container_name: nextclouddb
     environment:
       - PUID=${PUID}
