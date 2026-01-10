@@ -1,0 +1,39 @@
+services:
+  dispatcharr:
+    image: ghcr.io/dispatcharr/dispatcharr:0.16.0
+    container_name: dispatcharr
+    ports:
+      - 9191:9191
+    volumes:
+      - dispatcharr_data:/data
+    environment:
+      - DISPATCHARR_ENV=aio
+      - REDIS_HOST=localhost
+      - CELERY_BROKER_URL=redis://localhost:6379/0
+      - DISPATCHARR_LOG_LEVEL=info
+    devices:
+      - /dev/dri/:/dev/dri/
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${DISPATCHARR_IP}
+      npm: null
+    labels:
+      - homepage.group=Media
+      - homepage.name=Dispatcharr
+      - homepage.icon=dispatcharr.png
+      - homepage.href=https://dispatcharr.${DOMAIN}/
+      - homepage.description=IPTV streaming playlist editor and proxy
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.dispatcharr.rule=Host(`dispatcharr.${DOMAIN}`)
+      - traefik.http.routers.dispatcharr.entrypoints=websecure
+      - traefik.http.routers.dispatcharr.tls=true
+      - traefik.http.services.dispatcharr.loadbalancer.server.port=9191
+    restart: unless-stopped
+volumes:
+  dispatcharr_data:
+networks:
+  npm:
+    external: true
+  my-macvlan-net:
+    external: true
