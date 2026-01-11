@@ -6,7 +6,6 @@ networks:
 services:
   core:
     container_name: komodo-core
-    user: ${PUID}:${PGID}
     depends_on:
       - mongo
     environment:
@@ -73,7 +72,6 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/mongodb:/data/db
   periphery:
     container_name: komodo-periphery
-    user: ${PUID}:${PGID}
     group_add:
       - "999"  # docker group
     environment:
