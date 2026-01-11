@@ -4,7 +4,7 @@ networks:
 
 services:
   traefik:
-    image: dhi.io/traefik:3.6.5
+    image: dhi.io/traefik:3.6.6
     container_name: traefik
     restart: unless-stopped
     networks:
