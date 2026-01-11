@@ -29,6 +29,9 @@
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
   ],
+  "registryAliases": {
+    "dhi.io": "dhi.io"
+  },
   "packageRules": [
     {
       "description": "Docker: allow only stable SemVer or CalVer",
@@ -187,6 +190,8 @@
     {
       "matchHost": "dhi.io",
       "hostType": "docker",
+      "username": "${DOCKERHUB_USERNAME}",
+      "password": "${DOCKERHUB_TOKEN}",
       "concurrentRequestLimit": 2,
       "timeout": 120000
     }
