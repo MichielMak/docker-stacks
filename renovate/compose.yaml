@@ -57,6 +57,8 @@ services:
       # Docker Hub authentication using Renovate's built-in support
       - RENOVATE_DOCKER_USERNAME=${DOCKERHUB_USERNAME}
       - RENOVATE_DOCKER_PASSWORD=${DOCKERHUB_TOKEN}
+      - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}
+      - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN}
       
     volumes:
       - token-volume:/app/token:ro
