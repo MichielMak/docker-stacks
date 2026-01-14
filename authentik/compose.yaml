@@ -74,7 +74,7 @@ services:
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${DOCKER_DATA_DIR}/authentik/media:/media
+      - ${DOCKER_DATA_DIR}/authentik/data:/data
       - ${DOCKER_DATA_DIR}/authentik/certs:/certs
       - ${DOCKER_DATA_DIR}/authentik/custom-templates:/templates
     environment:
