@@ -3,7 +3,7 @@ services:
     #ports:
     #   - 9222:9222
     container_name: headless-chrome
-    image: chromedp/headless-shell:145.0.7620.3@sha256:192b9653a7b84458b1acd5646dcfa5612a33d08fb19833d0f93fcabb41333492
+    image: chromedp/headless-shell:145.0.7632.5@sha256:1d623a0c6027b7ab5fef3e54b4ae5fab453fb7d005c41b16e01c73d6b3813423
     restart: unless-stopped
     networks:
       - npm
