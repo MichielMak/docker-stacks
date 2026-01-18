@@ -3,12 +3,9 @@ services:
     image: linuxserver/nextcloud:32.0.5@sha256:813d86129f33fc22abb908366be71e5765a381bf0f08c220b1f2694610ff724f
     container_name: nextcloud
     restart: unless-stopped
-    #    networks:
-    #      - npm
     depends_on:
       - nextclouddb
-    #    ports:
-    #      - 443:443
+      - nextcloud-redis
     volumes:
       - ${DOCKER_DATA_DIR}/nextcloud/config:/config
       - ${MEDIA_DIR}/nextcloud:/data
@@ -20,6 +17,7 @@ services:
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD=${DB_PW}
       - MYSQL_HOST=nextclouddb
+      - REDIS_HOST=nextcloud-redis
     networks:
       - npm
     labels:
@@ -46,6 +44,13 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/nextclouddb/config:/config
     restart: unless-stopped
+    networks:
+      - npm
+  nextcloud-redis:
+    image: redis:8.4.0-alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - npm
   onlyoffice-document-server:
