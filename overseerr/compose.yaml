@@ -30,7 +30,7 @@ services:
     networks:
       - npm
   overseerr_private:
-    image: ghcr.io/seerr-team/seerr:develop@sha256:87c2bf3e4047039e06d69e7f4025248c0657614d6547afdba5585c80735fd650
+    image: ghcr.io/seerr-team/seerr:develop@sha256:b484d350e559fd2dabedcb9dfa7e2dfec45b6f637eae459aeac4060de9e15870
     init: true
     container_name: overseerr_private
     environment:
