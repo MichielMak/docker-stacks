@@ -9,7 +9,7 @@
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v2.5.2@sha256:8ac5a6d471fbb6fcfec6bc34854dd5a947c1795547f0d9345d9bf1803d1209e3
+    image: ghcr.io/immich-app/immich-server:v2.5.3@sha256:9b2e5525c411b7b2d0b74267e71321692c856b32db1429a1b40440184460b402
     environment:
       - TZ=Europe/Amsterdam
       - UPLOAD_LOCATION=${UPLOAD_LOCATION}
@@ -56,7 +56,7 @@ services:
     #      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: ghcr.io/immich-app/immich-machine-learning:v2.5.2@sha256:531d2bccbe20d0412496e36455715a18d692911eca5e2ee37d32e1e4f50e14bb
+    image: ghcr.io/immich-app/immich-machine-learning:v2.5.3@sha256:fa843f76cd34795ce8ca133d2c62ad67aa082b0f90b578ce7878210dcb5ad536
     networks:
       - npm
     environment:
