@@ -23,6 +23,10 @@ services:
       - homepage.icon=dispatcharr.png
       - homepage.href=https://dispatcharr.${DOMAIN}/
       - homepage.description=IPTV streaming playlist editor and proxy
+      - homepage.widget.type=dispatcharr
+      - homepage.widget.url=http://dispatcharr:9191
+      - homepage.widget.username=${DISPATCHARR_USER}
+      - homepage.widget.password=${DISPATCHARR_PASS}
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.dispatcharr.rule=Host(`dispatcharr.${DOMAIN}`)
