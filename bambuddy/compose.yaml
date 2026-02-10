@@ -1,0 +1,32 @@
+services:
+  bambuddy:
+    container_name: bambuddy
+    image: ghcr.io/maziggy/bambuddy:0.1.8.1@sha256:c9e8d6844beb8e142140e51b33888003a977c7e024e52b0098c6d9b1285c8720
+    environment:
+      - TZ=Europe/Amsterdam
+      - PORT=8000
+    volumes:
+      - ${DOCKER_DATA_DIR}/bambuddy/data:/app/data
+      - ${DOCKER_DATA_DIR}/bambuddy/logs:/app/logs
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${BAMBUDDY_IP}
+      npm: null
+    labels:
+      - homepage.group=Tools
+      - homepage.name=BamBuddy
+      - homepage.icon=si-bambulab
+      - homepage.href=https://bambuddy.${DOMAIN}/
+      - homepage.description=Bambu Lab printer companion
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.bambuddy.rule=Host(`bambuddy.${DOMAIN}`)
+      - traefik.http.routers.bambuddy.entrypoints=websecure
+      - traefik.http.routers.bambuddy.tls=true
+      - traefik.http.services.bambuddy.loadbalancer.server.port=8000
+    restart: unless-stopped
+networks:
+  my-macvlan-net:
+    external: true
+  npm:
+    external: true
