@@ -6,8 +6,6 @@ services:
     image: chromedp/headless-shell:146.0.7670.2@sha256:a5092d72d3987cfe3c7ba496bf3566787e4836248e74edb3a6b1378ac9792166
     restart: unless-stopped
     command:
-      - --remote-debugging-address=0.0.0.0
-      - --remote-debugging-port=9222
       - --remote-allow-origins=*
     networks:
       - npm
