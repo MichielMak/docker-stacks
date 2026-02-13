@@ -1,6 +1,6 @@
 services:
   postgresql:
-    image: docker.io/library/postgres:16.11-alpine@sha256:4327b9fd295502f326f44153a1045a7170ddbfffed1c3829798328556cfd09e2
+    image: docker.io/library/postgres:16.12-alpine@sha256:97ff59a4e30e08d1c11bdcd9455e7832368c0572b576c9092cde2df4ae5552a3
     restart: unless-stopped
     healthcheck:
       test:
@@ -21,7 +21,7 @@ services:
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
   server:
-    image: ghcr.io/goauthentik/server:2025.12.3@sha256:0e7e82b29a4c0899d0e2efa4a7a83452b48b6971faa3a87346f595ebf54fd74c
+    image: ghcr.io/goauthentik/server:2025.12.4@sha256:33a92b246b798f23931ce62027e045ecf302c3bc198b6389225973db6448a886
     restart: unless-stopped
     command: server
     networks:
@@ -68,7 +68,7 @@ services:
       - traefik.http.routers.authentik.middlewares=sec-headers@docker
 
   worker:
-    image: ghcr.io/goauthentik/server:2025.12.3@sha256:0e7e82b29a4c0899d0e2efa4a7a83452b48b6971faa3a87346f595ebf54fd74c
+    image: ghcr.io/goauthentik/server:2025.12.4@sha256:33a92b246b798f23931ce62027e045ecf302c3bc198b6389225973db6448a886
     restart: unless-stopped
     command: worker
     user: root
