@@ -1,6 +1,6 @@
 services:
   quickstart:
-    image: kometateam/quickstart:v0.9.8@sha256:c97b07ff223916d451dbed84cd8f149e73478e8a92c611f7578a329dd01ebeae
+    image: kometateam/quickstart:v0.9.10@sha256:58a4b30d1123fd7a4193b42f5825547c361da09342dbc10828992eda0c714f94
     container_name: quickstart
 #    ports:
 #      - 7171:7171
