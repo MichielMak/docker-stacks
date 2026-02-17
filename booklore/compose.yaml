@@ -51,7 +51,7 @@ services:
       - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
       - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Groups=
   bookloremariadb:
-    image: linuxserver/mariadb:11.4.8@sha256:d70694effbcb6158a5b9c7e81548aeaad24f11958329de517c5efb664aeb6219
+    image: linuxserver/mariadb:11.4.8@sha256:49b067ac468c7b25d695bbc0b5df860d6b86de0d6ecddfc799b25f695148ded9
     container_name: bookloremariadb
     environment:
       - PUID=${PUID}
