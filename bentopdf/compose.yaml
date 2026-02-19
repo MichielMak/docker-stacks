@@ -1,6 +1,6 @@
 services:
   bentopdf:
-    image: ghcr.io/alam00000/bentopdf-simple:v2.2.1
+    image: ghcr.io/alam00000/bentopdf-simple:v2.2.1@sha256:31fdc1559f90e37656338cdde4039e3504ff09ec29c347b61d9468ab61151c4e
     container_name: bentopdf
     restart: unless-stopped
 #    ports:
