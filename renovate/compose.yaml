@@ -95,16 +95,16 @@ services:
         # Run Renovate and capture output
         renovate 2>&1 | tee -a /tmp/renovate/logs/renovate.log
         
-        exit_code=$?
-        echo \"=== Renovate run completed at $(date) with exit code $exit_code ===\" >> /tmp/renovate/logs/renovate.log
+        exit_code=$$?
+        echo \"=== Renovate run completed at $(date) with exit code $$exit_code ===\" >> /tmp/renovate/logs/renovate.log
         
-        if [ "$exit_code" -eq 0 ]; then
+        if [ "$$exit_code" -eq 0 ]; then
           echo 'Renovate completed successfully!'
         else
-          echo \"Renovate exited with code $exit_code\"
+          echo \"Renovate exited with code $$exit_code\"
         fi
         
-        exit $exit_code
+        exit $$exit_code
       "
 
 volumes:
