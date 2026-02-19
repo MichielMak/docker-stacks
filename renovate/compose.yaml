@@ -59,7 +59,7 @@ services:
       - RENOVATE_DOCKER_PASSWORD=${DOCKERHUB_TOKEN}
       - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}
       - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN}
-      - RENOVATE_HOST_RULES=[{"matchHost":"dhi.io","hostType":"docker","username":"${DOCKERHUB_USERNAME}","password":"${DOCKERHUB_TOKEN}"}]
+      - RENOVATE_HOST_RULES=[{"matchHost":"docker.io","hostType":"docker","username":"${DOCKERHUB_USERNAME}","password":"${DOCKERHUB_TOKEN}"}]
       
     volumes:
       - token-volume:/app/token:ro
