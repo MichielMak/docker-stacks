@@ -1,6 +1,6 @@
 services:
   profilarr:
-    image: santiagosayshey/profilarr:v1.1.4
+    image: santiagosayshey/profilarr:v1.1.4@sha256:8a514f8429cd33885166facc9eb6504fa9ded056c737609e5e8ef32ae0afb350
     container_name: profilarr
     volumes:
       - ${DOCKER_DATA_DIR}/profilarr/config:/config # Replace with your actual path
