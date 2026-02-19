@@ -59,7 +59,6 @@ services:
       - RENOVATE_DOCKER_PASSWORD=${DOCKERHUB_TOKEN}
       - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}
       - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN}
-      - RENOVATE_HOST_RULES=[{"matchHost":"docker.io","hostType":"docker","username":"${DOCKERHUB_USERNAME}","password":"${DOCKERHUB_TOKEN}"}]
       
     volumes:
       - token-volume:/app/token:ro
@@ -87,6 +86,7 @@ services:
         fi
         
         echo 'Token loaded successfully (length: '$${#RENOVATE_TOKEN}' chars)'
+        export RENOVATE_HOST_RULES='[{"matchHost":"ghcr.io","hostType":"docker","username":"x-access-token","password":"'$RENOVATE_TOKEN'"},{"matchHost":"docker.io","hostType":"docker","username":"'$DOCKERHUB_USERNAME'","password":"'$DOCKERHUB_TOKEN'"}]'
         echo 'Starting Renovate...'
         
         # Add timestamp to log file
