@@ -167,21 +167,13 @@
   ],
   "hostRules": [
     {
-      "matchHost": "ghcr.io",
-      "hostType": "docker",
-      "concurrentRequestLimit": 2,
-      "timeout": 120000
-    },
-    {
       "matchHost": "lscr.io",
       "hostType": "docker",
-      "concurrentRequestLimit": 2,
       "timeout": 120000
     },
     {
       "matchHost": "registry-1.docker.io",
       "hostType": "docker",
-      "concurrentRequestLimit": 2,
       "timeout": 120000
     },
     {
@@ -189,7 +181,6 @@
       "hostType": "docker",
       "username": "${DOCKERHUB_USERNAME}",
       "password": "${DOCKERHUB_TOKEN}",
-      "concurrentRequestLimit": 2,
       "timeout": 120000
     }
   ]
