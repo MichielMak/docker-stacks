@@ -8,8 +8,7 @@ services:
     command:
       - --remote-allow-origins=*
     networks:
-      npm:
-        ipv4_address: 172.16.2.5
+      - npm
 networks:
   npm:
     external: true
