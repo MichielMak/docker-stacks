@@ -55,7 +55,7 @@ services:
       - npm
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
-    image: onlyoffice/documentserver:9.2.1@sha256:fd00acbbbde3d8b1ead9b933aafa7c2df77e62c48b1b171886e6bef343c13882
+    image: onlyoffice/documentserver:9.3.0@sha256:4cb83b05d91d6776de74a9f65645aac8838161b27a95ae00c776f58ae53dd111
     restart: unless-stopped
     environment:
       - JWT_SECRET=${ONLYOFFICE_JWT_SECRET}
