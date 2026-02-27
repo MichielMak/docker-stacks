@@ -3,7 +3,7 @@ services:
     #ports:
     #   - 9222:9222
     container_name: headless-chrome
-    image: chromedp/headless-shell:147.0.7695.0@sha256:dfd1e06c5003397b05f4ab53c48e51caa75671cac6c54a4f9556d6ed691e99b7
+    image: chromedp/headless-shell:147.0.7703.0@sha256:46648c68248c79485e7e2d5d76c99324ddfe3e25f3977d4a6d4a5e7e891bd13a
     restart: unless-stopped
     command:
       - --remote-allow-origins=*
