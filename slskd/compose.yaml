@@ -28,6 +28,7 @@ services:
       - traefik.http.routers.slskd.tls=true
       - traefik.http.services.slskd.loadbalancer.server.port=5030
     restart: unless-stopped
+    user: 568:568
     networks:
       my-macvlan-net:
         ipv4_address: ${SLSKD_IP}
