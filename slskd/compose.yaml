@@ -1,0 +1,29 @@
+services:
+  slskd:
+    image: slskd/slskd:latest
+    container_name: slskd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - SLSKD_REMOTE_CONFIGURATION=true
+    volumes:
+      - ${DOCKER_DATA_DIR}/slskd:/app
+      - ${MEDIA_DIR}/downloads/slskd:/downloads
+      - ${MEDIA_DIR}/music:/music:ro
+    ports:
+      - 50300:50300
+#      - 5030:5030
+#      - 5031:5031
+    labels:
+      - homepage.group=Media
+      - homepage.name=Slskd
+      - homepage.icon=slskd.png
+      - homepage.href=http://slskd.${DOMAIN}/
+      - homepage.description=Soulseek client
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
