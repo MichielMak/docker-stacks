@@ -28,7 +28,9 @@ services:
       - traefik.http.services.slskd.loadbalancer.server.port=5030
     restart: unless-stopped
     networks:
-      - npm
+      my-macvlan-net:
+        ipv4_address: ${SLSKD_IP}
+      npm: null
 networks:
   npm:
     external: true
