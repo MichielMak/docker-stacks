@@ -9,7 +9,7 @@ services:
       - SLSKD_REMOTE_CONFIGURATION=true
     volumes:
       - ${DOCKER_DATA_DIR}/slskd:/app
-      - ${MEDIA_DIR}/downloads/slskd:/media/downloads/slsksd
+      - ${MEDIA_DIR}/downloads/slskd:/media/downloads/slskd
       - ${MEDIA_DIR}/music:/music:ro
     ports:
       - 50300:50300
