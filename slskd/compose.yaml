@@ -22,6 +22,7 @@ services:
       - homepage.href=http://slskd.${DOMAIN}/
       - homepage.description=Soulseek client
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.slskd.rule=Host(`slskd.${DOMAIN}`)
       - traefik.http.routers.slskd.entrypoints=websecure
       - traefik.http.routers.slskd.tls=true
