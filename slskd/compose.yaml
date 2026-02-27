@@ -34,3 +34,5 @@ services:
 networks:
   npm:
     external: true
+  my-macvlan-net:
+    external: true
