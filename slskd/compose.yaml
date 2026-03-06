@@ -21,6 +21,10 @@ services:
       - homepage.icon=slskd.png
       - homepage.href=http://slskd.${DOMAIN}/
       - homepage.description=Soulseek client
+      - homepage.widget.type=slskd
+      - homepage.widget.url=${SLSKD_INTERNAL_URL}
+      - homepage.widget.key=${SLSKD_API}
+      - homepage.widget.version=2
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.slskd.rule=Host(`slskd.${DOMAIN}`)
