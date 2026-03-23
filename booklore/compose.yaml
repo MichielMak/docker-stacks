@@ -1,6 +1,6 @@
 services:
   booklore:
-    image: grimmory/grimmory:v2.3.0
+    image: grimmory/grimmory:v2.3.0@sha256:9014247f591074529894f81115ca40f899db697e89f72c2fe91ec530e3f19597
     container_name: booklore
     environment:
       - USER_ID=${PUID}
