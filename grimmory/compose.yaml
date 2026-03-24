@@ -28,7 +28,7 @@ services:
       - npm
     labels:
       - homepage.group=Media
-      - homepage.name=grimmory
+      - homepage.name=Grimmory
       - homepage.icon=sh-booklore.png
       - homepage.href=http://grimmory.${DOMAIN}/
       - homepage.description=Personal digital library for ebooks and audiobooks
