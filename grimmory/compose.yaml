@@ -17,7 +17,7 @@ services:
       - REMOTE_AUTH_HEADER_GROUPS=Remote-Groups
       - REMOTE_AUTH_ADMIN_GROUP=admin
     depends_on:
-      bookloremariadb:
+      grimmorymariadb:
         condition: service_healthy
     volumes:
       - ${DOCKER_DATA_DIR}/booklore/config:/app/data
