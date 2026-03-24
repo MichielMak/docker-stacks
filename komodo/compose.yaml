@@ -74,6 +74,7 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/mongodb:/data/db
   periphery:
     container_name: komodo-periphery
+    init: true
     group_add:
       - "999"  # docker group
     environment:
@@ -82,7 +83,7 @@ services:
       PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/komodo/periphery
       PERIPHERY_SSL_ENABLED: true
       TZ: Europe/Amsterdam
-    image: ghcr.io/moghtech/komodo-periphery:1.19.5@sha256:bd79cf960ed054fe8e02384322303e462448679b1149dde48bbef151417255b1
+    image: ghcr.io/moghtech/komodo-periphery:2.0.0@sha256:cc9aff8b621d49bbcca394e1538d9d9ea28c48bcfd2d6c8a6f9d5d3eef7f8341
     networks:
       - komodo
       - npm
