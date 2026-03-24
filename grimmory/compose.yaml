@@ -1,12 +1,12 @@
 services:
-  booklore:
+  grimmory:
     image: grimmory/grimmory:v2.3.0@sha256:9014247f591074529894f81115ca40f899db697e89f72c2fe91ec530e3f19597
-    container_name: booklore
+    container_name: grimmory
     environment:
       - USER_ID=${PUID}
       - GROUP_ID=${PGID}
       - TZ=Europe/Amsterdam
-      - DATABASE_URL=jdbc:mariadb://bookloremariadb:3306/booklore
+      - DATABASE_URL=jdbc:mariadb://grimmorymariadb:3306/booklore
       - DATABASE_USERNAME=booklore
       - DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - REMOTE_AUTH_ENABLED=true
@@ -28,31 +28,31 @@ services:
       - npm
     labels:
       - homepage.group=Media
-      - homepage.name=BookLore
+      - homepage.name=grimmory
       - homepage.icon=sh-booklore.png
-      - homepage.href=http://booklore.${DOMAIN}/
+      - homepage.href=http://grimmory.${DOMAIN}/
       - homepage.description=Personal digital library for ebooks and audiobooks
-      # Main router for booklore.${DOMAIN}
+      # Main router for grimmory.${DOMAIN}
       - traefik.enable=true
       - traefik.docker.network=npm
-      - traefik.http.routers.booklore.rule=Host(`booklore.${DOMAIN}`)
-      - traefik.http.routers.booklore.entrypoints=websecure
-      - traefik.http.routers.booklore.tls=true
-      - traefik.http.services.booklore.loadbalancer.server.port=6060
+      - traefik.http.routers.grimmory.rule=Host(`grimmory.${DOMAIN}`)
+      - traefik.http.routers.grimmory.entrypoints=websecure
+      - traefik.http.routers.grimmory.tls=true
+      - traefik.http.services.grimmory.loadbalancer.server.port=6060
       # Test router for books.${DOMAIN} with guest auto-login
-      - traefik.http.routers.booklore-test.rule=Host(`books.${DOMAIN}`)
-      - traefik.http.routers.booklore-test.entrypoints=websecure
-      - traefik.http.routers.booklore-test.tls=true
-      - traefik.http.routers.booklore-test.service=booklore
-      - traefik.http.routers.booklore-test.middlewares=booklore-guest-auth
+      - traefik.http.routers.grimmory-test.rule=Host(`books.${DOMAIN}`)
+      - traefik.http.routers.grimmory-test.entrypoints=websecure
+      - traefik.http.routers.grimmory-test.tls=true
+      - traefik.http.routers.grimmory-test.service=grimmory
+      - traefik.http.routers.grimmory-test.middlewares=grimmory-guest-auth
       # Guest auth middleware using headers
-      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-User=guest
-      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Name=Guest User
-      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
-      - traefik.http.middlewares.booklore-guest-auth.headers.customrequestheaders.Remote-Groups=
-  bookloremariadb:
+      - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-User=guest
+      - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Name=Guest User
+      - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
+      - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Groups=
+  grimmorymariadb:
     image: linuxserver/mariadb:11.4.9@sha256:88becf2c12f07ffba947a41dd36e4acee1eb02afb2bd507caad0dc36d6ae6779
-    container_name: bookloremariadb
+    container_name: grimmorymariadb
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
