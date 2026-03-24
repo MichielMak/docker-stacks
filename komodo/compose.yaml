@@ -82,6 +82,7 @@ services:
       PERIPHERY_PORT: '8120'
       PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/komodo/periphery
       PERIPHERY_SSL_ENABLED: true
+      PERIPHERY_CORE_PUBLIC_KEYS: ${KOMODO_PUBLIC_KEY}
       TZ: Europe/Amsterdam
     image: ghcr.io/moghtech/komodo-periphery:2.0.0@sha256:cc9aff8b621d49bbcca394e1538d9d9ea28c48bcfd2d6c8a6f9d5d3eef7f8341
     networks:
@@ -93,6 +94,7 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/periphery:${DOCKER_DATA_DIR}/komodo/periphery
       - /proc:/proc
       - /var/run/docker.sock:/var/run/docker.sock
+      - keys:/config/keys
 
 volumes:
   keys:
