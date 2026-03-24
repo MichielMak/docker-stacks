@@ -6,6 +6,7 @@ networks:
 services:
   core:
     container_name: komodo-core
+    init: true
     depends_on:
       - mongo
     environment:
@@ -29,7 +30,7 @@ services:
       TZ: Europe/Amsterdam
     group_add:
       - ${PGID}
-    image: ghcr.io/moghtech/komodo-core:1.19.5@sha256:a1cceb4f971443b1e9f2a767788f663d0afb6244ee2135f7fe3fd1036af37ade
+    image: ghcr.io/moghtech/komodo-core:2.0.0@sha256:3cc134272b39313ae1fb34ea8a3c8a0c2f629a3c2eeaf71258702159f154f9e9
     networks:
       - komodo
       - npm
@@ -40,6 +41,7 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/backups:/backups
       - ${DOCKER_DATA_DIR}/data/komodo/syncs:/syncs
       - ${DOCKER_STACKS_DIR}:${DOCKER_STACKS_DIR}
+      - keys:/config/keys
     labels:
       - homepage.group=Infra
       - homepage.name=Komodo
@@ -90,3 +92,6 @@ services:
       - ${DOCKER_DATA_DIR}/komodo/periphery:${DOCKER_DATA_DIR}/komodo/periphery
       - /proc:/proc
       - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  keys:
