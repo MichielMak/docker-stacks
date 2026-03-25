@@ -1,6 +1,6 @@
 services:
-  cwa-bd:
-    container_name: cwa-bd
+  shelfmark:
+    container_name: shelfmark
     image: ghcr.io/calibrain/shelfmark:v1.2.1@sha256:5e00d47cccaa3b67234855d950d016c50691b78197a68adf15a624f6c08acee2
     environment:
       UID: ${UID}
@@ -12,15 +12,16 @@ services:
       USE_CF_BYPASS: true
     restart: unless-stopped
     volumes:
-      - ${MEDIA_DIR}/downloads/usenet/books:/cwa-book-ingest
+      - ${MEDIA_DIR}/downloads/usenet/books:/books
+      - ${DOCKER_DATA_DIR}/shelfmark/config:/config
     networks:
       - npm
     labels:
       - traefik.enable=true
-      - traefik.http.routers.cwa-bd.rule=Host(`cwa-bd.${DOMAIN}`)
-      - traefik.http.routers.cwa-bd.entrypoints=websecure
-      - traefik.http.routers.cwa-bd.tls=true
-      - traefik.http.services.cwa-bd.loadbalancer.server.port=8084
+      - traefik.http.routers.shelfmark.rule=Host(`shelfmark.${DOMAIN}`)
+      - traefik.http.routers.shelfmark.entrypoints=websecure
+      - traefik.http.routers.shelfmark.tls=true
+      - traefik.http.services.shelfmark.loadbalancer.server.port=8084
 networks:
   npm:
     external: true
