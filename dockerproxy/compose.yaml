@@ -1,6 +1,6 @@
 services:
   dockerproxy:
-    image: linuxserver/socket-proxy:3.2.14@sha256:56dde3144ef213d2df1ee3d600baad521bd8b8c2bf844672719b07363606f4c2
+    image: linuxserver/socket-proxy:3.2.15@sha256:4e3ab628c94dfd58b5eef3847e1a0e42d8332c14983d391d585046037b373912
     container_name: dockerproxy
     environment:
       - CONTAINERS=1 # Allow access to viewing containers
