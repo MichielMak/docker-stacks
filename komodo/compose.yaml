@@ -30,7 +30,7 @@ services:
       TZ: Europe/Amsterdam
     group_add:
       - ${PGID}
-    image: ghcr.io/moghtech/komodo-core:2.1.0@sha256:4915d91b5c6e9de4e8fd59391eed5cad090ec84dcf6a1a9233d97edfdbbb88e7
+    image: ghcr.io/moghtech/komodo-core:2.1.1@sha256:2bbbb1efd3534211dac35091e0818f10398d9bdd98fdbf0ddef09e9e0b5ec4ba
     networks:
       - komodo
       - npm
@@ -84,7 +84,7 @@ services:
       PERIPHERY_SSL_ENABLED: true
       PERIPHERY_CORE_PUBLIC_KEYS: ${KOMODO_PUBLIC_KEY}
       TZ: Europe/Amsterdam
-    image: ghcr.io/moghtech/komodo-periphery:2.1.0@sha256:f5b272e3d9acd60d4eac69ea4fa0292dcaddfdecfc2be64ba5575e5ae18e72ae
+    image: ghcr.io/moghtech/komodo-periphery:2.1.1@sha256:9324baa15d355796fc8ab7fb4a4de7f2904327238100fa78fc2c814ba9d56022
     networks:
       - komodo
       - npm
