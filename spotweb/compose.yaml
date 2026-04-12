@@ -1,6 +1,6 @@
 services:
   spotweb:
-    image: jgeusebroek/spotweb:latest@sha256:8a0758cea04baac2dbc87a89ba78c087a114a39382867ec330421a8701dd2d80
+    image: jgeusebroek/spotweb:latest@sha256:546acd8433293bd84f3c464be7cf7ce9a4e84254d938bd9657cd8c73d34e188b
     container_name: spotweb
     restart: unless-stopped
     environment:
@@ -35,7 +35,7 @@ services:
       - traefik.http.routers.spotweb.tls=true
       - traefik.http.services.spotweb.loadbalancer.server.port=80
   spotweb_db:
-    image: linuxserver/mariadb:11.4.9@sha256:05cefe72b4d07d35cf0c4229b44020a7afdd43e0f152968a44431f84ca3eeb4f
+    image: linuxserver/mariadb:11.4.9@sha256:8dc302ed6e5933ded61a46b7f559749073632be361942b2a6ca0793c23baa2d0
     container_name: spotwebdb
     restart: unless-stopped
     environment:
