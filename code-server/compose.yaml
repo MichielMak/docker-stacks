@@ -1,6 +1,6 @@
 services:
   code-server:
-    image: linuxserver/code-server:4.114.0@sha256:560db9b18012d8fb5d8d24221d5884b09abb22eb338541c89508589e2b56a5a9
+    image: linuxserver/code-server:4.115.0@sha256:111275f3c11a51d1d2ad675bfca531677ee6d54ec89e86e78d5b9dcc1a40c6f0
     container_name: code-server
     environment:
       - PUID=${PUID}
