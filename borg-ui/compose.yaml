@@ -1,0 +1,50 @@
+services:
+  borg-ui:
+    image: ainullcode/borg-ui:2.0.2@sha256:5d6941382a9e55c11b73dc80c909dee7332c7b8a8fa10cdc7f0f14aed19b96ab
+    container_name: borg-web-ui
+    restart: unless-stopped
+    #ports:
+    #  - "8081:8081"
+    volumes:
+      - ${DOCKER_DATA_DIR}/borg-ui/data:/data
+      - ${DOCKER_DATA_DIR}/borg-ui/cache:/home/borg/.cache/borg
+      - ${MEDIA_DIR}/nextcloud:/local:rw
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Amsterdam
+      - REDIS_HOST=borg-redis
+      - REDIS_PORT=6379
+    depends_on:
+      borg-redis:
+        condition: service_healthy
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Borg UI
+      - homepage.icon=borgbackup.png
+      - homepage.href=http://borg.${DOMAIN}/
+      - homepage.description=BorgBackup web interface
+      - traefik.enable=true
+      - traefik.http.routers.borg-ui.rule=Host(`borg.${DOMAIN}`)
+      - traefik.http.routers.borg-ui.entrypoints=websecure
+      - traefik.http.routers.borg-ui.tls=true
+      - traefik.http.services.borg-ui.loadbalancer.server.port=8081
+    networks:
+      - npm
+
+  borg-redis:
+    image: redis:8.6.2-alpine@sha256:81b6f81d6a6c5b9019231a2e8eb10085e3a139a34f833dcc965a8a959b040b72
+    container_name: borg-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true
