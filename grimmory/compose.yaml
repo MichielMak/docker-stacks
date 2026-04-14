@@ -32,6 +32,10 @@ services:
       - homepage.icon=sh-booklore.png
       - homepage.href=http://grimmory.${DOMAIN}/
       - homepage.description=Personal digital library for ebooks and audiobooks
+      - homepage.widget.type=booklore
+      - homepage.widget.url=http://grimmory:6060
+      - homepage.widget.username=${GRIMMORY_USERNAME}
+      - homepage.widget.password=${GRIMMORY_PASSWORD}
       # Main router for grimmory.${DOMAIN}
       - traefik.enable=true
       - traefik.docker.network=npm
