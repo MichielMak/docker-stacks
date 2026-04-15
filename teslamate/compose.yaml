@@ -1,0 +1,91 @@
+services:
+  teslamate:
+    image: teslamate/teslamate:3.0.0@sha256:8d557ddd27ad1c4371baaa2572b95fa7db3f490e55de6df9df169aedb5e2d4f9
+    container_name: teslamate
+    restart: unless-stopped
+    #ports:
+    #  - 4000:4000
+    volumes:
+      - ${DOCKER_DATA_DIR}/teslamate/import:/opt/app/import
+    environment:
+      - TZ=Europe/Amsterdam
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - DATABASE_USER=teslamate
+      - DATABASE_PASS=${TESLAMATE_DB_PASSWORD}
+      - DATABASE_NAME=teslamate
+      - DATABASE_HOST=teslamate-db
+      - MQTT_HOST=teslamate-mosquitto
+    cap_drop:
+      - all
+    depends_on:
+      - teslamate-db
+      - teslamate-mosquitto
+    labels:
+      - homepage.group=Auto
+      - homepage.name=TeslaMate
+      - homepage.icon=teslamate.png
+      - homepage.href=https://teslamate.${DOMAIN}/
+      - homepage.description=Tesla data logger
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.teslamate.rule=Host(`teslamate.${DOMAIN}`)
+      - traefik.http.routers.teslamate.entrypoints=websecure
+      - traefik.http.routers.teslamate.tls=true
+      - traefik.http.services.teslamate.loadbalancer.server.port=4000
+    networks:
+      - npm
+
+  teslamate-db:
+    image: postgres:18-trixie@sha256:fbcb3dece453834980f7c89e1adad0d8854ff49032430753beec237a9ff069e0
+    container_name: teslamate-db
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Amsterdam
+      - POSTGRES_USER=teslamate
+      - POSTGRES_PASSWORD=${TESLAMATE_DB_PASSWORD}
+      - POSTGRES_DB=teslamate
+    volumes:
+      - ${DOCKER_DATA_DIR}/teslamate/db:/var/lib/postgresql
+    networks:
+      - npm
+
+  teslamate-grafana:
+    image: teslamate/grafana:3.0.0@sha256:95c64c1b35bfc271abcf6ee56713f3efd9640db590f1a8f75c8272a9777545b8
+    container_name: teslamate-grafana
+    restart: unless-stopped
+    #ports:
+    #  - 3000:3000
+    environment:
+      - TZ=Europe/Amsterdam
+      - DATABASE_USER=teslamate
+      - DATABASE_PASS=${TESLAMATE_DB_PASSWORD}
+      - DATABASE_NAME=teslamate
+      - DATABASE_HOST=teslamate-db
+    volumes:
+      - ${DOCKER_DATA_DIR}/teslamate/grafana:/var/lib/grafana
+    depends_on:
+      - teslamate-db
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.teslamate-grafana.rule=Host(`grafana-tesla.${DOMAIN}`)
+      - traefik.http.routers.teslamate-grafana.entrypoints=websecure
+      - traefik.http.routers.teslamate-grafana.tls=true
+      - traefik.http.services.teslamate-grafana.loadbalancer.server.port=3000
+    networks:
+      - npm
+
+  teslamate-mosquitto:
+    image: eclipse-mosquitto:2.0.22@sha256:10b94cc46bad579465e423e6979709f9cee9a778fca9ee0ee12c8590711eec6b
+    container_name: teslamate-mosquitto
+    restart: unless-stopped
+    command: mosquitto -c /mosquitto-no-auth.conf
+    volumes:
+      - ${DOCKER_DATA_DIR}/teslamate/mosquitto/config:/mosquitto/config
+      - ${DOCKER_DATA_DIR}/teslamate/mosquitto/data:/mosquitto/data
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true
