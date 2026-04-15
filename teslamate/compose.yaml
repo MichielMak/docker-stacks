@@ -1,6 +1,6 @@
 services:
   teslamate:
-    image: teslamate/teslamate:3.0.0
+    image: teslamate/teslamate:3.0.0@sha256:6569026b73bd657455bbec05965d07fa30b6d4d70eaab0bd5b343231c0429167
     container_name: teslamate
     restart: unless-stopped
     #ports:
@@ -36,7 +36,7 @@ services:
       - npm
 
   teslamate-db:
-    image: postgres:18-trixie@sha256:fbcb3dece453834980f7c89e1adad0d8854ff49032430753beec237a9ff069e0
+    image: postgres:18-trixie@sha256:52e6ffd11fddd081ae63880b635b2a61c14008c17fc98cdc7ce5472265516dd0
     container_name: teslamate-db
     restart: unless-stopped
     environment:
@@ -50,7 +50,7 @@ services:
       - npm
 
   teslamate-grafana:
-    image: teslamate/grafana:3.0.0@sha256:95c64c1b35bfc271abcf6ee56713f3efd9640db590f1a8f75c8272a9777545b8
+    image: teslamate/grafana:3.0.0@sha256:e02d1f036dd10771ea04db2bafc483067a9dbb874d0b5137dda5a6fe539b77dc
     container_name: teslamate-grafana
     restart: unless-stopped
     #ports:
@@ -76,7 +76,7 @@ services:
       - npm
 
   teslamate-mosquitto:
-    image: eclipse-mosquitto:2.0.22@sha256:10b94cc46bad579465e423e6979709f9cee9a778fca9ee0ee12c8590711eec6b
+    image: eclipse-mosquitto:2.0.22@sha256:6852da90a65dfff7aa3a1c8b249e92bb83c17ea8bbcce56bedff8707332a1a29
     container_name: teslamate-mosquitto
     restart: unless-stopped
     command: mosquitto -c /mosquitto-no-auth.conf
