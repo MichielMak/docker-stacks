@@ -1,6 +1,6 @@
 services:
   overseerr:
-    image: ghcr.io/seerr-team/seerr:v3.1.1@sha256:d535391db3b5a22ce02241e6d7a50ca714e75d927e46aa20456b77fa051cbf52
+    image: ghcr.io/seerr-team/seerr:v3.2.0@sha256:c4cbd5121236ac2f70a843a0b920b68a27976be57917555f1c45b08a1e6b2aad
     container_name: overseerr
     environment:
       - PUID=${PUID}
@@ -30,7 +30,7 @@ services:
     networks:
       - npm
   overseerr_private:
-    image: ghcr.io/seerr-team/seerr:v3.1.1@sha256:d535391db3b5a22ce02241e6d7a50ca714e75d927e46aa20456b77fa051cbf52
+    image: ghcr.io/seerr-team/seerr:v3.2.0@sha256:c4cbd5121236ac2f70a843a0b920b68a27976be57917555f1c45b08a1e6b2aad
     init: true
     container_name: overseerr_private
     environment:
