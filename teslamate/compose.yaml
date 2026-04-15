@@ -15,7 +15,7 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=teslamate-db
       - MQTT_HOST=teslamate-mosquitto
-      - TOKEN=${TESLAMATE_TOKEN}
+      - TOKEN=?token=${TESLAMATE_TOKEN}
       - TESLA_API_HOST=https://api.myteslamate.com
       - TESLA_AUTH_HOST=https://api.myteslamate.com
       - TESLA_AUTH_PATH=/api/oauth2/v3
