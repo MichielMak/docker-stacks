@@ -15,6 +15,7 @@ services:
       - DATABASE_NAME=teslamate
       - DATABASE_HOST=teslamate-db
       - MQTT_HOST=teslamate-mosquitto
+      - TOKEN=${TESLAMATE_TOKEN}
     cap_drop:
       - all
     depends_on:
