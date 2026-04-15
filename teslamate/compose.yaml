@@ -1,6 +1,6 @@
 services:
   teslamate:
-    image: teslamate/teslamate:3.0.0@sha256:8d557ddd27ad1c4371baaa2572b95fa7db3f490e55de6df9df169aedb5e2d4f9
+    image: teslamate/teslamate:3.0.0
     container_name: teslamate
     restart: unless-stopped
     #ports:
@@ -21,7 +21,7 @@ services:
       - teslamate-db
       - teslamate-mosquitto
     labels:
-      - homepage.group=Auto
+      - homepage.group=Media
       - homepage.name=TeslaMate
       - homepage.icon=teslamate.png
       - homepage.href=https://teslamate.${DOMAIN}/
