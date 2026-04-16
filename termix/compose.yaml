@@ -32,7 +32,7 @@ services:
       - homepage.description=Web-based terminal manager
 
   guacd:
-    image: guacamole/guacd:1.6.0@sha256:2d266a525a72ad55d8ea7cd4ca8342a1b44075759b03660d8684821b3636a922
+    image: guacamole/guacd:1.6.0@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f
     container_name: guacd
     restart: unless-stopped
     networks:
