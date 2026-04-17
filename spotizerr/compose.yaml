@@ -8,7 +8,7 @@ services:
       - ${DOCKER_DATA_DIR}/spotizerr/logs:/app/logs
       - ${DOCKER_DATA_DIR}/spotizerr/cache:/app/cache
       - ${DEEMIX_DIR}:/app/downloads
-    image: spotizerrphoenix/spotizerr:4.0.17
+    image: spotizerrphoenix/spotizerr:4.0.17@sha256:2a4aac5ef750f1497a3b942796ddaa9e02d6cec7a196d1292051a90d68b8f2ce
 #    ports:
 #      - 7171:7171
     restart: unless-stopped
