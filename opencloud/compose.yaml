@@ -1,6 +1,6 @@
 services:
   opencloud:
-    image: opencloudeu/opencloud:4.0.3@sha256:dfd8f64aa059de02b634c84442fc4f2c5685631f232ab0518f1cb1999926b021
+    image: opencloudeu/opencloud:4.0.5@sha256:0d5e8d758cae2ed3bcbda86a2bddbe3d7dfa80a09ced3cc46cf59895a882409f
     container_name: opencloud
     restart: always
     entrypoint:
@@ -20,7 +20,7 @@ services:
       - npm
 
   opencloud-collaboration:
-    image: opencloudeu/opencloud:4.0.3@sha256:dfd8f64aa059de02b634c84442fc4f2c5685631f232ab0518f1cb1999926b021
+    image: opencloudeu/opencloud:4.0.5@sha256:0d5e8d758cae2ed3bcbda86a2bddbe3d7dfa80a09ced3cc46cf59895a882409f
     container_name: opencloud-collaboration
     restart: always
     depends_on:
