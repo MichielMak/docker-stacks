@@ -1,6 +1,6 @@
 services:
   tsbridge:
-    image: ghcr.io/jtdowney/tsbridge:v0.14.0@sha256:dc41c929ff6400bd988be83fa385d15c5e3b7440f451a81c41d09977b14cecfe
+    image: ghcr.io/jtdowney/tsbridge:v0.15.0@sha256:6e03c0072b434d46e97555dc9a11a915aabdce515765678c164a95a928e994fd
     command: ["--provider", "docker"]
     volumes:
       - tsbridge-state:/var/lib/tsbridge
