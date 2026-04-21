@@ -54,8 +54,7 @@ services:
       # Optional: Additional configuration
       - RENOVATE_AUTODISCOVER=${RENOVATE_AUTODISCOVER:-false}
       - RENOVATE_INCLUDE_FORKS=${RENOVATE_INCLUDE_FORKS:-false}
-      # Prevent simple-git from blocking GIT_SSH_COMMAND (renovate/simple-git security plugin)
-      - GIT_SSH_COMMAND=
+      - RENOVATE_ALLOW_UNSAFE_SSH_COMMAND=true
       # Docker Hub authentication using Renovate's built-in support
       - RENOVATE_DOCKER_USERNAME=${DOCKERHUB_USERNAME}
       - RENOVATE_DOCKER_PASSWORD=${DOCKERHUB_TOKEN}
