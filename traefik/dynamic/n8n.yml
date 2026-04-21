@@ -1,0 +1,26 @@
+http:
+  routers:
+    n8n:
+      rule: "Host(`n8n.{{ env "DOMAIN" }}`)"
+      entryPoints:
+        - websecure
+      service: n8n
+      middlewares:
+        - n8n-sec
+
+  services:
+    n8n:
+      loadBalancer:
+        servers:
+          - url: "http://{{ env "N8N_IP" }}:5678"
+
+  middlewares:
+    n8n-sec:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
