@@ -36,7 +36,7 @@ services:
       - npm
 
   teslamate-db:
-    image: postgres:18-trixie@sha256:52e6ffd11fddd081ae63880b635b2a61c14008c17fc98cdc7ce5472265516dd0
+    image: postgres:18-trixie@sha256:0dd458bfcf64d157483790f9274fad61ef92f4b89e28c355e7c09cec7de3ecd9
     container_name: teslamate-db
     restart: unless-stopped
     environment:
