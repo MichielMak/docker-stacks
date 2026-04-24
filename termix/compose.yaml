@@ -6,7 +6,7 @@ networks:
 
 services:
   termix:
-    image: ghcr.io/lukegus/termix:release-2.0.0@sha256:78ee50bb5274106456eaa2e1826fca9e477570d82e0f30fde66b6a1421005d56
+    image: ghcr.io/lukegus/termix:release-2.1.0@sha256:2eee80a331c32fd23f0240a2a02650aea5c5bb2948b0ec2e303d3a565ca90cab
     container_name: termix
     restart: unless-stopped
     volumes:
