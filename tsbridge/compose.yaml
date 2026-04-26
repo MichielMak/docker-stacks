@@ -15,7 +15,7 @@ services:
       - "tsbridge.tailscale.default_tags=tag:michiel-docker"
     networks:
       - npm
-
+    restart: unless-stopped
   # Example: Add your own services here and label them to expose via Tailscale
   # Uncomment and customize as needed:
   #
