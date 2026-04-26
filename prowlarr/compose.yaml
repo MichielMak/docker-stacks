@@ -25,6 +25,7 @@ services:
       - tsbridge.enabled=true
       - tsbridge.service.name=prowlarr
       - tsbridge.service.port=9696
+      - tsbridge.service.insecure_skip_verify=true
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.prowlarr-api.rule=Host(`prowlarr.${DOMAIN}`) && PathPrefix(`/api`)
