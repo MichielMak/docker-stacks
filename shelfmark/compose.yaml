@@ -1,7 +1,7 @@
 services:
   shelfmark:
     container_name: shelfmark
-    image: ghcr.io/calibrain/shelfmark:v1.2.2@sha256:31738aa40006f97841eef3048612578681211f64a803fb51fac10e04127f3d0f
+    image: ghcr.io/calibrain/shelfmark:v1.2.3@sha256:bd6cb4bfa14a917e76945c22ed2c376d64cf7fdb74632435db713d42ca597b20
     environment:
       UID: ${UID}
       GID: ${GID}
