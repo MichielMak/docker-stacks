@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:33.0.3@sha256:8bf953d27c081b3f0c894ab237968fe945448b77e2e78c0dc5ffaaae867b4021
+    image: linuxserver/nextcloud:33.0.3@sha256:461497bd1ac627827678ba71c12d98b9476c1a5c26036f910dadc497ac8e2a38
     container_name: nextcloud
     restart: unless-stopped
     depends_on:
@@ -47,7 +47,7 @@ services:
     networks:
       - npm
   nextcloud-redis:
-    image: redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    image: redis:8.6.3-alpine@sha256:69f2c586c8a7e9cce4ae1ee9bbaf60bc4bb5f4bb3880e4ed022b1fd758a7cab9
     container_name: nextcloud-redis
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
