@@ -1,6 +1,6 @@
 services:
   borg-ui:
-    image: ainullcode/borg-ui:2.0.8@sha256:7d589d9be0c96c2ca743caa7819253d5c6743a345d3d470072bb308e8ba32d47
+    image: ainullcode/borg-ui:2.0.9@sha256:1d1a758e4a441ca08a0a9ec83cb987f7ff3a00fac90b2fc9c0dbe9270e845a79
     container_name: borg-web-ui
     restart: unless-stopped
     #ports:
@@ -33,7 +33,7 @@ services:
       - npm
 
   borg-redis:
-    image: redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    image: redis:8.6.3-alpine@sha256:69f2c586c8a7e9cce4ae1ee9bbaf60bc4bb5f4bb3880e4ed022b1fd758a7cab9
     container_name: borg-redis
     restart: unless-stopped
     command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru
