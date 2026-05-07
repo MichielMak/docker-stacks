@@ -13,7 +13,7 @@ services:
       - ${DOCKER_DATA_DIR}/overseerr/images/logo_stacked.svg:/app/overseerr/public/logo_stacked.svg
     labels:
       - traefik.enable=true
-      - traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN}`)
+      - traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN}`) || Host(`seerr.${DOMAIN}`)
       - traefik.http.routers.overseerr.entrypoints=websecure
       - traefik.http.routers.overseerr.tls=true
       - traefik.http.services.overseerr.loadbalancer.server.port=5055
@@ -41,7 +41,7 @@ services:
       - ${DOCKER_DATA_DIR}/overseerrprivate/config:/app/config
     labels:
       - traefik.enable=true
-      - traefik.http.routers.overseerr-private.rule=Host(`overseerrprivate.${DOMAIN}`)
+      - traefik.http.routers.overseerr-private.rule=Host(`overseerrprivate.${DOMAIN}`) || Host(`seerrprivate.${DOMAIN}`)
       - traefik.http.routers.overseerr-private.entrypoints=websecure
       - traefik.http.routers.overseerr-private.tls=true
       - traefik.http.services.overseerr-private.loadbalancer.server.port=5055
