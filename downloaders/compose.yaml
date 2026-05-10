@@ -118,7 +118,7 @@ services:
       - homepage.widget.fields=["speed", "active", "queue"]
       - homepage.widget.url=http://pyload:8000
       - homepage.widget.username=pyload
-      - homepage.widget.password=${PYLOAD_PW}
+      - homepage.widget.key=${PYLOAD_KEY}
       - traefik.enable=true
       - traefik.http.routers.pyload-api.rule=Host(`pyload.${DOMAIN}`) && PathPrefix(`/api`)
       - traefik.http.routers.pyload-api.entrypoints=websecure
