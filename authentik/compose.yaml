@@ -21,7 +21,7 @@ services:
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
   server:
-    image: ghcr.io/goauthentik/server:2026.2.2@sha256:40f0df709957c11324420fa387f1135c427f16086f12ca266b2d883d39c71fe3
+    image: ghcr.io/goauthentik/server:2026.2.3@sha256:7806ae1ae3423624fe90331e8b3dcca0afc155fac890c696dd92ddac6dc3a384
     restart: unless-stopped
     command: server
     networks:
@@ -68,7 +68,7 @@ services:
       - traefik.http.routers.authentik.middlewares=sec-headers@docker
 
   worker:
-    image: ghcr.io/goauthentik/server:2026.2.2@sha256:40f0df709957c11324420fa387f1135c427f16086f12ca266b2d883d39c71fe3
+    image: ghcr.io/goauthentik/server:2026.2.3@sha256:7806ae1ae3423624fe90331e8b3dcca0afc155fac890c696dd92ddac6dc3a384
     restart: unless-stopped
     command: worker
     user: root
