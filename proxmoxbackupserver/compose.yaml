@@ -28,6 +28,9 @@ services:
       - homepage.icon=si-proxmox
       - homepage.href=https://pbs.${DOMAIN}/
       - homepage.description=Proxmox Backup Server is a backup solution for Proxmox VE and other systems.
+      - tsbridge.enabled=true
+      - tsbridge.service.name=proxmoxbackupserver
+      - tsbridge.service.port=8007      
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.pbs.rule=Host(`pbs.${DOMAIN}`)
