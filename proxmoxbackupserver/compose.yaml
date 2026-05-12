@@ -32,6 +32,7 @@ services:
       - tsbridge.service.name=proxmoxbackupserver
       - tsbridge.service.port=8007
       - tsbridge.service.insecure_skip_verify=true
+      - tsbridge.service.backend_addr=https://${PBS_IP}:8007
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.pbs.rule=Host(`pbs.${DOMAIN}`)
