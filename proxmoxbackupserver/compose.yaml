@@ -1,0 +1,47 @@
+services:
+  pbs:
+    image: ayufan/proxmox-backup-server:v4.1.9-1
+    #ports:
+    #  - 8007:8007
+    mem_limit: 2G
+    volumes:
+      - pbs_etc:/etc/proxmox-backup
+      - pbs_logs:/var/log/proxmox-backup
+      - pbs_lib:/var/lib/proxmox-backup
+      - ${BACKUP_DIR}:/backup:rw
+    tmpfs:
+      - /run
+    cap_add:
+      - SYS_RAWIO # smartctl support
+    #devices: # smartctl support
+    #  - /dev/sda
+    #  - /dev/sdb
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${PBS_IP}
+      npm: null
+    restart: unless-stopped
+    stop_signal: SIGHUP
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Proxmox Backup Server
+      - homepage.icon=si-proxmox
+      - homepage.href=https://pbs.${DOMAIN}/
+      - homepage.description=Proxmox Backup Server is a backup solution for Proxmox VE and other systems.
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.pbs.rule=Host(`pbs.${DOMAIN}`)
+      - traefik.http.routers.pbs.entrypoints=websecure
+      - traefik.http.routers.pbs.tls=true
+      - traefik.http.services.pbs.loadbalancer.server.port=8007
+
+volumes:
+  pbs_etc:
+  pbs_logs:
+  pbs_lib:
+
+networks:
+  my-macvlan-net:
+    external: true
+  npm:
+    external: true
