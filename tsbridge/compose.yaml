@@ -15,6 +15,7 @@ services:
       - "tsbridge.tailscale.default_tags=tag:michiel-docker"
     networks:
       - npm
+      - my-macvlan-net 
     restart: unless-stopped
   # Example: Add your own services here and label them to expose via Tailscale
   # Uncomment and customize as needed:
@@ -31,6 +32,8 @@ services:
 
 networks:
   npm:
+    external: true
+  my-macvlan-net:
     external: true
 
 volumes:
