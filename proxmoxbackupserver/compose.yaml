@@ -1,5 +1,6 @@
 services:
   pbs:
+    container_name: pbs
     image: ayufan/proxmox-backup-server:v4.1.9-1@sha256:5e48a7610c9e9c56c8616cb6346a4c603c19f2e61db1aece88433b0b2769364a
     #ports:
     #  - 8007:8007
@@ -29,6 +30,7 @@ services:
       - homepage.href=https://pbs.${DOMAIN}/
       - homepage.description=Proxmox Backup Server is a backup solution for Proxmox VE and other systems.
       - tsbridge.enabled=true
+      - tsbridge.service.backend_addr=pbs:8007
       - tsbridge.service.name=proxmoxbackupserver
       - tsbridge.service.backend_addr=https://pbs.makstra.nl:443
       - traefik.enable=true
