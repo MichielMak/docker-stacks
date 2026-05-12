@@ -30,7 +30,6 @@ services:
       - homepage.href=https://pbs.${DOMAIN}/
       - homepage.description=Proxmox Backup Server is a backup solution for Proxmox VE and other systems.
       - tsbridge.enabled=true
-      - tsbridge.service.backend_addr=pbs:8007
       - tsbridge.service.name=proxmoxbackupserver
       - tsbridge.service.backend_addr=https://pbs.makstra.nl:443
       - traefik.enable=true
