@@ -34,6 +34,8 @@ services:
       - traefik.http.routers.pbs.entrypoints=websecure
       - traefik.http.routers.pbs.tls=true
       - traefik.http.services.pbs.loadbalancer.server.port=8007
+      - traefik.http.services.pbs.loadbalancer.server.scheme=https
+      - traefik.http.services.pbs.loadbalancer.serverstransport=proxmox-transport@file
 
 volumes:
   pbs_etc:
