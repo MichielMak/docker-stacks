@@ -23,6 +23,9 @@ services:
       - homepage.widget.url=http://pihole:8080
       - homepage.widget.key=${PIHOLE_API}
       - homepage.widget.version=6
+      - tsbridge.enabled=true
+      - tsbridge.service.name=pihole
+      - tsbridge.service.port=8080
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
