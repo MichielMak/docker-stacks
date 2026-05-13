@@ -62,6 +62,11 @@ services:
 #      - --experimental.http3=true
       - --serversTransport.insecureSkipVerify=false
     labels:
+      tsbridge.enabled: "true"
+      tsbridge.service.name: traefik
+      tsbridge.service.backend_addr: "https://traefik:443"
+      tsbridge.service.insecure_skip_verify: "true"
+
       traefik.enable: "true"
 
       # Dashboard router
