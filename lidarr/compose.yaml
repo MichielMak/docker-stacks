@@ -32,9 +32,17 @@ services:
       - homepage.widget.key=${LIDARR_API}
       - traefik.enable=true
       - traefik.docker.network=npm
+      - traefik.http.routers.lidarr-api.rule=Host(`lidarr.${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.lidarr-api.entrypoints=websecure
+      - traefik.http.routers.lidarr-api.priority=100
+      - traefik.http.routers.lidarr-api.tls=true
+      - traefik.http.routers.lidarr-api.service=lidarr
       - traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN}`)
       - traefik.http.routers.lidarr.entrypoints=websecure
+      - traefik.http.routers.lidarr.priority=99
       - traefik.http.routers.lidarr.tls=true
+      - traefik.http.routers.lidarr.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.lidarr.service=lidarr
       - traefik.http.services.lidarr.loadbalancer.server.port=8686
     networks:
       - npm
