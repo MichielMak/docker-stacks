@@ -73,6 +73,7 @@ services:
       traefik.http.routers.traefik.rule: Host(`${TRAEFIK_HOST}`)
       traefik.http.routers.traefik.entrypoints: websecure
       traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.middlewares: "authentik-forwardauth@docker,sec-headers@docker"
 
       # Security headers (herbruikbare middleware)
       traefik.http.middlewares.sec-headers.headers.stsSeconds: 31536000
@@ -83,10 +84,6 @@ services:
       traefik.http.middlewares.sec-headers.headers.referrerPolicy: no-referrer-when-downgrade
       traefik.http.middlewares.sec-headers.headers.permissionsPolicy: geolocation=(), microphone=(), camera=()
 
-
-      # Optioneel: BasicAuth of ForwardAuth (Authentik)
-      # traefik.http.middlewares.dash-auth.basicauth.users: ${TRAEFIK_DASH_USERS}
-      # traefik.http.routers.traefik.middlewares: dash-auth,sec-headers@docker
 
       # Authentik ForwardAuth (domain-level)
       traefik.http.middlewares.authentik-forwardauth.forwardauth.address: http://server:9000/outpost.goauthentik.io/auth/traefik
