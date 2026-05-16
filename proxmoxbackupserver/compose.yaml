@@ -1,7 +1,7 @@
 services:
   pbs:
     container_name: pbs
-    image: ayufan/proxmox-backup-server:v4.1.9-1@sha256:5e48a7610c9e9c56c8616cb6346a4c603c19f2e61db1aece88433b0b2769364a
+    image: ayufan/proxmox-backup-server:v4.2.0-1@sha256:01f685a010025233b649417a317cc175b27920cd64f0429abfdc46a0d8d2e88a
     #ports:
     #  - 8007:8007
     mem_limit: 2G
