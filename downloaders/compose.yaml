@@ -51,7 +51,7 @@ services:
     networks:
       - npm
   sabnzbd:
-    image: 11notes/sabnzbd:5.0.1@sha256:9682a42b538291c0bd24596d5d18ee68c83dcbadf21daccf19346d1d57b894da
+    image: 11notes/sabnzbd:5.0.3@sha256:cb4cdad75b4884c3c3c49b28a7511e84339f8baec49e199f4abd24725c4b66ec
     <<: *lockdown
     container_name: sabnzbd
     user: "568:568"
@@ -93,7 +93,7 @@ services:
     networks:
       - npm
   pyload:
-    image: linuxserver/pyload-ng:0.5.0@sha256:7fb55017725e2e0b76204594936fa131b6d0f844f39e6ef58d173ef638820f7b
+    image: linuxserver/pyload-ng:0.5.0@sha256:c631b2644eb1537efbaeda20adf0dc53eedaf7d743b094ea17da65c7afacfed1
     container_name: pyload
     environment:
       - PUID=${PUID}
