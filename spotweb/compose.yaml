@@ -20,7 +20,6 @@ services:
     #     - 81:80
     volumes:
       - ${DOCKER_DATA_DIR}/spotweb/config:/config
-      - ${DOCKER_DATA_DIR}/spotweb/patches/dbeng_pdo_mysql.php:/var/www/spotweb/lib/dbeng/dbeng_pdo_mysql.php:ro
     networks:
       - npm
     labels:
