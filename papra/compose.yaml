@@ -11,6 +11,13 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/papra/config:/app/app-data
     user: ${PUID}:${PGID}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.papra.rule=Host(`papra.${DOMAIN}`)
+      - traefik.http.routers.papra.entrypoints=websecure
+      - traefik.http.routers.papra.tls=true
+      - traefik.http.services.papra.loadbalancer.server.port=1221
     networks:
       - npm
 networks:
