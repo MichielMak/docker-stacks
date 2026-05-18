@@ -26,6 +26,13 @@
   "dependencyDashboardAutoclose": false,
   "rebaseWhen": "behind-base-branch",
   "branchConcurrentLimit": 10,
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"],
+    "schedule": ["at any time"],
+    "minimumReleaseAge": "0 hours",
+    "prPriority": 5
+  },
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
   ],
