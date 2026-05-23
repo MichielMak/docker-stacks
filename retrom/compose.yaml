@@ -1,7 +1,7 @@
 services:
   retrom:
     container_name: retrom
-    image: ghcr.io/jmberesford/retrom-service:0.8.2@sha256:fc96ff0f0919c8ede4d2f565792b14808548276c8c14493e3653f4e0ee3cfd76
+    image: ghcr.io/jmberesford/retrom-service:0.8.2@sha256:81452d830535dd721659909d17b3733b6479981329e099945c42bc00f5e698e6
 #    ports:
 #      - 5101:5101
     volumes:
