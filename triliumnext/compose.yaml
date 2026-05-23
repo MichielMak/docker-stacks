@@ -8,6 +8,13 @@ services:
     #      - "8080:8080"
     volumes:
       - ${DOCKER_DATA_DIR}/triliumnext/config:/home/node/trilium-data
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.triliumnext.rule=Host(`trilium.${DOMAIN}`)
+      - traefik.http.routers.triliumnext.entrypoints=websecure
+      - traefik.http.routers.triliumnext.tls=true
+      - traefik.http.services.triliumnext.loadbalancer.server.port=8080
     networks:
       - npm
 networks:
