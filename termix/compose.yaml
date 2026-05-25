@@ -25,7 +25,7 @@ services:
       - traefik.http.routers.termix.entrypoints=websecure
       - traefik.http.routers.termix.tls=true
       - traefik.http.services.termix.loadbalancer.server.port=8080
-      - homepage.group=Tools
+      - homepage.group=Infra
       - homepage.name=Termix
       - homepage.icon=termix.png
       - homepage.href=https://termix.${DOMAIN}/
