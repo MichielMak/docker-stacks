@@ -18,6 +18,13 @@ services:
     ports:
       - 69:69/udp
     #      - 8080:80 #optional
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.netbootxyz.rule=Host(`netbootxyz.${DOMAIN}`)
+      - traefik.http.routers.netbootxyz.entrypoints=websecure
+      - traefik.http.routers.netbootxyz.tls=true
+      - traefik.http.services.netbootxyz.loadbalancer.server.port=3000
+      - traefik.docker.network=npm
     networks:
       - npm
 networks:
