@@ -21,7 +21,7 @@ services:
     labels:
       - homepage.group=Infra
       - homepage.name=Borg UI
-      - homepage.icon=borg-ui-dark
+      - homepage.icon=sh-borg-ui
       - homepage.href=http://borg.${DOMAIN}/
       - homepage.description=BorgBackup web interface
       - traefik.enable=true
