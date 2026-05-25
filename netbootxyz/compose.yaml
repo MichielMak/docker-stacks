@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     ports:
       - 69:69/udp
-      - 8080:8080 #optional
+      - 8080:80 #optional
     labels:
       - traefik.enable=true
       - traefik.http.routers.netbootxyz.rule=Host(`netbootxyz.${DOMAIN}`)
