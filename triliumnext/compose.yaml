@@ -16,7 +16,7 @@ services:
       - traefik.http.routers.triliumnext.tls=true
       - traefik.http.services.triliumnext.loadbalancer.server.port=8080
       - homepage.group=Media
-      - homepage.name=Trilium Notes
+      - homepage.name=Trilium
       - homepage.icon=trilium.png
       - homepage.href=https://trilium.${DOMAIN}/
       - homepage.description=Hierarchical note taking application with focus on building large personal knowledge bases
