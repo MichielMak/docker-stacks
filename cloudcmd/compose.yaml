@@ -5,7 +5,7 @@ services:
       - ${MEDIA_DIR}:/media
       - ${OVERIG_DIR}:/overig
       - ${DEEMIX_DIR}:/deemix
-    image: coderaiser/cloudcmd:19.17.0@sha256:c3802a263dc3b84947b245c6e1a7952dc17eff77628c6dbae55ee586ce6cf47b
+    image: coderaiser/cloudcmd:19.18.0@sha256:12d097483cb2e7d0b06551102bc8fe1327ec9e7f7083110dc4a59b8d7b702bd8
     environment:
       - CLOUDCMD_THEME=dark
     labels:
