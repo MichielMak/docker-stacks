@@ -30,17 +30,13 @@
   "vulnerabilityAlerts": {
     "addLabels": ["security"],
     "schedule": ["at any time"],
-    "minimumReleaseAge": "0 hours"
+    "minimumReleaseAge": "0 hours",
+    "prPriority": 5
   },
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
   ],
   "packageRules": [
-    {
-      "description": "Prioritize vulnerability alert PRs",
-      "isVulnerabilityAlert": true,
-      "prPriority": 5
-    },
     {
       "description": "Docker: allow only stable SemVer or CalVer",
       "matchDatasources": [
