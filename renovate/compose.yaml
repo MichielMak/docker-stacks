@@ -15,17 +15,11 @@ services:
     restart: "no"  # Don't restart, just run once
     command: >
       sh -c "
-        echo 'Installing dependencies...'
-        npm install --silent jsonwebtoken @octokit/rest
-        echo 'Generating GitHub App installation token...'
-        node src/generate-token.js > /app/token/token.txt 2>&1
+        node src/generate-token.js > /app/token/token.txt
         if [ $? -eq 0 ]; then
           echo 'Token generated successfully'
-          cat /app/token/token.txt | head -c 20
-          echo '...'
         else
-          echo 'Token generation failed:'
-          cat /app/token/token.txt
+          echo 'Token generation failed'
           exit 1
         fi
       "
