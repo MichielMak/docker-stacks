@@ -1,7 +1,7 @@
 services:
   bambuddy:
     container_name: bambuddy
-    image: ghcr.io/maziggy/bambuddy:0.2.4.3@sha256:63a7ba56ce743c43ede46db0828d0f00971146bec9c08f512a9e2a72eebde4d8
+    image: ghcr.io/maziggy/bambuddy:0.2.4.4@sha256:b2f4323414d7bc70810967ee635fa99d46537ca04295759420aa0e8a533c756f
     environment:
       - TZ=Europe/Amsterdam
       - PORT=8000
