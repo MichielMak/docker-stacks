@@ -44,7 +44,7 @@ services:
       - 1.1.1.1      
 
   opencloud-collabora:
-    image: collabora/code:25.04.9.4.1@sha256:fe49c08c27e102c1877ad4ef2ac1a7bd8ccd2dfaa6641d4533389c204a92bb88
+    image: collabora/code:25.04.10.3.1@sha256:a51dd5d1741dea5d19f49d9997de2c321bf582076015ec4015941f3f00a5f4c0
     container_name: opencloud-collabora
     restart: always
     entrypoint: ['/bin/bash', '-c']
