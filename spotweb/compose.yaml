@@ -35,7 +35,7 @@ services:
       - traefik.http.routers.spotweb.tls=true
       - traefik.http.services.spotweb.loadbalancer.server.port=80
   spotweb_db:
-    image: linuxserver/mariadb:11.4.11@sha256:2d06ae7bc1c259e0762c654f2619db0eb93925d11a6d38041f24f3bcb16408e8
+    image: linuxserver/mariadb:11.4.12@sha256:9f24c5bea49f85077cecba60e198b2c588b13c17f4ca394dd83916a95a58ca70
     container_name: spotwebdb
     restart: unless-stopped
     environment:
