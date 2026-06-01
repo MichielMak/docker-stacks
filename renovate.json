@@ -37,11 +37,6 @@
   ],
   "packageRules": [
     {
-      "description": "Prioritize vulnerability alert PRs",
-      "isVulnerabilityAlert": true,
-      "prPriority": 5
-    },
-    {
       "description": "Docker: allow only stable SemVer or CalVer",
       "matchDatasources": [
         "docker"
