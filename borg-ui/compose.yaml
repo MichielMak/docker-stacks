@@ -1,6 +1,6 @@
 services:
   borg-ui:
-    image: ainullcode/borg-ui:2.2.3@sha256:0922157e8f77a1b2bd23cd09366a458ea6de07fd9306aa1485f9cfe623eca17f
+    image: ainullcode/borg-ui:2.2.4@sha256:4a40e157f4116d2e320d549f782b175d594c344f3e2b0a8a5773cbdb5c70342a
     container_name: borg-web-ui
     restart: unless-stopped
     #ports:
