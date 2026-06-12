@@ -25,6 +25,27 @@ services:
     networks:
       - npm
 
+  # One-off experiment: probe whether an automated Deezer login (via the
+  # shared headless-chrome container) survives reCAPTCHA. Runs once and
+  # exits; check this container's logs in Komodo for the result, and
+  # /data/auto_login_*.png on the host for a screenshot if it got stuck.
+  # Remove this service again once the experiment is done.
+  arl-sentinel-autologin-test:
+    image: python:3.13-slim@sha256:f82c96458eedc847b233e582eb31336f4954b39cae020b6dcf5b3ed0e5cbcd74
+    container_name: arl-sentinel-autologin-test
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python auto_login.py"
+    environment:
+      - TZ=Europe/Amsterdam
+      - DEEZER_EMAIL=${DEEZER_EMAIL}
+      - DEEZER_PASSWORD=${DEEZER_PASSWORD}
+    volumes:
+      - ${ARL_SENTINEL_DATA_DIR:-/mnt/ssd0/michiel/arl-sentinel}/app:/app
+      - ${ARL_SENTINEL_DATA_DIR:-/mnt/ssd0/michiel/arl-sentinel}/data:/data
+    restart: "no"
+    networks:
+      - npm
+
   arl-dockerproxy:
     image: linuxserver/socket-proxy:3.2.19@sha256:de8215f99a9ce4bbff5d8853d7a5ae4bbe6baa0ed868046a0251320a4fb05aa2
     container_name: arl-dockerproxy
