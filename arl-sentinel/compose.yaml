@@ -14,9 +14,9 @@ services:
       - DEEZER_EMAIL=${DEEZER_EMAIL}
       - DEEZER_PASSWORD=${DEEZER_PASSWORD}
     volumes:
-      - ${ARL_SENTINEL_DATA_DIR:-/mnt/ssd0/michiel/arl-sentinel}/app:/app
-      - ${ARL_SENTINEL_DATA_DIR:-/mnt/ssd0/michiel/arl-sentinel}/data:/data
-      - ${ARL_SENTINEL_DATA_DIR:-/mnt/ssd0/michiel/arl-sentinel}/inbox:/inbox
+      - ${DOCKER_DATA_DIR}/arl-sentinel/app:/app
+      - ${DOCKER_DATA_DIR}/arl-sentinel/data:/data
+      - ${DOCKER_DATA_DIR}/arl-sentinel/inbox:/inbox
       - ${DOCKER_DATA_DIR}/deemix/config:/targets/deemix
       - ${DOCKER_DATA_DIR}/spotizerr/data/creds:/targets/spotizerr
     restart: unless-stopped
