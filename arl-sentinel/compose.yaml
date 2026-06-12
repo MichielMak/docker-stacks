@@ -30,7 +30,8 @@ services:
     container_name: arl-dockerproxy
     environment:
       - CONTAINERS=1
-      - POST=1
+      - POST=0
+      - ALLOW_RESTARTS=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
