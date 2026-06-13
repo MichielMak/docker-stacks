@@ -1,6 +1,6 @@
 services:
   arl-sentinel:
-    image: python:3.13-slim@sha256:f82c96458eedc847b233e582eb31336f4954b39cae020b6dcf5b3ed0e5cbcd74
+    image: python:3.14-slim@sha256:d7a925f9eb9639a93e455b9f12c167569358818c0f62b51b88edbc8fcf34c421
     container_name: arl-sentinel
     working_dir: /app
     command: sh -c "pip install --no-cache-dir -r requirements.txt && python sentinel.py"
