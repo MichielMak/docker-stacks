@@ -23,6 +23,7 @@
   "automergeType": "pr",
   "platformAutomerge": true,
   "pruneStaleBranches": true,
+  "recreateWhen": "always",
   "dependencyDashboardAutoclose": false,
   "rebaseWhen": "behind-base-branch",
   "branchConcurrentLimit": 10,
