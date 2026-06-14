@@ -1,6 +1,6 @@
 services:
   teslamate:
-    image: teslamate/teslamate:3.1.0@sha256:b7b8b21869d789d043f62b404dd689f55c601ef7d02222e92c0f5d596d0b1044
+    image: teslamate/teslamate:4.0.0@sha256:1c4f03e1c8a8e43269ac24c78a2f4a4a021637bbedf600d4b951ec1223889a4e
     container_name: teslamate
     restart: unless-stopped
     #ports:
@@ -50,7 +50,7 @@ services:
       - npm
 
   teslamate-grafana:
-    image: teslamate/grafana:3.1.0@sha256:8d7287f44b1eefb39e649175aa14615df648c04a3162da9461d07c8a9ea1c7e9
+    image: teslamate/grafana:4.0.0@sha256:5b974c82b7684fbe071778e5e5e5f542dc9caffc2cacafb750edf8bf92124beb
     container_name: teslamate-grafana
     restart: unless-stopped
     #ports:
