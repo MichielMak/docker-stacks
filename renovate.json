@@ -163,14 +163,15 @@
       "versioning": "loose"
     },
     {
-      "description": "Don't resurrect closed digest PRs",
-      "matchManagers": [
-        "docker-compose"
+      "description": "Skip digest-only updates for versioned images — version bumps already bundle the new digest",
+      "matchDatasources": [
+        "docker"
       ],
       "matchUpdateTypes": [
         "digest"
       ],
-      "recreateWhen": "never"
+      "matchCurrentVersion": "!/^(latest|stable|edge|release|rolling|master|main)$/i",
+      "enabled": false
     }
   ],
   "hostRules": [
