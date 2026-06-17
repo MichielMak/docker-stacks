@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:33.0.2@sha256:cc73f7219452bb96b318af66603056f7465819508ac51d7fa47f59248ef39594
+    image: linuxserver/nextcloud:34.0.0@sha256:2e3e84d5f6fd09c4fce586a2de66a39990eb74e985463827387ad7434b82dd66
     container_name: nextcloud
     restart: unless-stopped
     depends_on:
@@ -31,7 +31,7 @@ services:
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
   nextclouddb:
-    image: linuxserver/mariadb:11.4.9@sha256:8ea7a10e36dfe229cd4f91a12fb2c8ac40bd0c4b2276e472de8f7835aa360fcd
+    image: linuxserver/mariadb:11.4.12@sha256:adbb0142f55abd0e913b8fdd017f637d2318d434e74755908c768399e96403ec
     container_name: nextclouddb
     environment:
       - PUID=${PUID}
@@ -47,7 +47,7 @@ services:
     networks:
       - npm
   nextcloud-redis:
-    image: redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    image: redis:8.8.0-alpine@sha256:09160599abd229764c0fb44cb6be640294e1d360a54b19985ab4843dcf2d90f1
     container_name: nextcloud-redis
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
@@ -55,7 +55,7 @@ services:
       - npm
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
-    image: onlyoffice/documentserver:9.3.1@sha256:53a06109f1f4029a78f913a061e14f01bff023d109024073a13d4416b54d2195
+    image: onlyoffice/documentserver:9.4.0@sha256:e3da62a847b9a5d51a11f73cfea1d9c13c3be3809614490d4edddcf01dcf919b
     restart: unless-stopped
     environment:
       - JWT_SECRET=${ONLYOFFICE_JWT_SECRET}

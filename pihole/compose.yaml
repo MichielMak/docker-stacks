@@ -2,7 +2,7 @@
 services:
   pihole:
     container_name: pihole
-    image: pihole/pihole:2026.04.0@sha256:300cc8f9e966b00440358aafef21f91b32dfe8887e8bd9a6193ed1c4328655d4
+    image: pihole/pihole:2026.06.0@sha256:8ea95136e7c8c15b42d88eadf1a3875421aa1be30ad39e50f661188cc986fb27
     environment:
       TZ: Europe/Amsterdam
       FTLCONF_webserver_port: 8080
@@ -28,7 +28,7 @@ services:
       - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
       - traefik.http.routers.pihole.entrypoints=websecure
       - traefik.http.routers.pihole.tls=true
-      - traefik.http.routers.pihole.tls.certresolver=letsencrypt
+#      - traefik.http.routers.pihole.tls.certresolver=letsencrypt
       - traefik.http.services.pihole.loadbalancer.server.port=8080
     restart: unless-stopped
 networks:

@@ -6,7 +6,7 @@ networks:
 
 services:
   termix:
-    image: ghcr.io/lukegus/termix:release-2.0.0@sha256:78ee50bb5274106456eaa2e1826fca9e477570d82e0f30fde66b6a1421005d56
+    image: ghcr.io/lukegus/termix:release-2.4.0@sha256:36bedb6ea162098cdc74e22ca2074ddc5d2e9b55d7560950c40bfc663f7d8e2d
     container_name: termix
     restart: unless-stopped
     volumes:
@@ -25,7 +25,7 @@ services:
       - traefik.http.routers.termix.entrypoints=websecure
       - traefik.http.routers.termix.tls=true
       - traefik.http.services.termix.loadbalancer.server.port=8080
-      - homepage.group=Tools
+      - homepage.group=Infra
       - homepage.name=Termix
       - homepage.icon=termix.png
       - homepage.href=https://termix.${DOMAIN}/

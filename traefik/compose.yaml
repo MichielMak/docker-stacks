@@ -4,7 +4,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v3.6.13@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48
+    image: traefik:v3.7.5@sha256:d6858791f9e74df44ca4014166647c41cdc2abd3bf2a71b832ca4e1c6a91b257
     container_name: traefik
     restart: unless-stopped
     networks:
@@ -21,6 +21,7 @@ services:
       TRUENAS_IP: ${TRUENAS_IP}
       PIHOLE2_IP: ${PIHOLE2_IP}
       JETKVM_IP: ${JETKVM_IP}
+      N8N_IP: ${N8N_IP}
     command:
       # Providers
       - --providers.docker=true
@@ -61,12 +62,18 @@ services:
 #      - --experimental.http3=true
       - --serversTransport.insecureSkipVerify=false
     labels:
+      tsbridge.enabled: "true"
+      tsbridge.service.name: traefik
+      tsbridge.service.backend_addr: "https://traefik:443"
+      tsbridge.service.insecure_skip_verify: "true"
+
       traefik.enable: "true"
 
       # Dashboard router
       traefik.http.routers.traefik.rule: Host(`${TRAEFIK_HOST}`)
       traefik.http.routers.traefik.entrypoints: websecure
       traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.middlewares: "authentik-forwardauth@docker,sec-headers@docker"
 
       # Security headers (herbruikbare middleware)
       traefik.http.middlewares.sec-headers.headers.stsSeconds: 31536000
@@ -77,10 +84,6 @@ services:
       traefik.http.middlewares.sec-headers.headers.referrerPolicy: no-referrer-when-downgrade
       traefik.http.middlewares.sec-headers.headers.permissionsPolicy: geolocation=(), microphone=(), camera=()
 
-
-      # Optioneel: BasicAuth of ForwardAuth (Authentik)
-      # traefik.http.middlewares.dash-auth.basicauth.users: ${TRAEFIK_DASH_USERS}
-      # traefik.http.routers.traefik.middlewares: dash-auth,sec-headers@docker
 
       # Authentik ForwardAuth (domain-level)
       traefik.http.middlewares.authentik-forwardauth.forwardauth.address: http://server:9000/outpost.goauthentik.io/auth/traefik

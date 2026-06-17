@@ -1,6 +1,6 @@
 services:
   papra:
-    image: ghcr.io/papra-hq/papra:latest@sha256:1de52370c82d0eb9aad101f5f06b92272cbae850f0ca3dc623fc96835f57ad68
+    image: ghcr.io/papra-hq/papra:latest@sha256:feb8c6e03bbbd1a730bc606fe3fb5a0fe13a71edb4f7d44b7f8f6940cca76a3a
     container_name: papra
     restart: unless-stopped
 #    ports:
@@ -11,6 +11,13 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/papra/config:/app/app-data
     user: ${PUID}:${PGID}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.papra.rule=Host(`papra.${DOMAIN}`)
+      - traefik.http.routers.papra.entrypoints=websecure
+      - traefik.http.routers.papra.tls=true
+      - traefik.http.services.papra.loadbalancer.server.port=1221
     networks:
       - npm
 networks:

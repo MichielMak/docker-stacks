@@ -30,7 +30,7 @@ services:
       TZ: Europe/Amsterdam
     group_add:
       - ${PGID}
-    image: ghcr.io/moghtech/komodo-core:2.1.2@sha256:8a7dbba232e4e49797bb412be5f78207c89fcf22cc2727b38631ae30f7518a4c
+    image: ghcr.io/moghtech/komodo-core:2.2.0@sha256:7afbcfa99674bf3f51539ec3aa7235795e9b994af9b7099a6c4c654d5d8a5b6b
     networks:
       - komodo
       - npm
@@ -53,6 +53,7 @@ services:
       - homepage.widget.url=http://core:30160
       - homepage.widget.key=${KOMODO_API_KEY}
       - homepage.widget.secret=${KOMODO_API_SECRET}
+      - homepage.widget.showStacks=true
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.komodo.rule=Host(`komodo.${DOMAIN}`)
@@ -65,7 +66,7 @@ services:
       MONGO_INITDB_DATABASE: komodo
       MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
       MONGO_INITDB_ROOT_USERNAME: komodo
-    image: mongo@sha256:7abfba0d07c9330373f8173981ea4d09cd8a82cdf0e86ccaf7008848d1d24f62
+    image: mongo@sha256:b679e74db730c6fc4aa7f2b6b0d360692fcc0f045d063cf9283511da732f7ffb
     networks:
       - komodo
     restart: unless-stopped
@@ -84,7 +85,7 @@ services:
       PERIPHERY_SSL_ENABLED: true
       PERIPHERY_CORE_PUBLIC_KEYS: ${KOMODO_PUBLIC_KEY}
       TZ: Europe/Amsterdam
-    image: ghcr.io/moghtech/komodo-periphery:2.1.2@sha256:8ac9f2ef9c1461b95c862d445da00253005e7094d1e30f5b7b04b8d60ca7a3d6
+    image: ghcr.io/moghtech/komodo-periphery:2.2.0@sha256:7fb1a4807d125ce036a17d37c940b4001402afcaf342a2c720c98d096b1b54da
     networks:
       - komodo
       - npm

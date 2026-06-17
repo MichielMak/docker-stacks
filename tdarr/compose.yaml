@@ -1,7 +1,7 @@
 services:
   tdarr:
     container_name: tdarr
-    image: ghcr.io/haveagitgat/tdarr:2.69.01@sha256:29995d5fd044fd3e1493942970c42c6fdf9be0ded36ec3a527b2493f39a8c6df
+    image: ghcr.io/haveagitgat/tdarr:2.78.01@sha256:e5163f305367b47baacee761aa98f420fb4e46a8e5db22b197f23a550f96dd6b
     restart: unless-stopped
     devices:
       - /dev/dri/:/dev/dri/

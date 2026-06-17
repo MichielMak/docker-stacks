@@ -1,6 +1,6 @@
 services:
   triliumnext:
-    image: triliumnext/trilium:v0.102.2@sha256:f1a2fd88e7032d60f863231ce94348e906bcd6a5fa043801badd5896c20c064d
+    image: triliumnext/trilium:v0.103.0@sha256:8e6bc939a6d5dbeed42d1b5b155bc790b1c28ca3ac414382d04d626903c62081
     restart: unless-stopped
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
@@ -8,6 +8,18 @@ services:
     #      - "8080:8080"
     volumes:
       - ${DOCKER_DATA_DIR}/triliumnext/config:/home/node/trilium-data
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.triliumnext.rule=Host(`trilium.${DOMAIN}`)
+      - traefik.http.routers.triliumnext.entrypoints=websecure
+      - traefik.http.routers.triliumnext.tls=true
+      - traefik.http.services.triliumnext.loadbalancer.server.port=8080
+      - homepage.group=Media
+      - homepage.name=Trilium
+      - homepage.icon=trilium.png
+      - homepage.href=https://trilium.${DOMAIN}/
+      - homepage.description=Hierarchical note taking application with focus on building large personal knowledge bases
     networks:
       - npm
 networks:

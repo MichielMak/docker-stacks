@@ -9,7 +9,7 @@ services:
     networks:
       - npm
     restart: unless-stopped
-    image: wisdomsky/cloudflared-web:2026.3.0@sha256:356aae0425f9a30a33b01ed92748305875bad68b0ce8ae6cb79428aee1c2a10b
+    image: wisdomsky/cloudflared-web:2026.6.0@sha256:f85539410c5ee30266db30d13b17c835f44e56531e515f5c45e91e6803728e7d
     labels:
       - homepage.group=Infra
       - homepage.name=Cloudflared
@@ -24,6 +24,7 @@ services:
       - traefik.http.routers.cloudflared.rule=Host(`cloudflared.${DOMAIN}`)
       - traefik.http.routers.cloudflared.entrypoints=websecure
       - traefik.http.routers.cloudflared.tls=true
+      - traefik.http.routers.cloudflared.middlewares=authentik-forwardauth@docker
       - traefik.http.services.cloudflared.loadbalancer.server.port=14333
 networks:
   npm:

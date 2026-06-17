@@ -1,6 +1,6 @@
 services:
   radarr:
-    image: linuxserver/radarr:6.1.1@sha256:b01097ad2d948c9f5eca39eb60bb529e2e55b0738c4bf7db09383bef0abab59d
+    image: linuxserver/radarr:6.2.1@sha256:7b45af3b660f5ff5f7d6d625bfa99960cb9265e902f1bef136486f6d2be73ee9
     container_name: radarr
     environment:
       - PUID=${PUID}
@@ -39,7 +39,7 @@ services:
     networks:
       - npm
   radarrexternal:
-    image: linuxserver/radarr:6.1.1@sha256:b01097ad2d948c9f5eca39eb60bb529e2e55b0738c4bf7db09383bef0abab59d
+    image: linuxserver/radarr:6.2.1@sha256:7b45af3b660f5ff5f7d6d625bfa99960cb9265e902f1bef136486f6d2be73ee9
     container_name: radarrexternal
     environment:
       - PUID=${PUID}

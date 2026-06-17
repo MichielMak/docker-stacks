@@ -1,5 +1,6 @@
 services:
   tsbridge:
+    container_name: tsbridge
     image: ghcr.io/jtdowney/tsbridge:v0.15.0@sha256:6e03c0072b434d46e97555dc9a11a915aabdce515765678c164a95a928e994fd
     command: ["--provider", "docker"]
     volumes:
@@ -15,7 +16,8 @@ services:
       - "tsbridge.tailscale.default_tags=tag:michiel-docker"
     networks:
       - npm
-
+      - my-macvlan-net 
+    restart: unless-stopped
   # Example: Add your own services here and label them to expose via Tailscale
   # Uncomment and customize as needed:
   #
@@ -31,6 +33,8 @@ services:
 
 networks:
   npm:
+    external: true
+  my-macvlan-net:
     external: true
 
 volumes:

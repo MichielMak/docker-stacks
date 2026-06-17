@@ -1,6 +1,6 @@
 services:
   borg-ui:
-    image: ainullcode/borg-ui:2.0.5@sha256:867c73983e5bef5491cdee1c34acf85fe8a9fe4f6ad5a9381e7ca2c382359ce6
+    image: ainullcode/borg-ui:2.2.5@sha256:e51b3d2e6cb38d1ba127ef60ba442c1e157965327196e6f7afb69f30c0ba99d1
     container_name: borg-web-ui
     restart: unless-stopped
     #ports:
@@ -21,7 +21,7 @@ services:
     labels:
       - homepage.group=Infra
       - homepage.name=Borg UI
-      - homepage.icon=borgbackup.png
+      - homepage.icon=sh-borg-ui
       - homepage.href=http://borg.${DOMAIN}/
       - homepage.description=BorgBackup web interface
       - traefik.enable=true
@@ -33,7 +33,7 @@ services:
       - npm
 
   borg-redis:
-    image: redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    image: redis:8.8.0-alpine@sha256:09160599abd229764c0fb44cb6be640294e1d360a54b19985ab4843dcf2d90f1
     container_name: borg-redis
     restart: unless-stopped
     command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru
