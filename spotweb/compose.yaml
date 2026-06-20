@@ -1,6 +1,6 @@
 services:
   spotweb:
-    image: jgeusebroek/spotweb:latest@sha256:1c3fdac50f4c630794ae67b33ecab014dea4647a1eb95bfd2b1b9fb00f57630b
+    image: jgeusebroek/spotweb:latest@sha256:34dc0adf3b5792f994df421978cd0dcdba55626d8e91b931fc4261e9401b43ae
     container_name: spotweb
     restart: unless-stopped
     environment:
