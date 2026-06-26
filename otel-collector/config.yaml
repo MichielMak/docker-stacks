@@ -19,11 +19,21 @@ receivers:
         enabled: true
       container.memory.percent:
         enabled: true
+      container.memory.usage.limit:
+        enabled: true
+      container.memory.usage.total:
+        enabled: true
       container.network.io.usage.rx_bytes:
         enabled: true
       container.network.io.usage.tx_bytes:
         enabled: true
+      container.network.io.usage.rx_dropped:
+        enabled: true
+      container.network.io.usage.tx_dropped:
+        enabled: true
       container.blockio.io_service_bytes_recursive:
+        enabled: true
+      container.blockio.io_serviced_recursive:
         enabled: true
 
   # Host-level metrics (CPU, memory, disk, filesystem, network).
@@ -154,6 +164,9 @@ processors:
     detectors:
       - env
       - system
+      - docker
+    timeout: 2s
+    override: false
     system:
       hostname_sources:
         - os
