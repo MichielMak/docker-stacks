@@ -19,7 +19,7 @@ services:
       retries: 3
       start_period: 30s
     volumes:
-      - ${DOCKER_DATA_DIR}/signoz/postgres:/var/lib/postgresql/data
+      - ${DOCKER_DATA_DIR}/signoz/postgres:/var/lib/postgresql
     networks:
       - signoz-network
 

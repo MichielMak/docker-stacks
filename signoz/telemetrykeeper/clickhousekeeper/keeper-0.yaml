@@ -16,7 +16,7 @@ keeper_server:
   server_id: 0
   snapshot_storage_path: /var/lib/clickhouse/coordination/snapshots
   tcp_port: 9181
-listen_host: 0.0.0.0
+listen_host: '::'
 logger:
   console: true
   level: information
