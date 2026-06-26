@@ -16,7 +16,7 @@ services:
     volumes:
       - ./config.yaml:/etc/otelcol-contrib/config.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /mnt/.ix-apps/docker/containers:/var/lib/docker/containers:ro
       - /:/hostfs:ro
     networks:
       - npm
