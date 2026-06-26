@@ -87,6 +87,57 @@ receivers:
       - type: remove
         field: attributes.time
 
+  # Scrape Prometheus /metrics endpoints exposed by self-hosted apps on the
+  # `npm` network. Each job sets a stable job name so the source is easy to
+  # find in SigNoz (Metrics Explorer -> filter by `job`).
+  prometheus:
+    config:
+      scrape_configs:
+        # Immich API metrics. Requires IMMICH_TELEMETRY_INCLUDE=all on the
+        # immich-server container (set by the OTLP/telemetry stack, not here).
+        - job_name: immich-api
+          scrape_interval: 30s
+          metrics_path: /metrics
+          static_configs:
+            - targets: ["immich-server:8081"]
+
+        # Immich microservices metrics (same container, separate port).
+        - job_name: immich-microservices
+          scrape_interval: 30s
+          metrics_path: /metrics
+          static_configs:
+            - targets: ["immich-server:8082"]
+
+        # Uptime-Kuma per-monitor metrics. /metrics is protected by basic auth
+        # (login credentials or an API key).
+        - job_name: uptime-kuma
+          scrape_interval: 30s
+          metrics_path: /metrics
+          basic_auth:
+            username: ${env:UPTIME_KUMA_METRICS_USER}
+            password: ${env:UPTIME_KUMA_METRICS_PASSWORD}
+          static_configs:
+            - targets: ["uptime-kuma:3001"]
+
+        # Healthchecks check/tag status metrics. The read-only API key is part
+        # of the metrics path (no separate auth header).
+        - job_name: healthchecks
+          scrape_interval: 30s
+          metrics_path: /projects/${env:HEALTHCHECKS_PROJECT_UUID}/metrics/${env:HEALTHCHECKS_METRICS_KEY}
+          static_configs:
+            - targets: ["healthchecks:8000"]
+
+        # slskd transfer/performance metrics. Endpoint shares the public web
+        # port, so basic auth is kept enabled.
+        - job_name: slskd
+          scrape_interval: 30s
+          metrics_path: /metrics
+          basic_auth:
+            username: ${env:SLSKD_METRICS_USERNAME}
+            password: ${env:SLSKD_METRICS_PASSWORD}
+          static_configs:
+            - targets: ["slskd:5030"]
+
 processors:
   resourcedetection/system:
     detectors:
@@ -111,6 +162,7 @@ service:
       receivers:
         - docker_stats
         - hostmetrics
+        - prometheus
       processors:
         - resourcedetection/system
         - batch

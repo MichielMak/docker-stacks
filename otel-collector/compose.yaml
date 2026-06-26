@@ -13,6 +13,14 @@ services:
     user: "0:0"
     environment:
       - TZ=${TZ}
+      # Credentials/identifiers for Prometheus scrape targets, referenced in
+      # config.yaml as ${env:VAR}. Komodo injects these from the env files.
+      - UPTIME_KUMA_METRICS_USER=${UPTIME_KUMA_METRICS_USER}
+      - UPTIME_KUMA_METRICS_PASSWORD=${UPTIME_KUMA_METRICS_PASSWORD}
+      - HEALTHCHECKS_PROJECT_UUID=${HEALTHCHECKS_PROJECT_UUID}
+      - HEALTHCHECKS_METRICS_KEY=${HEALTHCHECKS_METRICS_KEY}
+      - SLSKD_METRICS_USERNAME=${SLSKD_METRICS_USERNAME}
+      - SLSKD_METRICS_PASSWORD=${SLSKD_METRICS_PASSWORD}
     volumes:
       - ./config.yaml:/etc/otelcol-contrib/config.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
