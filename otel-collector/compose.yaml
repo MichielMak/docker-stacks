@@ -21,7 +21,6 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=host.name=${OTEL_COLLECTOR_HOST:-dockerhost}
       # Credentials/identifiers for Prometheus scrape targets, referenced in
       # config.yaml as ${env:VAR}. Komodo injects these from the env files.
-      - UPTIME_KUMA_METRICS_USER=${UPTIME_KUMA_METRICS_USER}
       - UPTIME_KUMA_METRICS_PASSWORD=${UPTIME_KUMA_METRICS_PASSWORD}
       - HEALTHCHECKS_PROJECT_UUID=${HEALTHCHECKS_PROJECT_UUID}
       - HEALTHCHECKS_METRICS_KEY=${HEALTHCHECKS_METRICS_KEY}
