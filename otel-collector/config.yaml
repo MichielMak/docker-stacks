@@ -78,10 +78,10 @@ receivers:
             - tracefs
           match_type: strict
 
-  # Dynamically creates one filelog receiver per running container.
-  # docker_observer provides container_name and labels so every log record
-  # arrives in SigNoz with service.name = the container name and
-  # container.name set, instead of a raw container ID.
+  # Dynamically creates one filelog receiver per running container port.
+  # docker_observer exposes `name` (container name) and `labels` so every
+  # log record arrives in SigNoz with container.name and service.name set
+  # (service.name = com.docker.compose.service label) instead of a raw ID.
   receiver_creator:
     watch_observers: [docker_observer]
     receivers:
@@ -95,8 +95,8 @@ receivers:
           include_file_name: false
           resource:
             container.id: '`container_id`'
-            container.name: '`container_name`'
-            service.name: '`container_name`'
+            container.name: '`name`'
+            service.name: '`labels["com.docker.compose.service"]`'
           operators:
             - type: json_parser
               id: parser-docker
