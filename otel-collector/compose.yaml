@@ -13,6 +13,12 @@ services:
     user: "0:0"
     environment:
       - TZ=${TZ}
+      # Pin a stable host.name so SigNoz doesn't register a new host on every
+      # redeploy. The resourcedetection/system processor lists detectors as
+      # [env, system], so this env-based value takes precedence over Docker's
+      # random container hostname. Set OTEL_COLLECTOR_HOST in Komodo to the real
+      # Docker host name; defaults to `dockerhost` so it never churns.
+      - OTEL_RESOURCE_ATTRIBUTES=host.name=${OTEL_COLLECTOR_HOST:-dockerhost}
       # Credentials/identifiers for Prometheus scrape targets, referenced in
       # config.yaml as ${env:VAR}. Komodo injects these from the env files.
       - UPTIME_KUMA_METRICS_USER=${UPTIME_KUMA_METRICS_USER}
