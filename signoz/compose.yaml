@@ -4,7 +4,7 @@ services:
   # ---------------------------------------------------------------------------
   signoz-metastore-postgres-0:
     container_name: signoz-metastore-postgres-0
-    image: postgres:16@sha256:287eced1f33b59ed265ed13a60d3680dd7646d70c4dc0e785f59a470ebc03eeb
+    image: postgres:18@sha256:1a5b3e745bbd82d6deb146505e504da3c2f248cac15e431951b148fbe4f8613a
     restart: unless-stopped
     environment:
       - POSTGRES_DB=signoz
@@ -28,7 +28,7 @@ services:
   # ---------------------------------------------------------------------------
   signoz-telemetrykeeper-clickhousekeeper-0:
     container_name: signoz-telemetrykeeper-clickhousekeeper-0
-    image: clickhouse/clickhouse-keeper:25.5.6@sha256:5dd09e84fec538d5a65ec7191545d0ced2405c5f4f24692e279db29d281eb2ee
+    image: clickhouse/clickhouse-keeper:26.5.3@sha256:c0cd2c4fc2e81203e2d83020c6baa465c6caf48133a71666f98c9d30ec6575df
     restart: unless-stopped
     entrypoint:
       - /usr/bin/clickhouse-keeper
@@ -58,7 +58,7 @@ services:
   # ---------------------------------------------------------------------------
   signoz-telemetrystore-clickhouse-user-scripts:
     container_name: signoz-telemetrystore-clickhouse-user-scripts
-    image: clickhouse/clickhouse-server:25.5.6@sha256:4536143e22dc9bddb217c7e610f6b7ed5e6efd8fefdbc61acdeadb5d8022213a
+    image: clickhouse/clickhouse-server:26.5.3@sha256:890b67cd3a2a761a083024b61e108851c3af3f71f65fac75721f7c6cd39fa237
     command:
       - bash
       - -c
@@ -81,7 +81,7 @@ services:
   # ---------------------------------------------------------------------------
   signoz-telemetrystore-clickhouse-0-0:
     container_name: signoz-telemetrystore-clickhouse-0-0
-    image: clickhouse/clickhouse-server:25.5.6@sha256:4536143e22dc9bddb217c7e610f6b7ed5e6efd8fefdbc61acdeadb5d8022213a
+    image: clickhouse/clickhouse-server:26.5.3@sha256:890b67cd3a2a761a083024b61e108851c3af3f71f65fac75721f7c6cd39fa237
     restart: unless-stopped
     environment:
       - CLICKHOUSE_SKIP_USER_SETUP=1
