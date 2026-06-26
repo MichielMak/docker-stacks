@@ -7,6 +7,9 @@ services:
       - PGID=${PGID}
       - TZ=Europe/Amsterdam
       - SLSKD_REMOTE_CONFIGURATION=true
+      - SLSKD_METRICS=true
+      - SLSKD_METRICS_USERNAME=${SLSKD_METRICS_USERNAME}
+      - SLSKD_METRICS_PASSWORD=${SLSKD_METRICS_PASSWORD}
     volumes:
       - ${DOCKER_DATA_DIR}/slskd:/app
       - ${MEDIA_DIR}/downloads/slskd:/media/downloads/slskd
