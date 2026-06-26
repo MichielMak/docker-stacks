@@ -1,5 +1,12 @@
 # OpenTelemetry Collector (agent) — scrapes the Docker host and ships
 # container metrics, host metrics and container logs to the SigNoz ingester.
+extensions:
+  # Watches the Docker daemon for container start/stop events. Used by
+  # receiver_creator below to spin up one filelog receiver per container with
+  # the correct container.name / service.name already attached to each record.
+  docker_observer:
+    endpoint: unix:///var/run/docker.sock
+
 receivers:
   # Per-container CPU / memory / network / disk stats via the Docker API.
   docker_stats:
@@ -61,31 +68,36 @@ receivers:
             - tracefs
           match_type: strict
 
-  # Container stdout/stderr logs from the Docker json-file driver.
-  filelog/containers:
-    include:
-      - /var/lib/docker/containers/*/*-json.log
-    start_at: end
-    include_file_path: true
-    include_file_name: false
-    operators:
-      - type: json_parser
-        id: parser-docker
-        timestamp:
-          parse_from: attributes.time
-          layout: "%Y-%m-%dT%H:%M:%S.%LZ"
-      - type: regex_parser
-        id: extract_container_id
-        regex: '^.*containers/(?P<container_id>[^/]+)/.*\.log$'
-        parse_from: attributes["log.file.path"]
-      - type: move
-        from: attributes.container_id
-        to: resource["container.id"]
-      - type: move
-        from: attributes.log
-        to: body
-      - type: remove
-        field: attributes.time
+  # Dynamically creates one filelog receiver per running container.
+  # docker_observer provides container_name and labels so every log record
+  # arrives in SigNoz with service.name = the container name and
+  # container.name set, instead of a raw container ID.
+  receiver_creator:
+    watch_observers: [docker_observer]
+    receivers:
+      filelog:
+        rule: type == "container"
+        config:
+          include:
+            - /var/lib/docker/containers/`container_id`/*-json.log
+          start_at: end
+          include_file_path: true
+          include_file_name: false
+          resource:
+            container.id: '`container_id`'
+            container.name: '`container_name`'
+            service.name: '`container_name`'
+          operators:
+            - type: json_parser
+              id: parser-docker
+              timestamp:
+                parse_from: attributes.time
+                layout: "%Y-%m-%dT%H:%M:%S.%LZ"
+            - type: move
+              from: attributes.log
+              to: body
+            - type: remove
+              field: attributes.time
 
   # Scrape Prometheus /metrics endpoints exposed by self-hosted apps on the
   # `npm` network. Each job sets a stable job name so the source is easy to
@@ -157,6 +169,7 @@ exporters:
       insecure: true
 
 service:
+  extensions: [docker_observer]
   pipelines:
     metrics:
       receivers:
@@ -170,7 +183,7 @@ service:
         - otlp
     logs:
       receivers:
-        - filelog/containers
+        - receiver_creator
       processors:
         - resourcedetection/system
         - batch
