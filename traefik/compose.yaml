@@ -52,12 +52,6 @@ services:
       - --api.dashboard=true
       - --api.insecure=false
 
-      # Tracing (OpenTelemetry -> SigNoz ingester, OTLP gRPC, plaintext)
-      - --tracing.serviceName=traefik
-      - --tracing.otlp.grpc=true
-      - --tracing.otlp.grpc.endpoint=signoz-ingester:4317
-      - --tracing.otlp.grpc.insecure=true
-
       # Logging
       - --log.level=INFO
       - --accesslog=true

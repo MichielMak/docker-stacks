@@ -18,11 +18,6 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_USERNAME=${DB_USERNAME}
       - DB_DATABASE_NAME=${DB_DATABASE_NAME}
-      # Telemetry: export traces to SigNoz ingester (OTLP HTTP, plaintext)
-      - IMMICH_TELEMETRY_INCLUDE=all
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://signoz-ingester:4318
-      - OTEL_SERVICE_NAME=immich
     devices:
       - /dev/dri:/dev/dri
     networks:

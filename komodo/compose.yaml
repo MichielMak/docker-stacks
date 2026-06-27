@@ -19,8 +19,6 @@ services:
       KOMODO_FIRST_SERVER: https://periphery:8120
       KOMODO_HOST: https://komodo.${DOMAIN}
       KOMODO_LOCAL_AUTH: false
-      KOMODO_LOGGING_OTLP_ENDPOINT: http://signoz-ingester:4317
-      KOMODO_LOGGING_OPENTELEMETRY_SERVICE_NAME: komodo-core
       KOMODO_OIDC_CLIENT_ID: ${KOMODO_OIDC_CLIENT_ID}
       KOMODO_OIDC_CLIENT_SECRET: ${KOMODO_OIDC_CLIENT_SECRET}
       KOMODO_OIDC_ENABLED: true
@@ -82,8 +80,6 @@ services:
       - "999"  # docker group
     environment:
       PERIPHERY_PASSKEYS: ${KOMODO_PASSKEY}
-      PERIPHERY_LOGGING_OTLP_ENDPOINT: http://signoz-ingester:4317
-      PERIPHERY_LOGGING_OPENTELEMETRY_SERVICE_NAME: komodo-periphery
       PERIPHERY_PORT: '8120'
       PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/komodo/periphery
       PERIPHERY_SSL_ENABLED: true

@@ -129,21 +129,6 @@
       ]
     },
     {
-      "description": "ClickHouse: group server and keeper together so they never drift in version. NOTE: grouping alone does NOT block a server-only bump when clickhouse-keeper has no matching tag yet (keeper is published on Docker Hub later than server). Renovate has no native 'wait for a sibling image to publish' option, so a residual skew window can still occur until keeper catches up. The minimumReleaseAge rule below softens this by delaying fresh tags; treat any clickhouse PR that bumps only one of the two images as DO-NOT-MERGE until the matching tag exists for the other.",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "/clickhouse\\/clickhouse-server/",
-        "/clickhouse\\/clickhouse-keeper/"
-      ],
-      "groupName": "clickhouse",
-      "groupSlug": "clickhouse",
-      "addLabels": [
-        "clickhouse"
-      ]
-    },
-    {
       "description": "Group updates strictly per compose file directory",
       "matchManagers": [
         "docker-compose"
@@ -164,9 +149,7 @@
         "!/^docker\\.io\\/redis\\//",
         "!/^ghcr\\.io\\/immich-app\\/postgres/",
         "!/^ghcr\\.io\\/immich-app\\/immich-server/",
-        "!/^ghcr\\.io\\/immich-app\\/immich-machine-learning/",
-        "!/clickhouse\\/clickhouse-server/",
-        "!/clickhouse\\/clickhouse-keeper/"
+        "!/^ghcr\\.io\\/immich-app\\/immich-machine-learning/"
       ]
     },
     {
