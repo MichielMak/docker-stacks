@@ -9,6 +9,8 @@
   "dependencyDashboardHeader": "This issue contains a list of Renovate updates and statuses.",
   "timezone": "Europe/Amsterdam",
   "assigneesFromCodeOwners": true,
+  "reviewers": ["MichielMak"],
+  "assignAutomerge": true,
   "enabledManagers": [
     "docker-compose"
   ],
