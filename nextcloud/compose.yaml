@@ -59,6 +59,7 @@ services:
     restart: unless-stopped
     environment:
       - JWT_SECRET=${ONLYOFFICE_JWT_SECRET}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     expose:
       - '80'
       - '443'
