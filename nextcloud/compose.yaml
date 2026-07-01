@@ -68,6 +68,8 @@ services:
     volumes:
       - document_data:/var/www/onlyoffice/Data
       - document_log:/var/log/onlyoffice
+      - ./onlyoffice-local.json:/etc/onlyoffice/documentserver/local.json
+      - ./document_editor_service_worker.js:/var/www/onlyoffice/documentserver/sdkjs/common/serviceworker/document_editor_service_worker.js:ro
     labels:
       - traefik.enable=true
       - traefik.http.routers.documentserver.rule=Host(`documentserver.${DOMAIN}`)
@@ -75,7 +77,6 @@ services:
       - traefik.http.routers.documentserver.tls=true
       - traefik.http.services.documentserver.loadbalancer.server.port=80
       - traefik.http.middlewares.documentserver-forward.headers.customRequestHeaders.X-Forwarded-Proto=https
-      - traefik.http.middlewares.documentserver-forward.headers.customRequestHeaders.X-Forwarded-Host={host}
       - traefik.http.routers.documentserver.middlewares=documentserver-forward
 networks:
   npm:

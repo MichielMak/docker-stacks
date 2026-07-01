@@ -1,0 +1,18 @@
+{
+  "services": {
+    "CoAuthoring": {
+      "requestDefaults": {
+        "rejectUnauthorized": false
+      },
+      "request-filtering-agent": {
+        "allowPrivateIPAddress": true,
+        "allowMetaIPAddress": true
+      }
+    }
+  },
+  "externalRequest": {
+    "action": {
+      "blockPrivateIP": false
+    }
+  }
+}
