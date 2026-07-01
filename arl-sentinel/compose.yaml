@@ -26,7 +26,7 @@ services:
       - npm
 
   arl-dockerproxy:
-    image: linuxserver/socket-proxy:3.4.0@sha256:1a210e6688649c3c8217faa29172dbbb46d9f9a0afb62b1c4b9987a612057a4d
+    image: linuxserver/socket-proxy:3.4.1@sha256:6f2cce2d71ab810ddbab6ced411436ee7dcaaeaf223d47cb44450887adb54f40
     container_name: arl-dockerproxy
     environment:
       - CONTAINERS=1
