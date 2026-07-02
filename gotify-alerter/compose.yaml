@@ -1,0 +1,17 @@
+services:
+  komodo-gotify:
+    container_name: komodo-gotify
+    image: foxxmd/komodo-gotify-alerter:latest@sha256:22d150fda1ef19eeb8a4e13ca21a0da6cc04bf0d5c2b1cb3d7f5dc99179d5f50
+    environment:
+      - GOTIFY_URL=${GOTIFY_URL}
+      - GOTIFY_APP_TOKEN=${GOTIFY_APP_TOKEN}
+    restart: unless-stopped
+    networks:
+      - komodo
+      - npm
+
+networks:
+  komodo:
+    external: true
+  npm:
+    external: true
