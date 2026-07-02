@@ -7,11 +7,8 @@ services:
       - GOTIFY_APP_TOKEN=${GOTIFY_APP_TOKEN}
     restart: unless-stopped
     networks:
-      - komodo
       - npm
 
 networks:
-  komodo:
-    external: true
   npm:
     external: true
