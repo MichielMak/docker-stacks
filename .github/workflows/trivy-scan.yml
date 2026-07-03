@@ -11,24 +11,79 @@ jobs:
   config-scan:
     name: Config scan (compose misconfig)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Trivy config scan
-        uses: aquasecurity/trivy-action@v0.36.0
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.3.1
         with:
-          scan-type: config
-          scan-ref: .
-          severity: HIGH,CRITICAL
-          exit-code: "1"
-          trivyignores: .trivyignore
-        env:
-          TRIVY_TIMEOUT: 10m
+          version: v0.72.0
+
+      - name: Trivy config scan
+        id: scan
+        run: |
+          set -euo pipefail
+
+          set +e
+          trivy config . \
+            --severity HIGH,CRITICAL \
+            --ignorefile .trivyignore \
+            --exit-code 1 \
+            --format table > config_report.txt 2>&1
+          code=$?
+          set -e
+
+          cat config_report.txt
+
+          if [ "$code" -ne 0 ]; then
+            {
+              echo "## 🛡️ Trivy config scan — HIGH/CRITICAL misconfigurations found"
+              echo
+              echo "The following misconfigurations must be resolved before merging."
+              echo
+              echo '```'
+              cat config_report.txt
+              echo '```'
+            } > config_comment.md
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post findings comment
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.actor != 'dependabot[bot]' &&
+          steps.scan.outputs.found == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-config-scan
+          path: config_comment.md
+
+      - name: Clear stale comment
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.actor != 'dependabot[bot]' &&
+          steps.scan.outputs.found == 'false'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-config-scan
+          delete: true
+
+      - name: Fail if misconfigurations found
+        if: steps.scan.outputs.found == 'true'
+        run: exit 1
 
   image-scan:
     name: Image scan (changed stacks)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,7 +96,6 @@ jobs:
           version: v0.72.0
 
       - name: Determine changed compose files
-        id: changed
         run: |
           set -euo pipefail
           base="origin/${{ github.base_ref }}"
@@ -54,11 +108,13 @@ jobs:
           cat changed_files.txt || true
 
       - name: Extract and scan images
+        id: scan
         run: |
           set -euo pipefail
 
           if [ ! -s changed_files.txt ]; then
             echo "No changed compose files detected. Nothing to scan."
+            echo "found=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -71,28 +127,82 @@ jobs:
 
           if [ -z "$images" ]; then
             echo "No image references found in changed compose files."
+            echo "found=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "Images to scan:"
           echo "$images"
 
+          : > image_comment.md
           fail=0
           for img in $images; do
             echo "::group::Scanning $img"
-            # --ignore-unfixed: only fail on vulnerabilities that have a fix
-            #   available (actionable — Renovate can bump to the patched image).
-            if ! trivy image \
+            # --ignore-unfixed: only report/gate on vulnerabilities that have a
+            #   fix available (actionable — Renovate can bump to the patched image).
+            set +e
+            report=$(trivy image \
               --severity HIGH,CRITICAL \
               --ignore-unfixed \
-              --exit-code 1 \
               --no-progress \
               --timeout 15m \
-              "$img"; then
+              --exit-code 1 \
+              --format table \
+              "$img" 2>&1)
+            code=$?
+            set -e
+
+            echo "$report"
+
+            if [ "$code" -ne 0 ]; then
               echo "::error::Vulnerabilities found in $img"
+              {
+                echo "### \`$img\`"
+                echo
+                echo '```'
+                echo "$report"
+                echo '```'
+                echo
+              } >> image_comment.md
               fail=1
             fi
             echo "::endgroup::"
           done
 
-          exit $fail
+          if [ "$fail" -ne 0 ]; then
+            {
+              echo "## 🛡️ Trivy image scan — fixable HIGH/CRITICAL vulnerabilities found"
+              echo
+              echo "The images below have known vulnerabilities with fixes available. Update to a patched image (digest) before merging."
+              echo
+              cat image_comment.md
+            } > image_comment_final.md
+            mv image_comment_final.md image_comment.md
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post findings comment
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.actor != 'dependabot[bot]' &&
+          steps.scan.outputs.found == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-image-scan
+          path: image_comment.md
+
+      - name: Clear stale comment
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.actor != 'dependabot[bot]' &&
+          steps.scan.outputs.found == 'false'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trivy-image-scan
+          delete: true
+
+      - name: Fail if vulnerabilities found
+        if: steps.scan.outputs.found == 'true'
+        run: exit 1
