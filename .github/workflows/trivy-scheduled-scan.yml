@@ -1,0 +1,171 @@
+name: Trivy Scheduled Scan
+
+on:
+  schedule:
+    # Weekly, Monday 04:15 Europe/Amsterdam (03:15 UTC in summer, 02:15 UTC standard).
+    # Using 03:15 UTC keeps it in the early-morning window year-round.
+    - cron: "15 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  image-scan:
+    name: Image scan (all stacks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      ISSUE_TITLE: "🛡️ Trivy scheduled scan — deployed image vulnerabilities"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.3.1
+        with:
+          version: v0.72.0
+
+      - name: Extract and scan all images
+        id: scan
+        run: |
+          set -euo pipefail
+
+          # Collect every compose file in the repo.
+          mapfile -t compose_files < <(find . \
+            \( -name 'compose.yaml' -o -name 'compose.yml' \
+               -o -name 'docker-compose.yaml' -o -name 'docker-compose.yml' \) \
+            -type f | sort)
+
+          if [ "${#compose_files[@]}" -eq 0 ]; then
+            echo "No compose files found. Nothing to scan."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Compose files:"
+          printf '%s\n' "${compose_files[@]}"
+
+          # Extract every `image:` reference, strip quotes/whitespace, de-duplicate.
+          images=$(grep -hoE '^[[:space:]]*image:[[:space:]]*\S+' "${compose_files[@]}" \
+            | sed -E 's/^[[:space:]]*image:[[:space:]]*//; s/["'\'']//g' \
+            | tr -d '\r' \
+            | sort -u || true)
+
+          if [ -z "$images" ]; then
+            echo "No image references found."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Images to scan:"
+          echo "$images"
+
+          : > image_report.md
+          fail=0
+          for img in $images; do
+            echo "::group::Scanning $img"
+            # --ignore-unfixed: only report vulnerabilities that have a fix
+            #   available (actionable — Renovate can bump to the patched image).
+            set +e
+            report=$(trivy image \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --no-progress \
+              --timeout 15m \
+              --exit-code 1 \
+              --format table \
+              "$img" 2>&1)
+            code=$?
+            set -e
+
+            echo "$report"
+
+            if [ "$code" -ne 0 ]; then
+              echo "::warning::Vulnerabilities found in $img"
+              {
+                echo "### \`$img\`"
+                echo
+                echo '```'
+                echo "$report"
+                echo '```'
+                echo
+              } >> image_report.md
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ "$fail" -ne 0 ]; then
+            {
+              echo "$ISSUE_TITLE"
+              echo
+              echo "The scheduled Trivy scan found **fixable HIGH/CRITICAL** vulnerabilities in images currently referenced on \`main\`. These emerged after merge and are not caught by the PR-triggered scan. Update the affected images (digests) to patched versions."
+              echo
+              echo "_Last scan: $(date -u '+%Y-%m-%d %H:%M UTC') — [run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})_"
+              echo
+              cat image_report.md
+            } > issue_body.md
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update issue
+        if: steps.scan.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Ensure the security label exists (idempotent).
+          gh label create security \
+            --color d73a4a \
+            --description "Security vulnerability or advisory" \
+            2>/dev/null || true
+
+          existing=$(gh issue list \
+            --state open \
+            --label security \
+            --search "in:title \"$ISSUE_TITLE\"" \
+            --json number,title \
+            --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" \
+            | head -n1)
+
+          if [ -n "$existing" ]; then
+            echo "Updating existing issue #$existing"
+            gh issue edit "$existing" --body-file issue_body.md
+            gh issue comment "$existing" \
+              --body "🔁 Vulnerabilities still present as of $(date -u '+%Y-%m-%d %H:%M UTC'). Issue body updated with the latest scan."
+          else
+            echo "Creating new issue"
+            gh issue create \
+              --title "$ISSUE_TITLE" \
+              --label security \
+              --body-file issue_body.md
+          fi
+
+      - name: Close stale issue if clean
+        if: steps.scan.outputs.found == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          existing=$(gh issue list \
+            --state open \
+            --label security \
+            --search "in:title \"$ISSUE_TITLE\"" \
+            --json number,title \
+            --jq ".[] | select(.title == \"$ISSUE_TITLE\") | .number" \
+            | head -n1)
+
+          if [ -n "$existing" ]; then
+            echo "Closing resolved issue #$existing"
+            gh issue close "$existing" \
+              --comment "✅ Scheduled Trivy scan on $(date -u '+%Y-%m-%d %H:%M UTC') found no fixable HIGH/CRITICAL vulnerabilities. Closing."
+          else
+            echo "No open scan issue and no findings. Nothing to do."
+          fi
