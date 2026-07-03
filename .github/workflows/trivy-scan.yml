@@ -32,7 +32,6 @@ jobs:
           trivy config . \
             --severity HIGH,CRITICAL \
             --ignorefile .trivyignore \
-            --no-progress \
             --exit-code 1 \
             --format table > config_report.txt 2>&1
           code=$?
