@@ -1,0 +1,98 @@
+name: Trivy Security Scan
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  config-scan:
+    name: Config scan (compose misconfig)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trivy config scan
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          trivyignores: .trivyignore
+        env:
+          TRIVY_TIMEOUT: 10m
+
+  image-scan:
+    name: Image scan (changed stacks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
+        with:
+          version: v0.58.1
+
+      - name: Determine changed compose files
+        id: changed
+        run: |
+          set -euo pipefail
+          base="origin/${{ github.base_ref }}"
+          git fetch --quiet origin "${{ github.base_ref }}" || true
+          files=$(git diff --name-only "$base"...HEAD -- \
+            '**/compose.yaml' '**/compose.yml' \
+            '**/docker-compose.yaml' '**/docker-compose.yml' || true)
+          printf '%s\n' "$files" | sed '/^$/d' > changed_files.txt
+          echo "Changed compose files:"
+          cat changed_files.txt || true
+
+      - name: Extract and scan images
+        run: |
+          set -euo pipefail
+
+          if [ ! -s changed_files.txt ]; then
+            echo "No changed compose files detected. Nothing to scan."
+            exit 0
+          fi
+
+          # Extract every `image:` reference from the changed compose files,
+          # strip quotes/whitespace, and de-duplicate.
+          images=$(grep -hoE '^[[:space:]]*image:[[:space:]]*\S+' $(cat changed_files.txt) \
+            | sed -E 's/^[[:space:]]*image:[[:space:]]*//; s/["'\'']//g' \
+            | tr -d '[:space:]' \
+            | sort -u || true)
+
+          if [ -z "$images" ]; then
+            echo "No image references found in changed compose files."
+            exit 0
+          fi
+
+          echo "Images to scan:"
+          echo "$images"
+
+          fail=0
+          for img in $images; do
+            echo "::group::Scanning $img"
+            # --ignore-unfixed: only fail on vulnerabilities that have a fix
+            #   available (actionable — Renovate can bump to the patched image).
+            if ! trivy image \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 1 \
+              --no-progress \
+              --timeout 15m \
+              "$img"; then
+              echo "::error::Vulnerabilities found in $img"
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+
+          exit $fail

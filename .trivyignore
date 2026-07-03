@@ -1,0 +1,13 @@
+# Trivy ignore file
+# Suppress specific findings that are accepted risks or false positives.
+#
+# Image vulnerabilities: list the CVE ID, one per line, e.g.
+#   CVE-2023-12345
+#
+# Config (misconfig) checks: list the Trivy check ID, e.g.
+#   AVD-DS-0026
+#
+# Optionally scope + expire a suppression:
+#   CVE-2023-12345 exp:2026-12-31
+#
+# Keep this list curated — every entry is a vulnerability you're choosing to ship.
