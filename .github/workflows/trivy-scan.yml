@@ -66,7 +66,7 @@ jobs:
           # strip quotes/whitespace, and de-duplicate.
           images=$(grep -hoE '^[[:space:]]*image:[[:space:]]*\S+' $(cat changed_files.txt) \
             | sed -E 's/^[[:space:]]*image:[[:space:]]*//; s/["'\'']//g' \
-            | tr -d '[:space:]' \
+            | tr -d '\r' \
             | sort -u || true)
 
           if [ -z "$images" ]; then
