@@ -6,3 +6,11 @@ repos:
         args: [--strict]
         files: "(^|/)renovate\\.json5?$"
         verbose: true
+  - repo: local
+    hooks:
+      - id: docker-compose-config
+        name: Validate docker compose files
+        entry: bash -c 'for f in "$@"; do docker compose -f "$f" config --no-interpolate --quiet || exit 1; done' --
+        language: system
+        files: "(^|/)compose\\.ya?ml$"
+        verbose: true
