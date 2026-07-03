@@ -49,6 +49,12 @@ jobs:
               cat config_report.txt
               echo '```'
             } > config_comment.md
+            if [ "$(wc -c < config_comment.md)" -gt 60000 ]; then
+              run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              head -c 60000 config_comment.md > config_comment.trunc
+              printf '\n\n_Comment truncated. See the [Actions log](%s) for full details._\n' "$run_url" >> config_comment.trunc
+              mv config_comment.trunc config_comment.md
+            fi
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
@@ -136,36 +142,56 @@ jobs:
 
           : > image_comment.md
           fail=0
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           for img in $images; do
             echo "::group::Scanning $img"
             # --ignore-unfixed: only report/gate on vulnerabilities that have a
             #   fix available (actionable — Renovate can bump to the patched image).
+            json="$(mktemp)"
             set +e
-            report=$(trivy image \
+            trivy image \
               --severity HIGH,CRITICAL \
               --ignore-unfixed \
               --no-progress \
               --timeout 15m \
               --exit-code 1 \
-              --format table \
-              "$img" 2>&1)
+              --format json \
+              --output "$json" \
+              "$img"
             code=$?
             set -e
 
-            echo "$report"
+            # Human-readable table in the job log (full detail lives here).
+            trivy convert --format table "$json" || cat "$json"
 
             if [ "$code" -ne 0 ]; then
               echo "::error::Vulnerabilities found in $img"
+              crit=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | map(select(.Severity == "CRITICAL")) | length' "$json")
+              high=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | map(select(.Severity == "HIGH")) | length' "$json")
+              total=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | length' "$json")
               {
                 echo "### \`$img\`"
                 echo
-                echo '```'
-                echo "$report"
-                echo '```'
+                echo "**${crit} CRITICAL, ${high} HIGH** fixable vulnerabilities"
+                echo
+                echo "| CVE | Package | Installed | Fixed | Severity |"
+                echo "| --- | --- | --- | --- | --- |"
+                jq -r '
+                  [.Results[]?.Vulnerabilities[]?]
+                  | unique_by(.VulnerabilityID + "|" + .PkgName)
+                  | sort_by(if .Severity == "CRITICAL" then 0 else 1 end)
+                  | .[:30][]
+                  | "| \(.VulnerabilityID) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion // "-") | \(.Severity) |"
+                ' "$json"
+                if [ "$total" -gt 30 ]; then
+                  echo
+                  echo "_…and $((total - 30)) more. See the [Actions log]($run_url) for the full report._"
+                fi
                 echo
               } >> image_comment.md
               fail=1
             fi
+            rm -f "$json"
             echo "::endgroup::"
           done
 
@@ -178,6 +204,14 @@ jobs:
               cat image_comment.md
             } > image_comment_final.md
             mv image_comment_final.md image_comment.md
+
+            # Safety net: keep the comment under GitHub's 65536-char limit.
+            if [ "$(wc -c < image_comment.md)" -gt 60000 ]; then
+              head -c 60000 image_comment.md > image_comment.trunc
+              printf '\n\n_Comment truncated. See the [Actions log](%s) for full details._\n' "$run_url" >> image_comment.trunc
+              mv image_comment.trunc image_comment.md
+            fi
+
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
