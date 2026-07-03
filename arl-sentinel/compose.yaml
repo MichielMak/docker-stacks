@@ -25,6 +25,34 @@ services:
     networks:
       - npm
 
+  arl-web:
+    image: python:3.14-slim@sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6500b1eff50061
+    container_name: arl-web
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir requests && python webapp.py"
+    environment:
+      - TZ=Europe/Amsterdam
+      - WEB_PORT=8080
+    volumes:
+      - ${DOCKER_DATA_DIR}/arl-sentinel/app:/app:ro
+      - ${DOCKER_DATA_DIR}/arl-sentinel/data:/data:ro
+    restart: unless-stopped
+    depends_on:
+      - arl-sentinel
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=ARL
+      - homepage.icon=deezer.png
+      - homepage.href=https://arl.${DOMAIN}/
+      - homepage.description=Current Deezer ARL token
+      - traefik.enable=true
+      - traefik.http.routers.arl.rule=Host(`arl.${DOMAIN}`)
+      - traefik.http.routers.arl.entrypoints=websecure
+      - traefik.http.routers.arl.tls=true
+      - traefik.http.services.arl.loadbalancer.server.port=8080
+
   arl-dockerproxy:
     image: linuxserver/socket-proxy:3.4.1@sha256:6f2cce2d71ab810ddbab6ced411436ee7dcaaeaf223d47cb44450887adb54f40
     container_name: arl-dockerproxy
