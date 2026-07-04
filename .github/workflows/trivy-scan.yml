@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.3.1
@@ -65,7 +65,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: trivy-config-scan
           path: config_comment.md
@@ -75,7 +75,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'false'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: trivy-config-scan
           delete: true
@@ -92,7 +92,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -222,7 +222,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: trivy-image-scan
           path: image_comment.md
@@ -232,7 +232,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'false'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: trivy-image-scan
           delete: true

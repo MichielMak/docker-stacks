@@ -21,7 +21,7 @@ jobs:
       ISSUE_TITLE: "🛡️ Trivy scheduled scan — deployed image vulnerabilities"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.3.1
