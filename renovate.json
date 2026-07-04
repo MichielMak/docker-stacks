@@ -12,7 +12,8 @@
   "reviewers": ["MichielMak"],
   "assignAutomerge": true,
   "enabledManagers": [
-    "docker-compose"
+    "docker-compose",
+    "pip_requirements"
   ],
   "labels": [
     "renovate"
@@ -39,6 +40,19 @@
     "self-hosted-renovate-mm"
   ],
   "packageRules": [
+    {
+      "description": "Group arl-sentinel pip deps with its Docker stack",
+      "matchManagers": ["pip_requirements"],
+      "matchFileNames": ["arl-sentinel/app/requirements.txt"],
+      "groupName": "stack: arl-sentinel",
+      "groupSlug": "stack-arl-sentinel"
+    },
+    {
+      "description": "Disable playwright auto-updates (version must match runtime browser binaries)",
+      "matchManagers": ["pip_requirements"],
+      "matchPackageNames": ["playwright"],
+      "enabled": false
+    },
     {
       "description": "Docker: allow only stable SemVer or CalVer",
       "matchDatasources": [
