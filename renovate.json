@@ -13,7 +13,8 @@
   "assignAutomerge": true,
   "enabledManagers": [
     "docker-compose",
-    "pip_requirements"
+    "pip_requirements",
+    "github-actions"
   ],
   "labels": [
     "renovate"
@@ -52,6 +53,17 @@
       "matchManagers": ["pip_requirements"],
       "matchPackageNames": ["playwright"],
       "enabled": false
+    },
+    {
+      "description": "Group GitHub Actions updates and label them",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "github-actions",
+      "groupSlug": "github-actions",
+      "addLabels": [
+        "github-actions"
+      ]
     },
     {
       "description": "Docker: allow only stable SemVer or CalVer",
