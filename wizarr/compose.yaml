@@ -13,6 +13,7 @@ services:
       - TZ=Europe/Amsterdam #Set your timezone here
       - PUID=${PUID} #Set UID
       - PGID=${PGID} #Set GID
+      - PORT=5690
     restart: unless-stopped
     networks:
       - npm
