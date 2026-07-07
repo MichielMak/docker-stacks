@@ -1,6 +1,6 @@
 services:
   ocis:
-    image: owncloud/ocis:8.0.5@sha256:820f18c37c5b6f449ea27acca49287cbe9fb608a47f82e5156925e4f47d4d107
+    image: owncloud/ocis:8.1.0@sha256:1c83b612450f64151ab064bc7e40fb8425f14f3d4a600a3ff52d7aaa6683bcbf
     container_name: owncloud
     restart: unless-stopped
     environment:
