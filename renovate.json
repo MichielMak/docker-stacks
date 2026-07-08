@@ -66,6 +66,19 @@
       ]
     },
     {
+      "description": "Skip digest pinning for aquasecurity/trivy (the setup-trivy 'version' with-input): Renovate's uses-with extraction has no replaceString here, so pinDigest always fails the branch update",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchDepTypes": [
+        "uses-with"
+      ],
+      "matchPackageNames": [
+        "aquasecurity/trivy"
+      ],
+      "pinDigests": false
+    },
+    {
       "description": "Docker: allow only stable SemVer or CalVer",
       "matchDatasources": [
         "docker"
