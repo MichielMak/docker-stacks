@@ -17,7 +17,7 @@ services:
       - HANDBRAKE_GUI=1
       - TZ=Europe/Amsterdam
       - DARK_MODE=1
-    image: jlesage/handbrake:v26.03.3@sha256:2b1eb1e34cf2edba2590c3ab768206a11cf8916fbe8a8a3391fe74d9eabcdce0
+    image: jlesage/handbrake:v26.07.1@sha256:682eaf62bdf75e9e19003cf46892a452e29af3bce28c1321e7639255cc3fbce1
     restart: unless-stopped
     networks:
       - npm
