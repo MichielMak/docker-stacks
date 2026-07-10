@@ -9,7 +9,7 @@ services:
     networks:
       - npm
     restart: unless-stopped
-    image: wisdomsky/cloudflared-web:2026.6.1@sha256:3552fa87c10f2ec6a854c0c09209753957e909eca6194499194cedbb8c817db9
+    image: wisdomsky/cloudflared-web:2026.7.0@sha256:6009bfe374879521be514d18f01ef237009e2d6b40a150883bd62f7786c4db33
     labels:
       - homepage.group=Infra
       - homepage.name=Cloudflared
