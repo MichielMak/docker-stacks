@@ -23,7 +23,6 @@ services:
       - TRAKT_REFRESH_TOKEN=${TRAKT_REFRESH_TOKEN}
     container_name: kometa
     volumes:
-      - ./config.yml:/config/config.yml:ro
       - ${DOCKER_DATA_DIR}/kometa/config:/config
     restart: unless-stopped
     networks:
