@@ -63,7 +63,8 @@ jobs:
           echo "Images to scan:"
           echo "$images"
 
-          : > image_report.md
+          : > summary_report.md
+          : > detail_report.md
           fail=0
           for img in $images; do
             echo "::group::Scanning $img"
@@ -85,6 +86,16 @@ jobs:
 
             if [ "$code" -ne 0 ]; then
               echo "::warning::Vulnerabilities found in $img"
+
+              # Sum HIGH/CRITICAL across all targets in the report so the issue
+              # can show a compact per-image count without the full tables.
+              high=$(echo "$report" | grep -oE 'HIGH: [0-9]+' \
+                | awk -F': ' '{s+=$2} END {print s+0}')
+              crit=$(echo "$report" | grep -oE 'CRITICAL: [0-9]+' \
+                | awk -F': ' '{s+=$2} END {print s+0}')
+
+              echo "| \`$img\` | $high | $crit |" >> summary_report.md
+
               {
                 echo "### \`$img\`"
                 echo
@@ -92,22 +103,54 @@ jobs:
                 echo "$report"
                 echo '```'
                 echo
-              } >> image_report.md
+              } >> detail_report.md
               fail=1
             fi
             echo "::endgroup::"
           done
 
           if [ "$fail" -ne 0 ]; then
+            run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
             {
               echo "$ISSUE_TITLE"
               echo
               echo "The scheduled Trivy scan found **fixable HIGH/CRITICAL** vulnerabilities in images currently referenced on \`main\`. These emerged after merge and are not caught by the PR-triggered scan. Update the affected images (digests) to patched versions."
               echo
-              echo "_Last scan: $(date -u '+%Y-%m-%d %H:%M UTC') — [run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})_"
+              echo "_Last scan: $(date -u '+%Y-%m-%d %H:%M UTC') — [full report in the run logs]($run_url)_"
               echo
-              cat image_report.md
+              echo "| Image | HIGH | CRITICAL |"
+              echo "| --- | ---: | ---: |"
+              cat summary_report.md
+              echo
+              echo "<details><summary>Detailed vulnerability tables</summary>"
+              echo
+              cat detail_report.md
+              echo "</details>"
             } > issue_body.md
+
+            # GitHub caps issue bodies at 65536 chars; the GraphQL updateIssue
+            # mutation rejects anything longer. Truncate the detail section so a
+            # large scan still produces a valid (updatable) issue — the full
+            # tables always remain in the run logs.
+            max_bytes=60000
+            if [ "$(wc -c < issue_body.md)" -gt "$max_bytes" ]; then
+              echo "Issue body over ${max_bytes} bytes; truncating detail section."
+              {
+                echo "$ISSUE_TITLE"
+                echo
+                echo "The scheduled Trivy scan found **fixable HIGH/CRITICAL** vulnerabilities in images currently referenced on \`main\`. These emerged after merge and are not caught by the PR-triggered scan. Update the affected images (digests) to patched versions."
+                echo
+                echo "_Last scan: $(date -u '+%Y-%m-%d %H:%M UTC') — [full report in the run logs]($run_url)_"
+                echo
+                echo "> ⚠️ Too many findings to embed the full tables here. Only the per-image summary is shown below; see the [run logs]($run_url) for complete details."
+                echo
+                echo "| Image | HIGH | CRITICAL |"
+                echo "| --- | ---: | ---: |"
+                cat summary_report.md
+              } > issue_body.md
+            fi
+
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
