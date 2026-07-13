@@ -65,18 +65,23 @@ jobs:
 
           : > summary_report.md
           : > detail_report.md
+          : > error_report.md
           fail=0
+          scan_error=0
           for img in $images; do
             echo "::group::Scanning $img"
             # --ignore-unfixed: only report vulnerabilities that have a fix
             #   available (actionable — Renovate can bump to the patched image).
+            # --exit-code 2: findings return exit code 2, keeping them distinct
+            #   from Trivy's exit code 1 which signals a genuine scan error
+            #   (e.g. MANIFEST_UNKNOWN for a digest no longer in the registry).
             set +e
             report=$(trivy image \
               --severity HIGH,CRITICAL \
               --ignore-unfixed \
               --no-progress \
               --timeout 15m \
-              --exit-code 1 \
+              --exit-code 2 \
               --format table \
               "$img" 2>&1)
             code=$?
@@ -84,15 +89,17 @@ jobs:
 
             echo "$report"
 
-            if [ "$code" -ne 0 ]; then
+            if [ "$code" -eq 0 ]; then
+              echo "Clean: $img"
+            elif [ "$code" -eq 2 ]; then
               echo "::warning::Vulnerabilities found in $img"
 
               # Sum HIGH/CRITICAL across all targets in the report so the issue
               # can show a compact per-image count without the full tables.
               high=$(echo "$report" | grep -oE 'HIGH: [0-9]+' \
-                | awk -F': ' '{s+=$2} END {print s+0}')
+                | awk -F': ' '{s+=$2} END {print s+0}' || true)
               crit=$(echo "$report" | grep -oE 'CRITICAL: [0-9]+' \
-                | awk -F': ' '{s+=$2} END {print s+0}')
+                | awk -F': ' '{s+=$2} END {print s+0}' || true)
 
               echo "| \`$img\` | $high | $crit |" >> summary_report.md
 
@@ -105,6 +112,18 @@ jobs:
                 echo
               } >> detail_report.md
               fail=1
+            else
+              echo "::error::Scan failed for $img"
+
+              {
+                echo "### \`$img\` (scan error, exit $code)"
+                echo
+                echo '```'
+                echo "$report"
+                echo '```'
+                echo
+              } >> error_report.md
+              scan_error=1
             fi
             echo "::endgroup::"
           done
@@ -154,6 +173,15 @@ jobs:
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Fail the run only on genuine scan errors. Findings alone keep the
+          # run green — they are surfaced via the auto-opened issue.
+          if [ "$scan_error" -ne 0 ]; then
+            echo "::error::One or more images failed to scan (genuine errors)."
+            echo "Scan error details:"
+            cat error_report.md
+            exit 1
           fi
 
       - name: Open or update issue
