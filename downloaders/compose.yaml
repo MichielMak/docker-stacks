@@ -22,7 +22,7 @@ services:
       - qbittorrent.var:/qbittorrent/var
       - ${DOCKER_DATA_DIR}/qbittorrent/config:/config
       - ${MEDIA_DIR}/downloads/torrents:/media/downloads/torrents
-      - ${OVERIG_DIR}/prestage:/overig/prestage
+      - ${PRESTAGE_DIR}:/overig/prestage
     ports:
       - 6881:6881/tcp
       - 6881:6881/udp
@@ -61,7 +61,7 @@ services:
     volumes:
       - sabnzbd.etc:/sabnzbd/etc
       - ${MEDIA_DIR}/downloads/usenet:/media/downloads/usenet
-      - ${OVERIG_DIR}/prestage:/overig/prestage
+      - ${PRESTAGE_DIR}:/overig/prestage
 #    ports:
 #      - 8080:8080
     tmpfs:
