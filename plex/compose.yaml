@@ -1,6 +1,6 @@
 services:
   plex:
-    image: linuxserver/plex:1.43.2@sha256:8b2996bf9a78615d7490d30241ea75f86c3dcdaf14edb4c329eb912932537e4f
+    image: linuxserver/plex:1.43.3@sha256:59c671e182563040092a2d0901e429dc15e0aba9883acd13ef97857372b79b21
     container_name: plex
     environment:
       - PUID=${PUID}
