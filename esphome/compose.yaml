@@ -1,6 +1,6 @@
 services:
   esphome:
-    image: ghcr.io/esphome/esphome:2026.7.1
+    image: ghcr.io/esphome/esphome:2026.7.1@sha256:b4ac9ddc2fc702e629540baac62df0ac5912fc11e90c1b267337c6413d03243c
     volumes:
       - ${DOCKER_DATA_DIR}/esphome/config:/config
     environment:
