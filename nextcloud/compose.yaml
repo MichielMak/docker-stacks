@@ -53,34 +53,25 @@ services:
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - npm
-  onlyoffice-document-server:
-    container_name: onlyoffice-document-server
-    image: onlyoffice/documentserver:9.4.0@sha256:e3da62a847b9a5d51a11f73cfea1d9c13c3be3809614490d4edddcf01dcf919b
+  collabora:
+    container_name: collabora
+    image: collabora/code:26.04.2.2.1@sha256:f8a308bcd12ad09babcd635662b512776b0749fc04c9a63db568865bd195b4d9
     restart: unless-stopped
+    cap_add:
+      - MKNOD
     environment:
-      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET}
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-    expose:
-      - '80'
-      - '443'
+      - domain=nextcloud\\.${DOMAIN}
+      - username=${COLLABORA_ADMIN_USER}
+      - password=${COLLABORA_ADMIN_PASSWORD}
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=true
     networks:
       - npm
-    volumes:
-      - document_data:/var/www/onlyoffice/Data
-      - document_log:/var/log/onlyoffice
-      - ./onlyoffice-local.json:/etc/onlyoffice/documentserver/local.json
-      - ./document_editor_service_worker.js:/var/www/onlyoffice/documentserver/sdkjs/common/serviceworker/document_editor_service_worker.js:ro
     labels:
       - traefik.enable=true
-      - traefik.http.routers.documentserver.rule=Host(`documentserver.${DOMAIN}`)
-      - traefik.http.routers.documentserver.entrypoints=websecure
-      - traefik.http.routers.documentserver.tls=true
-      - traefik.http.services.documentserver.loadbalancer.server.port=80
-      - traefik.http.middlewares.documentserver-forward.headers.customRequestHeaders.X-Forwarded-Proto=https
-      - traefik.http.routers.documentserver.middlewares=documentserver-forward
+      - traefik.http.routers.collabora.rule=Host(`collabora.${DOMAIN}`)
+      - traefik.http.routers.collabora.entrypoints=websecure
+      - traefik.http.routers.collabora.tls=true
+      - traefik.http.services.collabora.loadbalancer.server.port=9980
 networks:
   npm:
     external: true
-volumes:
-  document_data:
-  document_log:
