@@ -60,6 +60,12 @@ services:
     command:
       - --o:ssl.enable=false
       - --o:ssl.termination=true
+    healthcheck:
+      test: ["CMD", "/usr/bin/coolwsd", "--probe", "--disable-ssl"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
     cap_add:
       - MKNOD
     environment:
