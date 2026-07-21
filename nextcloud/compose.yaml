@@ -57,13 +57,15 @@ services:
     container_name: collabora
     image: collabora/code:26.04.2.2.1@sha256:f8a308bcd12ad09babcd635662b512776b0749fc04c9a63db568865bd195b4d9
     restart: unless-stopped
+    command:
+      - --o:ssl.enable=false
+      - --o:ssl.termination=true
     cap_add:
       - MKNOD
     environment:
-      - domain=nextcloud\\.${DOMAIN}
+      - domain=nextcloud\.${DOMAIN}
       - username=${COLLABORA_ADMIN_USER}
       - password=${COLLABORA_ADMIN_PASSWORD}
-      - extra_params=--o:ssl.enable=false --o:ssl.termination=true
     networks:
       - npm
     labels:
