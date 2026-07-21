@@ -1,0 +1,30 @@
+services:
+  esphome:
+    image: ghcr.io/esphome/esphome:2026.7.1
+    volumes:
+      - ${DOCKER_DATA_DIR}/esphome/config:/config
+    environment:
+      - ESPHOME_USERNAME=${ESPHOME_USERNAME}
+      - ESPHOME_PASSWORD=${ESPHOME_PASSWORD}
+    networks:
+      my-macvlan-net:
+        ipv4_address: ${ESPHOME_IP}
+      npm: null
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.esphome.rule=Host(`esphome.${DOMAIN}`)
+      - traefik.http.routers.esphome.entrypoints=websecure
+      - traefik.http.routers.esphome.tls=true
+      - traefik.http.services.esphome.loadbalancer.server.port=6052
+      - homepage.group=Utilities
+      - homepage.name=ESPHome
+      - homepage.icon=esphome.png
+      - homepage.href=https://esphome.${DOMAIN}/
+      - homepage.description=Remote compile server for ESPHome
+    restart: unless-stopped
+networks:
+  npm:
+    external: true
+  my-macvlan-net:
+    external: true
