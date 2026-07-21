@@ -28,7 +28,7 @@ services:
       - default
       - npm
     volumes:
-      - ${DOCKER_DATA_DIR}/authentik/media:/media
+      - ${DOCKER_DATA_DIR}/authentik/data:/data
       - ${DOCKER_DATA_DIR}/authentik/custom-templates:/templates
     environment:
       - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
