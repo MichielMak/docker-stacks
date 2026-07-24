@@ -17,11 +17,11 @@ services:
       - traefik.http.routers.esphome.entrypoints=websecure
       - traefik.http.routers.esphome.tls=true
       - traefik.http.services.esphome.loadbalancer.server.port=6052
-      - homepage.group=Utilities
-      - homepage.name=ESPHome
-      - homepage.icon=esphome.png
-      - homepage.href=https://esphome.${DOMAIN}/
-      - homepage.description=Remote compile server for ESPHome
+      # - homepage.group=Utilities
+      # - homepage.name=ESPHome
+      # - homepage.icon=esphome.png
+      # - homepage.href=https://esphome.${DOMAIN}/
+      # - homepage.description=Remote compile server for ESPHome
     restart: unless-stopped
 networks:
   npm:
