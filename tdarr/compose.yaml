@@ -29,14 +29,15 @@ services:
       - ${DOCKER_DATA_DIR}/tdarr/transcode:/temp
       - ${OVERIG_DIR}:/overig
     labels:
-      - homepage.group=Infra
-      - homepage.name=Tdarr
-      - homepage.icon=tdarr.png
-      - homepage.href=http://tdarr.${DOMAIN}/
-      - homepage.description=Automated Video Conversion
-      - homepage.widget.fields=["queue", "errored", "saved"]
-      - homepage.widget.type=tdarr
-      - homepage.widget.url=http://tdarr:8265
+#      - homepage.group=Infra
+#
+#      - homepage.name=Tdarr
+#      - homepage.icon=tdarr.png
+#      - homepage.href=http://tdarr.${DOMAIN}/
+#      - homepage.description=Automated Video Conversion
+#      - homepage.widget.fields=["queue", "errored", "saved"]
+#      - homepage.widget.type=tdarr
+#      - homepage.widget.url=http://tdarr:8265
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.tdarr.middlewares=authentik-forwardauth@docker
