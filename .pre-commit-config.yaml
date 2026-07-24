@@ -6,6 +6,16 @@ repos:
         args: [--strict]
         files: "(^|/)renovate\\.json5?$"
         verbose: true
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        # Traefik dynamic configs are Go templates ({{ env "X" }}), not valid YAML
+        exclude: "^traefik/dynamic/"
   - repo: local
     hooks:
       - id: docker-compose-config
