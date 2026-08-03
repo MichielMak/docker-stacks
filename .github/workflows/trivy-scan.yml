@@ -21,7 +21,7 @@ jobs:
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
         with:
-          version: v0.72.0
+          version: v0.73.0
 
       - name: Trivy config scan
         id: scan
@@ -99,7 +99,7 @@ jobs:
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
         with:
-          version: v0.72.0
+          version: v0.73.0
 
       - name: Determine changed compose files
         run: |
