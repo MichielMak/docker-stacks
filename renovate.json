@@ -236,7 +236,7 @@
         "custom.regex"
       ],
       "matchPackageNames": [
-        "renovate/renovate"
+        "ghcr.io/renovatebot/renovate"
       ],
       "pinDigests": false,
       "groupName": "renovate self-hosted version",
@@ -253,7 +253,7 @@
       "matchStrings": [
         "renovate-version:\\s*(?<currentValue>\\S+)"
       ],
-      "depNameTemplate": "renovate/renovate",
+      "depNameTemplate": "ghcr.io/renovatebot/renovate",
       "datasourceTemplate": "docker",
       "versioningTemplate": "semver"
     }
