@@ -5,7 +5,7 @@
 This is a **GitOps-based Docker orchestration repository** managing 60+ self-hosted services (home lab) using:
 - **Komodo** — declarative Docker stack manager that continuously syncs this repo to the Docker environment
 - **Traefik** — reverse proxy configured entirely via Docker container labels
-- **Renovate** — automated container image updates via PRs
+- **Renovate** — automated container image updates via PRs, run self-hosted from `.github/workflows/renovate.yml`
 
 ## Repository Structure
 
@@ -20,7 +20,6 @@ Notable directories:
 - `komodo/` — the GitOps orchestrator itself (with MongoDB backend)
 - `homepage/` — dashboard aggregating all services
 - `authentik/` — OIDC provider for SSO/ForwardAuth
-- `renovate/` — self-hosted Renovate bot stack
 
 ## Compose File Conventions
 
@@ -81,6 +80,8 @@ labels:
 
 When adding a new service, Renovate will pick up the image automatically. If the image uses non-standard versioning, add a custom `packageRule` in `renovate.json`.
 
+Renovate runs hourly as a GitHub Actions workflow (`.github/workflows/renovate.yml`). It authenticates as a GitHub App using the `RENOVATE_APP_ID` and `RENOVATE_PRIVATE_KEY` repository secrets, and pulls Docker Hub metadata with `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`. The workflow can also be triggered manually, with options to reset or disable the repository cache.
+
 ## Adding a New Stack
 
 1. Create `/<stack-name>/compose.yaml`
@@ -98,7 +99,7 @@ When adding a new service, Renovate will pick up the image automatically. If the
 | Komodo | `komodo/` | GitOps stack manager |
 | Authentik | `authentik/` | OIDC / SSO / ForwardAuth |
 | Homepage | `homepage/` | Service dashboard |
-| Renovate | `renovate/` | Automated image updates |
+| Renovate | `.github/workflows/renovate.yml` | Automated image updates (GitHub Actions) |
 | Plex | `plex/` | Media server |
 | Nextcloud | `nextcloud/` | File storage |
 | Immich | `immich-app/` | Photo management |
