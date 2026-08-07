@@ -231,6 +231,20 @@
       "enabled": false
     },
     {
+      "description": "LinuxServer.io re-points its short version tags on every rebuild (-lsNNN), so digest-only updates must stay enabled",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "/^(?:docker\\.io\\/)?linuxserver\\//",
+        "/^lscr\\.io\\/linuxserver\\//"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "enabled": true
+    },
+    {
       "description": "The renovate-version workflow input takes a plain tag, so it must not be pinned to a digest",
       "matchManagers": [
         "custom.regex"
