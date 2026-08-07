@@ -14,7 +14,8 @@
   "enabledManagers": [
     "docker-compose",
     "pip_requirements",
-    "github-actions"
+    "github-actions",
+    "custom.regex"
   ],
   "labels": [
     "renovate"
@@ -228,6 +229,33 @@
       ],
       "matchCurrentVersion": "!/^(latest|stable|edge|release|rolling|master|main)$/i",
       "enabled": false
+    },
+    {
+      "description": "The renovate-version workflow input takes a plain tag, so it must not be pinned to a digest",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/renovatebot/renovate"
+      ],
+      "pinDigests": false,
+      "groupName": "renovate self-hosted version",
+      "groupSlug": "renovate-version"
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Keep the pinned Renovate version in the Renovate workflow up to date",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/renovate\\.yml$/"
+      ],
+      "matchStrings": [
+        "renovate-version:\\s*(?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "ghcr.io/renovatebot/renovate",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
     }
   ],
   "hostRules": [

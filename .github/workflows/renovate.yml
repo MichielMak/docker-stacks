@@ -1,0 +1,112 @@
+name: Renovate
+
+on:
+  schedule:
+    # Hourly at :20, offset from other scheduled workflows.
+    - cron: "20 * * * *"
+  workflow_dispatch:
+    inputs:
+      repoCache:
+        description: "Repository cache behaviour"
+        type: choice
+        default: enabled
+        options:
+          - enabled
+          - disabled
+          - reset
+      logLevel:
+        description: "Renovate log level"
+        type: choice
+        default: info
+        options:
+          - info
+          - debug
+
+permissions:
+  contents: read
+
+env:
+  # Directory Renovate itself uses for the repository cache. Caching this exact
+  # path avoids the permission problems that come with overriding `cacheDir`.
+  cache_dir: /tmp/renovate/cache/renovate/repository
+  # Bump this value manually to invalidate every existing cache entry.
+  cache_key: renovate-cache
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # Exchanges the GitHub App private key for a short-lived installation
+      # token. This replaces the self-hosted token-generator container.
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
+      # The primary key contains the run id and attempt so every run stores a
+      # fresh entry; `restore-keys` then picks the most recent previous entry.
+      - name: Restore Renovate cache
+        id: cache-restore
+        if: inputs.repoCache != 'disabled' && inputs.repoCache != 'reset'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.cache_dir }}
+          key: ${{ env.cache_key }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache_key }}-
+
+      # The restored files belong to the runner user, but Renovate reads them
+      # from inside its container as uid 12021.
+      - name: Fix restored cache ownership
+        if: steps.cache-restore.outputs.cache-matched-key != ''
+        run: sudo chown -R 12021:0 /tmp/renovate/
+
+      - name: Run Renovate
+        uses: renovatebot/github-action@316d7cd859606d6039a2182b7d69199e9b036835 # v46.2.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          renovate-version: 44.14.3
+        env:
+          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+          RENOVATE_PLATFORM: github
+          RENOVATE_AUTODISCOVER: "false"
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_REQUIRE_CONFIG: required
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REPOSITORY_CACHE: ${{ inputs.repoCache || 'enabled' }}
+          # Authenticated Docker Hub pulls avoid the low anonymous rate limit,
+          # which matters because this repo tracks 60+ images.
+          RENOVATE_HOST_RULES: >-
+            [
+              {
+                "matchHost": "docker.io",
+                "hostType": "docker",
+                "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+              },
+              {
+                "matchHost": "ghcr.io",
+                "hostType": "docker",
+                "username": "x-access-token",
+                "password": "${{ steps.app-token.outputs.token }}"
+              }
+            ]
+
+      - name: Save Renovate cache
+        if: inputs.repoCache != 'disabled' && steps.cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.cache_dir }}
+          key: ${{ env.cache_key }}-${{ github.run_id }}-${{ github.run_attempt }}
