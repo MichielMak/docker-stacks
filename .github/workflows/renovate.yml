@@ -31,6 +31,13 @@ env:
   cache_dir: /tmp/renovate/cache/renovate/repository
   # Bump this value manually to invalidate every existing cache entry.
   cache_key: renovate-cache
+  # Repositories this Renovate instance manages. Both lists must be kept in
+  # sync: the token step wants names relative to the owner, while Renovate
+  # itself wants fully qualified names.
+  renovate_repos: |
+    docker-stacks
+    open_agb_firm
+  renovate_repositories: MichielMak/docker-stacks,MichielMak/open_agb_firm
 
 concurrency:
   group: renovate
@@ -53,7 +60,7 @@ jobs:
           client-id: ${{ secrets.RENOVATE_CLIENT_ID }}
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }}
+          repositories: ${{ env.renovate_repos }}
 
       # The primary key contains the run id and attempt so every run stores a
       # fresh entry; `restore-keys` then picks the most recent previous entry.
@@ -82,7 +89,7 @@ jobs:
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
           RENOVATE_PLATFORM: github
           RENOVATE_AUTODISCOVER: "false"
-          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_REPOSITORIES: ${{ env.renovate_repositories }}
           RENOVATE_REQUIRE_CONFIG: required
           RENOVATE_ONBOARDING: "false"
           RENOVATE_REPOSITORY_CACHE: ${{ inputs.repoCache || 'enabled' }}

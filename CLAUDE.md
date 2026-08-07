@@ -80,7 +80,7 @@ labels:
 
 When adding a new service, Renovate will pick up the image automatically. If the image uses non-standard versioning, add a custom `packageRule` in `renovate.json`.
 
-Renovate runs hourly as a GitHub Actions workflow (`.github/workflows/renovate.yml`). It authenticates as a GitHub App using the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets, and pulls Docker Hub metadata with `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`. The workflow can also be triggered manually, with options to reset or disable the repository cache.
+Renovate runs hourly as a GitHub Actions workflow (`.github/workflows/renovate.yml`). It manages this repository and `MichielMak/open_agb_firm` — add further repositories to the `renovate_repos` and `renovate_repositories` lists at the top of the workflow. It authenticates as a GitHub App using the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets, and pulls Docker Hub metadata with `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`. The workflow can also be triggered manually, with options to reset or disable the repository cache.
 
 ## Adding a New Stack
 
