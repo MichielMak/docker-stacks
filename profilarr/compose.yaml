@@ -1,11 +1,19 @@
 services:
   profilarr:
-    image: santiagosayshey/profilarr:v1.1.5@sha256:8033e9c6d6995f37625afeb93d7020e99566f549ae83b65f1db7e11048952d0f
+    image: ghcr.io/dictionarry-hub/profilarr:2.1.0@sha256:75a43c9c19c70f6e48315d4ed5cef3232d905da8fab397391a2078a5e0fd7ec1
     container_name: profilarr
     volumes:
-      - ${DOCKER_DATA_DIR}/profilarr/config:/config # Replace with your actual path
+      - ${DOCKER_DATA_DIR}/profilarr/config:/config
     environment:
-      - TZ=Europe/Amsterdam # Set your timezone
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - ORIGIN=https://profilarr.${DOMAIN}
+      - PARSER_HOST=profilarr-parser
+      - PARSER_PORT=5000
+    depends_on:
+      profilarr-parser:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - npm
@@ -14,13 +22,27 @@ services:
       - homepage.name=Profilarr
       - homepage.id=colsmall
       - homepage.icon=https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4d2.png
-      - homepage.href=http://profilarr.${DOMAIN}/
+      - homepage.href=https://profilarr.${DOMAIN}/
       - homepage.description=Config management for -arr suite
       - traefik.enable=true
       - traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN}`)
       - traefik.http.routers.profilarr.entrypoints=websecure
       - traefik.http.routers.profilarr.tls=true
       - traefik.http.services.profilarr.loadbalancer.server.port=6868
+
+  profilarr-parser:
+    image: ghcr.io/dictionarry-hub/profilarr-parser:2.1.0@sha256:83d668258b2a798adaf25dec0d78e5159953c3b015e2d31edb8e5b9859f3c591
+    container_name: profilarr-parser
+    environment:
+      - TZ=${TZ}
+    expose:
+      - 5000
+    restart: unless-stopped
+    networks:
+      - npm
+    labels:
+      - traefik.enable=false
+
 networks:
   npm:
     external: true
