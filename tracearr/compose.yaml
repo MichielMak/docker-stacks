@@ -7,10 +7,14 @@
 #   TRACEARR_JWT_SECRET      openssl rand -hex 32
 #   TRACEARR_COOKIE_SECRET   openssl rand -hex 32
 #   TRACEARR_DB_PASSWORD     database password
+#
+# NOTE: avoid "$" in these values. Compose interpolates the env file, so a
+# literal "$" is read as a variable reference (e.g. "pa$word" -> warning
+# 'The "w" variable is not set'). Use hex/alphanumeric values, or escape as "$$".
 
 services:
   tracearr:
-    image: ghcr.io/connorgallopo/tracearr:v2.0.1
+    image: ghcr.io/connorgallopo/tracearr:2.0.1@sha256:3d57d9b032b4a57919c48c919c16c3d6640b83f9116feb2c2cdf907747702ec8
     container_name: tracearr
     environment:
       - NODE_ENV=production
@@ -48,7 +52,7 @@ services:
     restart: unless-stopped
 
   tracearr-db:
-    image: timescale/timescaledb-ha:pg18.4-ts2.29.1
+    image: timescale/timescaledb-ha:pg18.4-ts2.29.1@sha256:5bcc34889e90cc21a4c67fc334b581ea3abc00f8e8d0a2eaf08d747ae69bd82f
     container_name: tracearr-db
     shm_size: 512mb
     ulimits:
@@ -78,7 +82,7 @@ services:
     restart: unless-stopped
 
   tracearr-redis:
-    image: redis:8-alpine
+    image: redis:8-alpine@sha256:978f0e01593e65eed801f2402944efcd936d43b5027e4908a7897baf88ed6241
     container_name: tracearr-redis
     command: redis-server --appendonly yes
     volumes:
