@@ -10,7 +10,7 @@
 
 services:
   tracearr:
-    image: ghcr.io/connorgallopo/tracearr:latest
+    image: ghcr.io/connorgallopo/tracearr:v2.0.1
     container_name: tracearr
     environment:
       - NODE_ENV=production
