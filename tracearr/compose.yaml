@@ -1,0 +1,100 @@
+# Tracearr - PostgreSQL 18 / TimescaleDB HA (experimental upstream example)
+#
+# WARNING: NEW INSTALLATIONS ONLY - PostgreSQL 18 data format is incompatible
+# with PostgreSQL 15/16 volumes.
+#
+# Required per-stack env vars (set in Komodo):
+#   TRACEARR_JWT_SECRET      openssl rand -hex 32
+#   TRACEARR_COOKIE_SECRET   openssl rand -hex 32
+#   TRACEARR_DB_PASSWORD     database password
+
+services:
+  tracearr:
+    image: ghcr.io/connorgallopo/tracearr:latest
+    container_name: tracearr
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - TZ=${TZ}
+      - DATABASE_URL=postgres://tracearr:${TRACEARR_DB_PASSWORD}@tracearr-db:5432/tracearr
+      - REDIS_URL=redis://tracearr-redis:6379
+      - JWT_SECRET=${TRACEARR_JWT_SECRET}
+      - COOKIE_SECRET=${TRACEARR_COOKIE_SECRET}
+      - CORS_ORIGIN=https://tracearr.${DOMAIN}
+      - LOG_LEVEL=info
+    volumes:
+      - ${DOCKER_DATA_DIR}/tracearr/backup:/data/backup
+    depends_on:
+      tracearr-db:
+        condition: service_healthy
+      tracearr-redis:
+        condition: service_healthy
+    labels:
+      - homepage.group=Media
+      - homepage.name=Tracearr
+      - homepage.icon=tautulli.png
+      - homepage.href=https://tracearr.${DOMAIN}/
+      - homepage.description=Plex media analytics and playback tracking
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.tracearr.rule=Host(`tracearr.${DOMAIN}`)
+      - traefik.http.routers.tracearr.entrypoints=websecure
+      - traefik.http.routers.tracearr.tls=true
+      - traefik.http.services.tracearr.loadbalancer.server.port=3000
+    networks:
+      - default
+      - tracearr-internal
+    restart: unless-stopped
+
+  tracearr-db:
+    image: timescale/timescaledb-ha:pg18.4-ts2.29.1
+    container_name: tracearr-db
+    shm_size: 512mb
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    command: >
+      postgres
+      -c timescaledb.license=timescale
+      -c timescaledb.max_tuples_decompressed_per_dml_transaction=100000
+      -c max_locks_per_transaction=4096
+      -c timescaledb.telemetry_level=off
+      -c max_connections=150
+    environment:
+      - POSTGRES_USER=tracearr
+      - POSTGRES_PASSWORD=${TRACEARR_DB_PASSWORD}
+      - POSTGRES_DB=tracearr
+    volumes:
+      - ${DOCKER_DATA_DIR}/tracearr/db:/home/postgres/pgdata/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracearr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tracearr-internal
+    restart: unless-stopped
+
+  tracearr-redis:
+    image: redis:8-alpine
+    container_name: tracearr-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - ${DOCKER_DATA_DIR}/tracearr/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tracearr-internal
+    restart: unless-stopped
+
+networks:
+  default:
+    external: true
+    name: npm
+  tracearr-internal:
+    driver: bridge
