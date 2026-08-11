@@ -1,6 +1,6 @@
 services:
   byparr:
-    image: ghcr.io/thephaseless/byparr:3.0.2@sha256:8295dcfe1476610720d43d925dd60d14cd032b43048d10ce4b7851f6c35afd03 
+    image: ghcr.io/thephaseless/byparr:3.0.3@sha256:db931cd7b7880a454bf7d12640155dbb57386088629811ecf452f7626be49e3c 
     container_name: byparr
     init: true
     restart: unless-stopped
