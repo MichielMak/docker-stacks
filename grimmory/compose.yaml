@@ -9,6 +9,7 @@ services:
       - DATABASE_URL=jdbc:mariadb://grimmorymariadb:3306/booklore
       - DATABASE_USERNAME=booklore
       - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OIDC_ALLOW_UNSAFE_HOSTS=true
       - REMOTE_AUTH_ENABLED=true
       - REMOTE_AUTH_CREATE_NEW_USERS=true
       - REMOTE_AUTH_HEADER_NAME=Remote-Name
