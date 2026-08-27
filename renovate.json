@@ -131,11 +131,27 @@
       "allowedVersions": "/^pr-plugins-/"
     },
     {
-      "description": "Postgres: only track 16.x (including distro suffixes)",
+      "description": "Authentik: PG16 data directory — never bump major",
+      "matchFileNames": [
+        "**/authentik/compose.yaml",
+        "**/authentik/compose.yml",
+        "**/authentik/docker-compose.yaml",
+        "**/authentik/docker-compose.yml"
+      ],
       "matchPackageNames": [
-        "/^docker\\.io\\/library\\/postgres$/"
+        "/^(?:docker\\.io\\/library\\/)?postgres$/"
       ],
       "allowedVersions": "/^16(?:\\.\\d+){0,2}(?:-[A-Za-z0-9.-]+)?$/"
+    },
+    {
+      "description": "Postgres majors need manual review — the data directory is not backward compatible",
+      "matchPackageNames": [
+        "/^(?:docker\\.io\\/library\\/)?postgres$/"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
     },
     {
       "description": "Immich Infrastructure: Ignore Redis/Valkey and PostgreSQL updates",
