@@ -1,0 +1,67 @@
+# MCPJungle - self-hosted MCP server registry & gateway
+#
+# Required per-stack env vars (set in Komodo):
+#   MCPJUNGLE_DB_PASSWORD    database password
+#
+# NOTE: avoid "$" in this value. Compose interpolates the env file, so a
+# literal "$" is read as a variable reference. Use hex/alphanumeric values.
+#
+# SERVER_MODE=production enables authentication. After first start, run
+# `mcpjungle init-server` against the server once to create the admin token.
+
+services:
+  mcpjungle:
+    image: ghcr.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
+    container_name: mcpjungle
+    environment:
+      - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle
+      - SERVER_MODE=production
+      - OTEL_ENABLED=false
+      - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=10
+    volumes:
+      # Read-only host data exposed to filesystem-type MCP servers
+      - ${DOCKER_DATA_DIR}/mcpjungle/host:/host:ro
+    depends_on:
+      mcpjungle-db:
+        condition: service_healthy
+    labels:
+      - homepage.group=Infra
+      - homepage.name=MCPJungle
+      - homepage.icon=mcp.png
+      - homepage.href=https://mcpjungle.${DOMAIN}/
+      - homepage.description=MCP server registry and gateway
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.mcpjungle.rule=Host(`mcpjungle.${DOMAIN}`)
+      - traefik.http.routers.mcpjungle.entrypoints=websecure
+      - traefik.http.routers.mcpjungle.tls=true
+      - traefik.http.services.mcpjungle.loadbalancer.server.port=8080
+    networks:
+      - default
+      - mcpjungle-internal
+    restart: unless-stopped
+
+  mcpjungle-db:
+    image: postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    container_name: mcpjungle-db
+    environment:
+      - POSTGRES_USER=mcpjungle
+      - POSTGRES_PASSWORD=${MCPJUNGLE_DB_PASSWORD}
+      - POSTGRES_DB=mcpjungle
+    volumes:
+      - ${DOCKER_DATA_DIR}/mcpjungle/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mcpjungle"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mcpjungle-internal
+    restart: unless-stopped
+
+networks:
+  default:
+    external: true
+    name: npm
+  mcpjungle-internal:
+    driver: bridge
