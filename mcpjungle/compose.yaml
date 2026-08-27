@@ -6,8 +6,13 @@
 # NOTE: avoid "$" in this value. Compose interpolates the env file, so a
 # literal "$" is read as a variable reference. Use hex/alphanumeric values.
 #
-# SERVER_MODE=production enables authentication. After first start, run
-# `mcpjungle init-server` against the server once to create the admin token.
+# SERVER_MODE:
+#   development - web UI is served, mcpjungle itself does NO authentication.
+#   enterprise  - per-client bearer tokens + ACLs, but the web UI returns 404
+#                 (upstream serves the frontend in dev mode only).
+# This stack runs "development" and puts Authentik in front of the UI instead,
+# same pattern as sonarr. See the router split below for what that does and
+# does not cover.
 
 services:
   mcpjungle:
@@ -15,7 +20,7 @@ services:
     container_name: mcpjungle
     environment:
       - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle
-      - SERVER_MODE=enterprise
+      - SERVER_MODE=development
       - OTEL_ENABLED=false
       - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=10
     volumes:
@@ -32,9 +37,21 @@ services:
       - homepage.description=MCP server registry and gateway
       - traefik.enable=true
       - traefik.docker.network=npm
+      # Machine paths: MCP proxy transports, CLI API, health. These must skip
+      # Authentik - MCP clients and the mcpjungle CLI send their own bearer
+      # token and cannot follow an OIDC browser redirect.
+      - traefik.http.routers.mcpjungle-api.rule=Host(`mcpjungle.${DOMAIN}`) && (PathPrefix(`/mcp`) || PathPrefix(`/sse`) || PathPrefix(`/message`) || PathPrefix(`/api/v0`) || PathPrefix(`/v0`) || PathPrefix(`/health`) || PathPrefix(`/metadata`))
+      - traefik.http.routers.mcpjungle-api.entrypoints=websecure
+      - traefik.http.routers.mcpjungle-api.priority=100
+      - traefik.http.routers.mcpjungle-api.tls=true
+      - traefik.http.routers.mcpjungle-api.service=mcpjungle
+      # Everything else - web UI, /assets, /api/dashboard, /init - behind Authentik
       - traefik.http.routers.mcpjungle.rule=Host(`mcpjungle.${DOMAIN}`)
       - traefik.http.routers.mcpjungle.entrypoints=websecure
+      - traefik.http.routers.mcpjungle.priority=99
       - traefik.http.routers.mcpjungle.tls=true
+      - traefik.http.routers.mcpjungle.middlewares=authentik-forwardauth@docker
+      - traefik.http.routers.mcpjungle.service=mcpjungle
       - traefik.http.services.mcpjungle.loadbalancer.server.port=8080
     networks:
       - default
