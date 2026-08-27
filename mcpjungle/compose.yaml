@@ -15,7 +15,7 @@ services:
     container_name: mcpjungle
     environment:
       - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle
-      - SERVER_MODE=production
+      - SERVER_MODE=enterprise
       - OTEL_ENABLED=false
       - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=10
     volumes:
