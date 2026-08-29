@@ -54,7 +54,7 @@ services:
       - traefik.http.services.arl.loadbalancer.server.port=8080
 
   arl-dockerproxy:
-    image: linuxserver/socket-proxy:3.4.3@sha256:5907a638bb14ee873500f6161dd3aaa4d9b3e67a35912db8c9995e134d990ec0
+    image: linuxserver/socket-proxy:3.4.4@sha256:c0e905167a19a756f47e7fcf724ac08e47a883238ef2e1dfb1bd62e94d481ce5
     container_name: arl-dockerproxy
     environment:
       - CONTAINERS=1
