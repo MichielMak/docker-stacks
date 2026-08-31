@@ -1,7 +1,7 @@
 services:
   # Single-node VictoriaMetrics: TSDB + query API + vmui.
   victoriametrics:
-    image: victoriametrics/victoria-metrics:v1.150.0@sha256:54467c7764a3e6579199af1914bb779f01ce32265cd552eb5ae0d4f8a2b80a97
+    image: victoriametrics/victoria-metrics:v1.151.0@sha256:6d164540a04f49ba4e696cbdb70f9fee78be1e94b8f2a1292743a0b1ab8275bd
     container_name: victoriametrics
     restart: unless-stopped
     user: "${PUID}:${PGID}"
@@ -30,7 +30,7 @@ services:
 
   # Scrapes targets from prometheus.yml, remote-writes into victoriametrics.
   vmagent:
-    image: victoriametrics/vmagent:v1.150.0@sha256:3eff5874d59292714878dcb6aee14f048bf19b7312b727860ba5e7d29e2e0c07
+    image: victoriametrics/vmagent:v1.151.0@sha256:ff6168d22b523d0bc3db1a0fedd0dafd37a77dba75489120464c39fadbfa1ff7
     container_name: vmagent
     restart: unless-stopped
     user: "${PUID}:${PGID}"
@@ -56,7 +56,7 @@ services:
 
   # Evaluates alerting and recording rules from ./rules.
   vmalert:
-    image: victoriametrics/vmalert:v1.150.0@sha256:c6e6c1ef6e43c09510dd0aff264bf0ea319c1bdfced1ccc79dad1545950a7989
+    image: victoriametrics/vmalert:v1.151.0@sha256:e519f14c31f4d68015702e684a0fc3f1b4e559aa985d8f4462768f07f55b05c9
     container_name: vmalert
     restart: unless-stopped
     user: "${PUID}:${PGID}"
