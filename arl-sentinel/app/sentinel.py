@@ -1,10 +1,12 @@
 """ARL Sentinel main loop.
 
-Periodically checks whether the Deezer ARL shared by spotizerr and deemix is
-still valid. If the user drops a new ARL into /inbox/new_arl.txt, validates
-it and propagates it to both apps (restarting both containers). If the
-current ARL has expired, sends a Gotify notification asking for a new one,
-and optionally attempts an automated Deezer login (see auto_login.py).
+Periodically checks whether the Deezer ARL shared by spotizerr, deemix and
+Music Assistant is still valid. If the user drops a new ARL into
+/inbox/new_arl.txt, validates it and propagates it to all three (restarting
+the deemix and spotizerr containers; Music Assistant is updated over its API
+and reloads its Deezer provider itself). If the current ARL has expired,
+sends a Gotify notification asking for a new one, and optionally attempts an
+automated Deezer login (see auto_login.py).
 """
 
 import json
@@ -17,6 +19,7 @@ import traceback
 import requests
 
 from deezer_api import check_arl
+from musicassistant import set_musicassistant_arl
 from propagate import restart_container, write_deemix_login, write_spotizerr_arl
 
 STATE_PATH = "/data/state.json"
@@ -29,6 +32,8 @@ GOTIFY_URL = os.environ.get("GOTIFY_URL", "").rstrip("/")
 GOTIFY_TOKEN = os.environ.get("GOTIFY_TOKEN", "")
 DOCKERPROXY_URL = os.environ.get("DOCKERPROXY_URL", "http://arl-dockerproxy:2375")
 ATTEMPT_AUTO_LOGIN = os.environ.get("ATTEMPT_AUTO_LOGIN", "false").lower() == "true"
+MUSICASSISTANT_URL = os.environ.get("MUSICASSISTANT_URL", "").rstrip("/")
+MUSICASSISTANT_TOKEN = os.environ.get("MUSICASSISTANT_TOKEN", "")
 
 
 def notify(title: str, message: str, priority: int = 5) -> None:
@@ -89,11 +94,38 @@ def archive_inbox() -> None:
         os.replace(INBOX_PATH, f"{INBOX_PATH}.applied_{int(time.time())}")
 
 
+def update_musicassistant(arl: str) -> None:
+    """Push the ARL to Music Assistant, if it is configured.
+
+    Failures here must not undo the deemix/spotizerr update, so they are
+    reported instead of raised.
+    """
+    if not MUSICASSISTANT_URL or not MUSICASSISTANT_TOKEN:
+        return
+    try:
+        set_musicassistant_arl(MUSICASSISTANT_URL, MUSICASSISTANT_TOKEN, arl)
+        print("Music Assistant's Deezer provider updated.")
+    except Exception as exc:
+        notify(
+            "ARL not applied to Music Assistant",
+            f"deemix and spotizerr were updated, but Music Assistant refused the new ARL: {exc}",
+            priority=8,
+        )
+
+
+def targets_label() -> str:
+    targets = ["deemix", "spotizerr"]
+    if MUSICASSISTANT_URL and MUSICASSISTANT_TOKEN:
+        targets.append("Music Assistant")
+    return ", ".join(targets)
+
+
 def propagate(arl: str) -> None:
     write_deemix_login(arl, DEEMIX_LOGIN_PATH)
     write_spotizerr_arl(arl, SPOTIZERR_DB_PATH)
     restart_container("deemix", DOCKERPROXY_URL)
     restart_container("spotizerr", DOCKERPROXY_URL)
+    update_musicassistant(arl)
 
 
 def try_auto_login() -> None:
@@ -117,7 +149,7 @@ def try_auto_login() -> None:
 
     propagate(result["arl"])
     save_state({"arl": result["arl"], "checked_at": time.time()})
-    notify("ARL auto-refreshed", "Logged into Deezer automatically and refreshed both apps.")
+    notify("ARL auto-refreshed", f"Logged into Deezer automatically and refreshed {targets_label()}.")
 
 
 def run_cycle() -> None:
@@ -135,7 +167,7 @@ def run_cycle() -> None:
             propagate(candidate)
             save_state({"arl": candidate, "checked_at": time.time()})
             archive_inbox()
-            notify("ARL updated", f"New ARL applied to deemix and spotizerr (user_id={result['user_id']}).")
+            notify("ARL updated", f"New ARL applied to {targets_label()} (user_id={result['user_id']}).")
         else:
             notify(
                 "ARL update failed",
@@ -163,7 +195,7 @@ def run_cycle() -> None:
     notify(
         "Deezer ARL expired",
         "The current ARL is no longer valid. Log into deezer.com, copy the 'arl' cookie, "
-        "and drop it into /inbox/new_arl.txt to refresh deemix and spotizerr automatically.",
+        f"and drop it into /inbox/new_arl.txt to refresh {targets_label()} automatically.",
         priority=8,
     )
 
