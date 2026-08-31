@@ -13,6 +13,10 @@ services:
       - ATTEMPT_AUTO_LOGIN=true
       - DEEZER_EMAIL=${DEEZER_EMAIL}
       - DEEZER_PASSWORD=${DEEZER_PASSWORD}
+      # Music Assistant target: create a long-lived token in
+      # Settings -> your user -> Long-lived tokens. Leave empty to skip.
+      - MUSICASSISTANT_URL=http://musicassistant:8095
+      - MUSICASSISTANT_TOKEN=${MUSICASSISTANT_TOKEN}
     volumes:
       - ${DOCKER_DATA_DIR}/arl-sentinel/app:/app
       - ${DOCKER_DATA_DIR}/arl-sentinel/data:/data
