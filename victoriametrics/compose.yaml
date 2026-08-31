@@ -1,0 +1,133 @@
+services:
+  # Single-node VictoriaMetrics: TSDB + query API + vmui.
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:v1.150.0@sha256:54467c7764a3e6579199af1914bb779f01ce32265cd552eb5ae0d4f8a2b80a97
+    container_name: victoriametrics
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    command:
+      - --storageDataPath=/storage
+      - --httpListenAddr=:8428
+      - --retentionPeriod=12
+      - --vmalert.proxyURL=http://vmalert:8880
+    volumes:
+      - ${DOCKER_DATA_DIR}/victoriametrics/data:/storage
+    labels:
+      - homepage.group=Infra
+      - homepage.name=VictoriaMetrics
+      - homepage.icon=victoriametrics.png
+      - homepage.href=https://vmui.${DOMAIN}/
+      - homepage.description=Metrics database
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.vmui.rule=Host(`vmui.${DOMAIN}`)
+      - traefik.http.routers.vmui.entrypoints=websecure
+      - traefik.http.routers.vmui.tls=true
+      - traefik.http.routers.vmui.middlewares=authentik-forwardauth@docker,sec-headers@docker
+      - traefik.http.services.vmui.loadbalancer.server.port=8428
+    networks:
+      - npm
+
+  # Scrapes targets from prometheus.yml, remote-writes into victoriametrics.
+  vmagent:
+    image: victoriametrics/vmagent:v1.150.0@sha256:3eff5874d59292714878dcb6aee14f048bf19b7312b727860ba5e7d29e2e0c07
+    container_name: vmagent
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    depends_on:
+      - victoriametrics
+    command:
+      - --promscrape.config=/etc/prometheus/prometheus.yml
+      - --remoteWrite.url=http://victoriametrics:8428/api/v1/write
+      - --remoteWrite.tmpDataPath=/vmagentdata
+    volumes:
+      - ${DOCKER_DATA_DIR}/victoriametrics/vmagent:/vmagentdata
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.vmagent.rule=Host(`vmagent.${DOMAIN}`)
+      - traefik.http.routers.vmagent.entrypoints=websecure
+      - traefik.http.routers.vmagent.tls=true
+      - traefik.http.routers.vmagent.middlewares=authentik-forwardauth@docker,sec-headers@docker
+      - traefik.http.services.vmagent.loadbalancer.server.port=8429
+    networks:
+      - npm
+
+  # Evaluates alerting and recording rules from ./rules.
+  vmalert:
+    image: victoriametrics/vmalert:v1.150.0@sha256:c6e6c1ef6e43c09510dd0aff264bf0ea319c1bdfced1ccc79dad1545950a7989
+    container_name: vmalert
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    depends_on:
+      - victoriametrics
+      - alertmanager
+    command:
+      - --datasource.url=http://victoriametrics:8428/
+      - --remoteRead.url=http://victoriametrics:8428/
+      - --remoteWrite.url=http://vmagent:8429/
+      - --notifier.url=http://alertmanager:9093/
+      - --rule=/etc/alerts/*.yml
+      # Makes "Source" links in alerts point at the Grafana stack.
+      - --external.url=https://grafana.${DOMAIN}
+      - --external.alert.source=explore?orgId=1&left={"datasource":"VictoriaMetrics","queries":[{"expr":{{.Expr|jsonEscape|queryEscape}},"refId":"A"}],"range":{"from":"{{ .ActiveAt.UnixMilli }}","to":"now"}}
+    volumes:
+      - ./rules:/etc/alerts:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.vmalert.rule=Host(`vmalert.${DOMAIN}`)
+      - traefik.http.routers.vmalert.entrypoints=websecure
+      - traefik.http.routers.vmalert.tls=true
+      - traefik.http.routers.vmalert.middlewares=authentik-forwardauth@docker,sec-headers@docker
+      - traefik.http.services.vmalert.loadbalancer.server.port=8880
+    networks:
+      - npm
+
+  # Deduplicates/groups alerts from vmalert and forwards them to the Gotify bridge.
+  alertmanager:
+    image: prom/alertmanager:v0.34.0@sha256:690c7b525f4367aa91f73e2f91c632206d32e97c6384bdbf2fb7a861b420340d
+    container_name: alertmanager
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    command:
+      - --config.file=/config/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --web.external-url=https://alertmanager.${DOMAIN}
+    volumes:
+      - ./alertmanager.yml:/config/alertmanager.yml:ro
+      - ${DOCKER_DATA_DIR}/victoriametrics/alertmanager:/alertmanager
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Alertmanager
+      - homepage.icon=alertmanager.png
+      - homepage.href=https://alertmanager.${DOMAIN}/
+      - homepage.description=Alert routing
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.alertmanager.rule=Host(`alertmanager.${DOMAIN}`)
+      - traefik.http.routers.alertmanager.entrypoints=websecure
+      - traefik.http.routers.alertmanager.tls=true
+      - traefik.http.routers.alertmanager.middlewares=authentik-forwardauth@docker,sec-headers@docker
+      - traefik.http.services.alertmanager.loadbalancer.server.port=9093
+    networks:
+      - npm
+
+  # Translates Alertmanager webhooks into Gotify messages.
+  alertmanager-gotify:
+    image: druggeri/alertmanager_gotify_bridge:2.3.2@sha256:242441023c6a7956fc7bcdd30350a8fed38f791e703d670aa286fc0465f88b41
+    container_name: alertmanager-gotify
+    restart: unless-stopped
+    environment:
+      - GOTIFY_ENDPOINT=http://gotify:80/message
+      - GOTIFY_TOKEN=${GOTIFY_VM_TOKEN}
+      - TITLE_ANNOTATION=summary
+      - MESSAGE_ANNOTATION=description
+      - EXTENDED_DETAILS=true
+    networks:
+      - npm
+
+networks:
+  npm:
+    external: true
