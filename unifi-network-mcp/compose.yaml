@@ -1,0 +1,64 @@
+# UniFi Network MCP server - https://github.com/sirkirby/unifi-mcp
+#
+# Exposes ~192 UniFi Network tools to MCPjungle over HTTP.
+#
+# Required per-stack env vars (set these in Komodo BEFORE deploying - the
+# stack will not work without them):
+#   UNIFI_NETWORK_HOST       controller hostname or IP
+#   UNIFI_NETWORK_USERNAME   local controller user
+#   UNIFI_NETWORK_PASSWORD   that user's password
+#
+# Unlike truenas-mcp, these credentials really do live in Komodo rather than
+# being typed into the MCPjungle web UI, because this server is configured
+# through its own environment rather than by mcpjungle spawning it.
+#
+# This server can run either as a stdio subprocess or as a real HTTP service.
+# We deliberately run HTTP, so MCPjungle talks to it over the network instead
+# of starting a fresh Python process for every tool call. That also means it
+# needs no downloaded binary or init sidecar - contrast with truenas-mcp.
+#
+# Register it in the MCPJungle web UI after deploy:
+#   Server name:  unifi-network
+#   Transport:    streamable_http
+#   Session mode: stateless
+#   Target URL:   http://unifi-network-mcp:3000/mcp
+#   Bearer token: (empty)
+# Stateless is fine here - there is no expensive per-connection authentication
+# handshake worth keeping alive between calls.
+#
+# Two gotchas worth knowing when debugging:
+#   1. The HTTP listener only binds when the process is PID 1 (unless
+#      UNIFI_MCP_HTTP_FORCE=true). As the container entrypoint it is PID 1, so
+#      this works - but starting the server by hand via "docker exec" will NOT
+#      serve HTTP, which is confusing if you don't expect it.
+#   2. UNIFI_MCP_ALLOWED_HOSTS must contain the exact host:port that appears in
+#      the caller's Host header, or the request is rejected. MCPjungle connects
+#      to unifi-network-mcp:3000, hence those entries below.
+
+services:
+  unifi-network-mcp:
+    image: ghcr.io/sirkirby/unifi-network-mcp:0.29.3@sha256:4ebc2582d7c85f08fc52dc8f988abd7cf1c0350837fe84ca35f4c7884eab2f0b
+    container_name: unifi-network-mcp
+    environment:
+      # Serve MCP over HTTP instead of the default stdio transport
+      - UNIFI_MCP_HTTP_ENABLED=true
+      - UNIFI_MCP_HTTP_TRANSPORT=streamable-http
+      - UNIFI_MCP_HOST=0.0.0.0
+      - UNIFI_MCP_PORT=3000
+      - UNIFI_MCP_ALLOWED_HOSTS=unifi-network-mcp,unifi-network-mcp:3000,localhost,localhost:3000,127.0.0.1,127.0.0.1:3000
+      # UniFi controller credentials - values come from Komodo
+      - UNIFI_NETWORK_HOST=${UNIFI_NETWORK_HOST}
+      - UNIFI_NETWORK_USERNAME=${UNIFI_NETWORK_USERNAME}
+      - UNIFI_NETWORK_PASSWORD=${UNIFI_NETWORK_PASSWORD}
+    # No Traefik labels and no published host ports on purpose. This service
+    # has no authentication of its own, and its tools can change the network.
+    # Publishing that to the internet would be dangerous. MCPjungle reaches it
+    # by container name on the shared npm network, which is all it needs.
+    networks:
+      - default
+    restart: unless-stopped
+
+networks:
+  default:
+    external: true
+    name: npm
