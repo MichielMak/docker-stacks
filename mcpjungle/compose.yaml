@@ -14,7 +14,79 @@
 # same pattern as sonarr. See the router split below for what that does and
 # does not cover.
 
+#
+# truenas-mcp init sidecar
+# ------------------------
+# truenas-mcp (https://github.com/truenas/truenas-mcp) does not publish a Docker
+# image. It is a single static Go binary that only speaks MCP over stdio.
+# MCPJungle runs stdio servers as child processes *inside its own container*, so
+# the binary has to exist on mcpjungle's filesystem - a separate service would
+# not help. The init sidecar below downloads the pinned release, verifies its
+# checksum, and drops the binary into a shared volume that mcpjungle mounts
+# read-only at /opt/mcp-bin.
+#
+# After the stack is up, register the server yourself in the MCPJungle web UI
+# (it is stored in mcpjungle's Postgres DB - compose cannot declare it):
+#   Transport: stdio
+#   Command:   /opt/mcp-bin/truenas-mcp
+#   Arguments: (none)
+#   Environment variables:
+#     TRUENAS_URL=wss://<truenas-ip>:444/websocket   # this homelab's TrueNAS UI
+#                                                    # is on 444, see
+#                                                    # traefik/dynamic/truenas.yml
+#     TRUENAS_API_KEY=<key from TrueNAS System Settings -> API Keys>
+#     TRUENAS_INSECURE=1        # TrueNAS uses a self-signed cert here; the
+#                               # safer alternative is TRUENAS_TLS_CA=<pem path>
+#
+# WARNING: do NOT commit the TrueNAS API key to this repo. Enter it in the web
+# UI only - it lives in mcpjungle's database.
+
 services:
+  mcpjungle-truenas-mcp-init:
+    image: curlimages/curl:8.21.0@sha256:7c12af72ceb38b7432ab85e1a265cff6ae58e06f95539d539b654f2cfa64bb13
+    container_name: mcpjungle-truenas-mcp-init
+    # Runs as root so it can write into the shared mcpjungle-bin volume.
+    user: "0:0"
+    environment:
+      # renovate: datasource=github-releases depName=truenas/truenas-mcp
+      - TRUENAS_MCP_VERSION=v0.0.6
+      # Must be updated together with TRUENAS_MCP_VERSION above. Renovate bumps
+      # the version but cannot know the new checksum, so update it by hand from
+      # the release page when a version PR comes in.
+      - TRUENAS_MCP_SHA256=920a1042763f2ed31937c5cf3072fbd2defdd863dbfb3e1078aeed0275f5fa1d
+    volumes:
+      - mcpjungle-bin:/opt/mcp-bin
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        target=/opt/mcp-bin/truenas-mcp
+        stamp=/opt/mcp-bin/.truenas-mcp.version
+        asset=truenas-mcp-linux-amd64
+        url="https://github.com/truenas/truenas-mcp/releases/download/$${TRUENAS_MCP_VERSION}/$${asset}.tar.gz"
+
+        # Idempotent: the stamp file records which version is installed, so a
+        # restart of the stack does not re-download the release.
+        if [ -x "$$target" ] && [ "$$(cat "$$stamp" 2>/dev/null)" = "$${TRUENAS_MCP_VERSION}" ]; then
+          echo "truenas-mcp $${TRUENAS_MCP_VERSION} already installed, nothing to do"
+          exit 0
+        fi
+
+        tmp=$$(mktemp -d)
+        trap 'rm -rf "$$tmp"' EXIT
+
+        echo "Downloading $$url"
+        curl -fsSL --retry 3 -o "$$tmp/$$asset.tar.gz" "$$url"
+        # Checksum of the release tarball - a mismatch aborts the install.
+        echo "$${TRUENAS_MCP_SHA256}  $$tmp/$$asset.tar.gz" | sha256sum -c -
+        tar -xzf "$$tmp/$$asset.tar.gz" -C "$$tmp"
+        install -m 0755 "$$tmp/$$asset" "$$target"
+        echo "$${TRUENAS_MCP_VERSION}" > "$$stamp"
+        echo "Installed truenas-mcp $${TRUENAS_MCP_VERSION} at $$target"
+    networks:
+      - mcpjungle-internal
+    restart: "no"
+
   mcpjungle:
     image: ghcr.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
     container_name: mcpjungle
@@ -26,9 +98,13 @@ services:
     volumes:
       # Read-only host data exposed to filesystem-type MCP servers
       - ${DOCKER_DATA_DIR}/mcpjungle/host:/host:ro
+      # stdio MCP server binaries installed by the init sidecars
+      - mcpjungle-bin:/opt/mcp-bin:ro
     depends_on:
       mcpjungle-db:
         condition: service_healthy
+      mcpjungle-truenas-mcp-init:
+        condition: service_completed_successfully
     labels:
       - homepage.group=Infra
       - homepage.name=MCPJungle
@@ -75,6 +151,9 @@ services:
     networks:
       - mcpjungle-internal
     restart: unless-stopped
+
+volumes:
+  mcpjungle-bin:
 
 networks:
   default:
