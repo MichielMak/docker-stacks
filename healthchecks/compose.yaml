@@ -1,6 +1,6 @@
 services:
   healthchecks:
-    image: linuxserver/healthchecks:4.3.20260824@sha256:0c403bef5506c0e8a10b1c3b6af00e30bb179d5edb3175fa4614a47284db7796
+    image: linuxserver/healthchecks:4.4.20260901@sha256:f6739c45c88ec162dd0c7e2f8ce48ab1bfe2d18d97755ebcb76a287bc4a71143
     container_name: healthchecks
     environment:
       - PUID=${PUID}
