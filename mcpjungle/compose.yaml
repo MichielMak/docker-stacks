@@ -27,16 +27,24 @@
 #
 # After the stack is up, register the server yourself in the MCPJungle web UI
 # (it is stored in mcpjungle's Postgres DB - compose cannot declare it):
-#   Transport: stdio
-#   Command:   /opt/mcp-bin/truenas-mcp
-#   Arguments: (none)
+#   Transport:    stdio
+#   Session mode: stateful   <-- the UI defaults to "stateless", change it!
+#   Command:      /opt/mcp-bin/truenas-mcp
+#   Arguments:    (none)
 #   Environment variables:
-#     TRUENAS_URL=wss://<truenas-ip>:444/websocket   # this homelab's TrueNAS UI
-#                                                    # is on 444, see
-#                                                    # traefik/dynamic/truenas.yml
+#     TRUENAS_URL=wss://<truenas-ip>:444/websocket
+#       Port 444 is verified working on this homelab. <truenas-ip> is the same
+#       host as ${TRUENAS_IP} in traefik/dynamic/truenas.yml - type it in by
+#       hand, stdio registrations live in mcpjungle's Postgres DB, not here.
 #     TRUENAS_API_KEY=<key from TrueNAS System Settings -> API Keys>
 #     TRUENAS_INSECURE=1        # TrueNAS uses a self-signed cert here; the
 #                               # safer alternative is TRUENAS_TLS_CA=<pem path>
+#
+# Session mode MUST be "stateful". In stateless mode MCPJungle starts a brand
+# new truenas-mcp process for every single tool call, and each of those would
+# have to redo the very slow TrueNAS authentication (see the timeout note on
+# the mcpjungle service below). Stateful keeps the process and its already
+# authenticated WebSocket alive between calls.
 #
 # WARNING: do NOT commit the TrueNAS API key to this repo. Enter it in the web
 # UI only - it lives in mcpjungle's database.
@@ -94,7 +102,11 @@ services:
       - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle
       - SERVER_MODE=development
       - OTEL_ENABLED=false
-      - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=10
+      # truenas-mcp authenticates to TrueNAS *before* it answers the MCP
+      # initialize request, so a slow login blocks registration entirely. On
+      # this system auth.login_with_api_key has been observed taking ~58s, so
+      # the 10s default made registration fail every time. 120s gives headroom.
+      - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=120
     volumes:
       # Read-only host data exposed to filesystem-type MCP servers
       - ${DOCKER_DATA_DIR}/mcpjungle/host:/host:ro
