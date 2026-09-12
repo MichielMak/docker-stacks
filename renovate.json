@@ -263,30 +263,18 @@
     {
       "description": "The renovate-version workflow input takes a plain tag, so it must not be pinned to a digest",
       "matchManagers": [
-        "custom.regex"
+        "github-actions"
+      ],
+      "matchDepTypes": [
+        "uses-with"
       ],
       "matchPackageNames": [
         "ghcr.io/renovatebot/renovate"
       ],
-      "pinDigests": false,
-      "groupName": "renovate self-hosted version",
-      "groupSlug": "renovate-version"
+      "pinDigests": false
     }
   ],
   "customManagers": [
-    {
-      "description": "Keep the pinned Renovate version in the Renovate workflow up to date",
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.github/workflows/renovate\\.yml$/"
-      ],
-      "matchStrings": [
-        "renovate-version:\\s*(?<currentValue>\\S+)"
-      ],
-      "depNameTemplate": "ghcr.io/renovatebot/renovate",
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "semver"
-    },
     {
       "description": "Pick up versions pinned in compose env vars via a '# renovate:' annotation comment",
       "customType": "regex",
