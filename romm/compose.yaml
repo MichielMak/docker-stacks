@@ -50,7 +50,7 @@ services:
     networks:
       - npm
   romm-db:
-    image: mariadb:12.3.3@sha256:dd9b303aed4f4890ed09f766d8ca9ddfd176c0c6f6267feff53b3192ec65a979
+    image: mariadb:13.0.2@sha256:831e1993f97fc7a25ea7ce5d07db61a5bb7fdc5cf28cdedcca4c84db4feb0760
     container_name: romm-db
     restart: unless-stopped
     environment:
