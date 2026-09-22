@@ -49,6 +49,37 @@
 # WARNING: do NOT commit the TrueNAS API key to this repo. Enter it in the web
 # UI only - it lives in mcpjungle's database.
 
+#
+# Docker MCP server + socket proxy
+# --------------------------------
+# truenas-mcp above queries the TrueNAS middleware "app.query" API, so it only
+# ever sees containers installed from the TrueNAS App Store. Everything Komodo
+# deploys from this repo is invisible to it. mcp-server-docker talks to the
+# Docker API directly, so it sees every container on the host.
+#
+# mcp-server-docker (https://pypi.org/project/mcp-server-docker/) is a stdio
+# Python package and publishes no Docker image. Unlike truenas-mcp it needs no
+# init sidecar: the mcpjungle "-stdio" image already ships uv/uvx and Python, so
+# mcpjungle can run the package straight from PyPI as a child process.
+#
+# The Docker socket is deliberately NOT mounted into mcpjungle. MCPJungle runs
+# whatever MCP servers are defined in its database, so giving it the raw socket
+# would be root-equivalent access to the host. Instead the socket goes to the
+# mcpjungle-docker-proxy service below, which enforces an allow-list, and
+# mcpjungle reaches it over the internal network on tcp://...:2375.
+#
+# After the stack is up, register the server yourself in the MCPJungle web UI
+# (it is stored in mcpjungle's Postgres DB - compose cannot declare it):
+#   Transport: stdio
+#   Command:   uvx
+#   Arguments: mcp-server-docker@0.3.0
+#   Environment variables:
+#     DOCKER_HOST=tcp://mcpjungle-docker-proxy:2375
+#
+# NOTE: mcp-server-docker also exposes create/remove/exec tools. The proxy
+# refuses those requests, so calling them returns an error. That is by design -
+# this server is for inspecting containers plus start/stop/restart, nothing more.
+
 services:
   mcpjungle-truenas-mcp-init:
     image: curlimages/curl:8.22.0@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
@@ -95,6 +126,51 @@ services:
       - mcpjungle-internal
     restart: "no"
 
+  mcpjungle-docker-proxy:
+    image: linuxserver/socket-proxy:3.4.4@sha256:a8c700baae19c2fff5b2940b21a748e78cf3b91cc311ad65f990efabdd1361eb
+    container_name: mcpjungle-docker-proxy
+    environment:
+      # Read access - what the Docker MCP server needs to inspect the host.
+      - CONTAINERS=1
+      - IMAGES=1
+      - NETWORKS=1
+      - VOLUMES=1
+      - INFO=1
+      - VERSION=1
+      - PING=1
+      - EVENTS=1
+      - ALLOW_LOGS=1
+      - ALLOW_TOP=1
+      # Write access - start/stop/restart only.
+      #
+      # POST=0 denies every non-GET request that is not explicitly allowed
+      # above it, so create, remove, rename and exec are refused even though
+      # mcp-server-docker offers tools for them. This works because this image
+      # evaluates the ALLOW_* container rules BEFORE the POST check; the
+      # upstream Tecnativa image checks POST first, where POST=1 plus
+      # CONTAINERS=1 would also permit create and remove.
+      - POST=0
+      - ALLOW_START=1
+      - ALLOW_STOP=1
+      - ALLOW_RESTARTS=1
+      # Explicitly denied.
+      - EXEC=0
+      - AUTH=0
+      - SECRETS=0
+      - BUILD=0
+      - COMMIT=0
+      - CONFIGS=0
+      - ALLOW_ARCHIVE=0
+      - ALLOW_CHANGES=0
+      - ALLOW_EXPORT=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Internal network only - never published, no Traefik labels. This must not
+    # be reachable from anywhere except mcpjungle.
+    networks:
+      - mcpjungle-internal
+    restart: unless-stopped
+
   mcpjungle:
     image: ghcr.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
     container_name: mcpjungle
@@ -106,12 +182,19 @@ services:
       # initialize request, so a slow login blocks registration entirely. On
       # this system auth.login_with_api_key has been observed taking ~58s, so
       # the 10s default made registration fail every time. 120s gives headroom.
+      # It also covers the first uvx run of a stdio server, which downloads the
+      # package before the server can answer.
       - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=120
+      # Persistent uv cache so uvx-based stdio MCP servers start fast instead
+      # of re-downloading their package on every session.
+      - UV_CACHE_DIR=/opt/uv-cache
     volumes:
       # Read-only host data exposed to filesystem-type MCP servers
       - ${DOCKER_DATA_DIR}/mcpjungle/host:/host:ro
       # stdio MCP server binaries installed by the init sidecars
       - mcpjungle-bin:/opt/mcp-bin:ro
+      # Writable uv package cache (see UV_CACHE_DIR above)
+      - mcpjungle-uv-cache:/opt/uv-cache
     depends_on:
       mcpjungle-db:
         condition: service_healthy
@@ -166,6 +249,7 @@ services:
 
 volumes:
   mcpjungle-bin:
+  mcpjungle-uv-cache:
 
 networks:
   default:
