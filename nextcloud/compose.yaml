@@ -31,7 +31,7 @@ services:
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
   nextclouddb:
-    image: linuxserver/mariadb:11.8.8@sha256:75ffa39d652653e73848328a667d169a20a1e084fd51a66c4be3eb754a2492c9
+    image: linuxserver/mariadb:11.8.8@sha256:71eb1840431c36d5ff4985afc7b59072c5de3d8a91fe5353b5791f7a6e9fb7f5
     container_name: nextclouddb
     environment:
       - PUID=${PUID}
