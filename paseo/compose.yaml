@@ -15,7 +15,8 @@ services:
     command:
       - >
         mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( [ -x /home/paseo/.npm-global/bin/claude ] ||
-          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @anthropic-ai/claude-code' ) &&
+          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @anthropic-ai/claude-code' ) && ( [ -x /home/paseo/.npm-global/bin/copilot ] ||
+          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @github/copilot' ) &&
         exec /usr/local/bin/paseo-docker-entrypoint
     volumes:
       - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
