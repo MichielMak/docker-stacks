@@ -1,0 +1,28 @@
+services:
+  paseo:
+    image: ghcr.io/getpaseo/paseo:0.9.1@sha256:9aae08258b6ff85853da3144ef48c2fd355cfe644500ca4d6041753da589098d
+    container_name: paseo
+    environment:
+      - TZ=${TZ}
+      - PASEO_PASSWORD=${PASEO_PASSWORD}
+      - PASEO_HOSTNAMES=paseo.${DOMAIN}
+    volumes:
+      - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
+      - ${DOCKER_STACKS_DIR}:/workspace
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Paseo
+      - homepage.icon=https://paseo.sh/favicon.svg
+      - homepage.href=https://paseo.${DOMAIN}/
+      - homepage.description=Coding agent daemon and web UI
+      - traefik.enable=true
+      - traefik.http.routers.paseo.rule=Host(`paseo.${DOMAIN}`)
+      - traefik.http.routers.paseo.entrypoints=websecure
+      - traefik.http.routers.paseo.tls=true
+      - traefik.http.services.paseo.loadbalancer.server.port=6767
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
