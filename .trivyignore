@@ -11,3 +11,9 @@
 #   CVE-2023-12345 exp:2026-12-31
 #
 # Keep this list curated — every entry is a vulnerability you're choosing to ship.
+
+# AVD-DS-0002: paseo/Dockerfile ends as USER root by design. Paseo's own
+# entrypoint drops the daemon and launched agents to the non-root `paseo`
+# user at runtime; the docs explicitly say to leave the child image as root.
+# https://paseo.sh/docs/docker#install-agent-clis
+AVD-DS-0002
