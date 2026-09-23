@@ -8,7 +8,7 @@ services:
       - PASEO_HOSTNAMES=paseo.${DOMAIN}
     volumes:
       - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
-      - ${DOCKER_STACKS_DIR}:/workspace
+      - paseo-workspace:/workspace
     labels:
       - homepage.group=Infra
       - homepage.name=Paseo
@@ -23,6 +23,9 @@ services:
     restart: unless-stopped
     networks:
       - npm
+volumes:
+  paseo-workspace:
+    driver: local
 networks:
   npm:
     external: true
