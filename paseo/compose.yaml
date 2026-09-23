@@ -1,12 +1,22 @@
 services:
   paseo:
-    build: .
-    image: paseo-with-agents:0.9.1
+    image: ghcr.io/getpaseo/paseo:0.9.1@sha256:9aae08258b6ff85853da3144ef48c2fd355cfe644500ca4d6041753da589098d
     container_name: paseo
     environment:
       - TZ=${TZ}
       - PASEO_PASSWORD=${PASEO_PASSWORD}
       - PASEO_HOSTNAMES=paseo.${DOMAIN}
+      - PATH=/home/paseo/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    entrypoint:
+      - /usr/bin/tini
+      - --
+      - sh
+      - -c
+    command:
+      - >
+        mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( [ -x /home/paseo/.npm-global/bin/claude ] ||
+          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @anthropic-ai/claude-code' ) &&
+        exec /usr/local/bin/paseo-docker-entrypoint
     volumes:
       - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
       - paseo-workspace:/workspace
