@@ -7,6 +7,7 @@ services:
       - PASEO_PASSWORD=${PASEO_PASSWORD}
       - PASEO_HOSTNAMES=paseo.${DOMAIN}
       - PATH=/home/paseo/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - DX_API_TOKEN=${DX_API_TOKEN}
     entrypoint:
       - /usr/bin/tini
       - --
