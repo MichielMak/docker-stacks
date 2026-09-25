@@ -172,7 +172,7 @@ services:
     restart: unless-stopped
 
   mcpjungle:
-    image: ghcr.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
+    image: docker.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
     container_name: mcpjungle
     environment:
       - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle

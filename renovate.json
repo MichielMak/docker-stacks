@@ -118,7 +118,7 @@
     {
       "description": "BamBuddy: parse a.b.c.d versioning",
       "matchPackageNames": [
-        "ghcr.io/maziggy/bambuddy"
+        "/^(?:docker\\.io\\/)?maziggy\\/bambuddy$/"
       ],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:\\.(?<build>\\d+))?$",
       "allowedVersions": "/^\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?$/"
@@ -177,8 +177,8 @@
         "**/immich-app/docker-compose.yml"
       ],
       "matchPackageNames": [
-        "/^ghcr\\.io\\/immich-app\\/immich-server/",
-        "/^ghcr\\.io\\/immich-app\\/immich-machine-learning/"
+        "/^(?:docker\\.io\\/)?altran1502\\/immich-server/",
+        "/^(?:docker\\.io\\/)?altran1502\\/immich-machine-learning/"
       ],
       "groupName": "immich-apps",
       "groupSlug": "immich-apps",
@@ -206,8 +206,8 @@
         "!/^docker\\.io\\/valkey\\//",
         "!/^docker\\.io\\/redis\\//",
         "!/^ghcr\\.io\\/immich-app\\/postgres/",
-        "!/^ghcr\\.io\\/immich-app\\/immich-server/",
-        "!/^ghcr\\.io\\/immich-app\\/immich-machine-learning/"
+        "!/^(?:docker\\.io\\/)?altran1502\\/immich-server/",
+        "!/^(?:docker\\.io\\/)?altran1502\\/immich-machine-learning/"
       ]
     },
     {
