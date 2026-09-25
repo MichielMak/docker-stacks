@@ -76,9 +76,39 @@
 #   Environment variables:
 #     DOCKER_HOST=tcp://mcpjungle-docker-proxy:2375
 #
-# NOTE: mcp-server-docker also exposes create/remove/exec tools. The proxy
-# refuses those requests, so calling them returns an error. That is by design -
-# this server is for inspecting containers plus start/stop/restart, nothing more.
+# NOTE: mcp-server-docker also exposes create/remove tools. The proxy refuses
+# those requests, so calling them returns an error. That is by design - this
+# server is for inspecting containers plus start/stop/restart, nothing more.
+# mcp-server-docker has no exec tool at all; see the next section for that.
+
+#
+# Docker exec MCP server + exec-only socket proxy
+# -----------------------------------------------
+# container-exec-mcp (https://www.npmjs.com/package/container-exec-mcp) adds an
+# "exec" tool (plus list_containers / get_container_info). It is an npm stdio
+# package; the mcpjungle "-stdio" image ships npx, so no sidecar is needed.
+#
+# It gets its own proxy, mcpjungle-docker-exec-proxy, instead of reusing the one
+# above. The stock proxy can only allow exec via POST=1, and POST=1 plus
+# CONTAINERS=1 would also allow container create/remove. The exec proxy mounts
+# docker-exec-proxy.cfg as its HAProxy template, which allows only list,
+# inspect and exec - see that file.
+#
+# WARNING: exec is root-equivalent on the host. Exec into any container that
+# holds the Docker socket (komodo periphery, the proxies) gives full host
+# control. mcpjungle itself does no auth (SERVER_MODE=development), so the
+# mcpjungle-api router below is limited to the LAN with an IP allow-list.
+#
+# Register it in the MCPJungle web UI:
+#   Transport:    stdio
+#   Session mode: stateful
+#   Command:      npx
+#   Arguments:    -y container-exec-mcp@1.1.1
+#   Environment variables:
+#     DOCKER_HOST=tcp://mcpjungle-docker-exec-proxy:2375
+#
+# Limitation: the exec tool always runs "/bin/bash -c <command>", so it fails
+# in containers without bash (most alpine and distroless images).
 
 services:
   mcpjungle-truenas-mcp-init:
@@ -171,6 +201,19 @@ services:
       - mcpjungle-internal
     restart: unless-stopped
 
+  mcpjungle-docker-exec-proxy:
+    image: linuxserver/socket-proxy:3.4.4@sha256:a8c700baae19c2fff5b2940b21a748e78cf3b91cc311ad65f990efabdd1361eb
+    container_name: mcpjungle-docker-exec-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Fixed allow-list (list, inspect, exec only). Replaces the env-driven
+      # upstream template, so the CONTAINERS/POST/EXEC env vars have no effect.
+      - ./docker-exec-proxy.cfg:/templates/haproxy.cfg:ro
+    # Internal network only - never published, no Traefik labels.
+    networks:
+      - mcpjungle-internal
+    restart: unless-stopped
+
   mcpjungle:
     image: ghcr.io/mcpjungle/mcpjungle:0.4.6-stdio@sha256:4b647cc6e8134cb95c251d59a352c9a21cca4a7df62f63c7352a37b4b4cc1514
     container_name: mcpjungle
@@ -211,11 +254,19 @@ services:
       # Machine paths: MCP proxy transports, CLI API, health. These must skip
       # Authentik - MCP clients and the mcpjungle CLI send their own bearer
       # token and cannot follow an OIDC browser redirect.
+      #
+      # Instead they are limited to LAN clients, because the MCP servers behind
+      # them can exec into containers. Traffic from the Cloudflare tunnel,
+      # tsbridge and other containers reaches Traefik as the npm network gateway
+      # (172.16.2.1), so it is blocked here. Containers on the npm network
+      # (e.g. paseo) should use http://mcpjungle:8080/mcp directly instead.
       - traefik.http.routers.mcpjungle-api.rule=Host(`mcpjungle.${DOMAIN}`) && (PathPrefix(`/mcp`) || PathPrefix(`/sse`) || PathPrefix(`/message`) || PathPrefix(`/api/v0`) || PathPrefix(`/v0`) || PathPrefix(`/health`) || PathPrefix(`/metadata`))
       - traefik.http.routers.mcpjungle-api.entrypoints=websecure
       - traefik.http.routers.mcpjungle-api.priority=100
       - traefik.http.routers.mcpjungle-api.tls=true
       - traefik.http.routers.mcpjungle-api.service=mcpjungle
+      - traefik.http.routers.mcpjungle-api.middlewares=mcpjungle-lan-only
+      - traefik.http.middlewares.mcpjungle-lan-only.ipallowlist.sourcerange=192.168.178.0/24
       # Everything else - web UI, /assets, /api/dashboard, /init - behind Authentik
       - traefik.http.routers.mcpjungle.rule=Host(`mcpjungle.${DOMAIN}`)
       - traefik.http.routers.mcpjungle.entrypoints=websecure
