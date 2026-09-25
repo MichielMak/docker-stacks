@@ -1,0 +1,56 @@
+services:
+  paseo:
+    image: ghcr.io/getpaseo/paseo:0.9.2@sha256:d413ff361bc4018d559da3d517a6d5a9eaca721fbb1b71ae8df3dcf7a965c136
+    container_name: paseo
+    environment:
+      - TZ=${TZ}
+      - PASEO_PASSWORD=${PASEO_PASSWORD}
+      - PASEO_HOSTNAMES=paseo.${DOMAIN}
+      - PATH=/home/paseo/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - DX_API_TOKEN=${DX_API_TOKEN}
+      # Docker CLI + compose plugin only (no daemon), used to validate compose files
+      # renovate: datasource=github-tags depName=docker/cli
+      - DOCKER_CLI_VERSION=v29.8.1
+      # renovate: datasource=github-releases depName=docker/compose
+      - DOCKER_COMPOSE_VERSION=v5.5.1
+    entrypoint:
+      - /usr/bin/tini
+      - --
+      - sh
+      - -c
+    command:
+      - >
+        mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( [ -x /home/paseo/.npm-global/bin/claude ] ||
+          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @anthropic-ai/claude-code' ) && ( [ -x /home/paseo/.npm-global/bin/copilot ] ||
+          su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @github/copilot' ) && ( [ -x /home/paseo/.npm-global/bin/gh ] ||
+          su paseo -s /bin/sh -c 'v=$$(curl -fsSLI -o /dev/null -w %{url_effective} https://github.com/cli/cli/releases/latest) && v=$${v##*/v} && a=$$(dpkg --print-architecture) &&
+            curl -fsSL https://github.com/cli/cli/releases/download/v$$v/gh_$${v}_linux_$$a.tar.gz | tar -xz -C /tmp && mv /tmp/gh_$${v}_linux_$$a/bin/gh /home/paseo/.npm-global/bin/gh' ) && ( /home/paseo/.npm-global/bin/docker --version 2>/dev/null | grep -qF " $${DOCKER_CLI_VERSION#v}," ||
+          su paseo -s /bin/sh -c 'curl -fsSL https://download.docker.com/linux/static/stable/$$(uname -m)/docker-$${DOCKER_CLI_VERSION#v}.tgz | tar -xz -C /tmp docker/docker &&
+            mv /tmp/docker/docker /home/paseo/.npm-global/bin/docker' ) && ( /home/paseo/.docker/cli-plugins/docker-compose version --short 2>/dev/null | grep -qxF "$${DOCKER_COMPOSE_VERSION#v}" ||
+          su paseo -s /bin/sh -c 'f=docker-compose-linux-$$(uname -m) && u=https://github.com/docker/compose/releases/download/$$DOCKER_COMPOSE_VERSION/$$f && cd /tmp &&
+            curl -fsSLO $$u && curl -fsSLO $$u.sha256 && sha256sum -c $$f.sha256 && mkdir -p /home/paseo/.docker/cli-plugins && chmod +x $$f &&
+            mv $$f /home/paseo/.docker/cli-plugins/docker-compose && rm $$f.sha256' ) &&
+        exec /usr/local/bin/paseo-docker-entrypoint
+    volumes:
+      - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
+      - paseo-workspace:/workspace
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Paseo
+      - homepage.icon=https://paseo.sh/favicon.svg
+      - homepage.href=https://paseo.${DOMAIN}/
+      - homepage.description=Coding agent daemon and web UI
+      - traefik.enable=true
+      - traefik.http.routers.paseo.rule=Host(`paseo.${DOMAIN}`)
+      - traefik.http.routers.paseo.entrypoints=websecure
+      - traefik.http.routers.paseo.tls=true
+      - traefik.http.services.paseo.loadbalancer.server.port=6767
+    restart: unless-stopped
+    networks:
+      - npm
+volumes:
+  paseo-workspace:
+    driver: local
+networks:
+  npm:
+    external: true

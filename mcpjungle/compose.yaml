@@ -76,7 +76,7 @@
 #   Environment variables:
 #     DOCKER_HOST=tcp://mcpjungle-docker-proxy:2375
 #
-# NOTE: mcp-server-docker also exposes create/remove/exec tools. The proxy
+# NOTE: mcp-server-docker also exposes create/remove tools. The proxy
 # refuses those requests, so calling them returns an error. That is by design -
 # this server is for inspecting containers plus start/stop/restart, nothing more.
 
@@ -211,11 +211,20 @@ services:
       # Machine paths: MCP proxy transports, CLI API, health. These must skip
       # Authentik - MCP clients and the mcpjungle CLI send their own bearer
       # token and cannot follow an OIDC browser redirect.
+      #
+      # Because they skip Authentik and mcpjungle itself does no auth
+      # (SERVER_MODE=development), they are limited to LAN clients. Traffic from
+      # the Cloudflare tunnel, tsbridge and other containers reaches Traefik as
+      # the npm network gateway (172.16.2.1), so it is blocked here. Containers
+      # on the npm network (e.g. paseo) should use http://mcpjungle:8080/mcp
+      # directly instead.
       - traefik.http.routers.mcpjungle-api.rule=Host(`mcpjungle.${DOMAIN}`) && (PathPrefix(`/mcp`) || PathPrefix(`/sse`) || PathPrefix(`/message`) || PathPrefix(`/api/v0`) || PathPrefix(`/v0`) || PathPrefix(`/health`) || PathPrefix(`/metadata`))
       - traefik.http.routers.mcpjungle-api.entrypoints=websecure
       - traefik.http.routers.mcpjungle-api.priority=100
       - traefik.http.routers.mcpjungle-api.tls=true
       - traefik.http.routers.mcpjungle-api.service=mcpjungle
+      - traefik.http.routers.mcpjungle-api.middlewares=mcpjungle-lan-only
+      - traefik.http.middlewares.mcpjungle-lan-only.ipallowlist.sourcerange=192.168.178.0/24
       # Everything else - web UI, /assets, /api/dashboard, /init - behind Authentik
       - traefik.http.routers.mcpjungle.rule=Host(`mcpjungle.${DOMAIN}`)
       - traefik.http.routers.mcpjungle.entrypoints=websecure
