@@ -36,7 +36,8 @@
   "vulnerabilityAlerts": {
     "addLabels": ["security"],
     "schedule": ["at any time"],
-    "minimumReleaseAge": "0 hours"
+    "minimumReleaseAge": "0 hours",
+    "prCreation": "immediate"
   },
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
@@ -211,12 +212,13 @@
       ]
     },
     {
-      "description": "Minimum release age for Docker to avoid fresh-tag churn",
+      "description": "Docker: wait 12h before opening a PR. minimumReleaseAge only works for Docker Hub (GHCR/lscr/GitLab have no release timestamp), so gate on branch age instead: the branch is created within an hour of a release (no CI runs on bare branches, so it stays pending) and the PR opens once the branch is 12h old. Only rebase on conflict, otherwise every merge to main resets the timer",
       "matchDatasources": [
         "docker"
       ],
-      "minimumReleaseAge": "12 hours",
-      "minimumReleaseAgeBehaviour": "timestamp-optional"
+      "prCreation": "not-pending",
+      "prNotPendingHours": 12,
+      "rebaseWhen": "conflicted"
     },
     {
       "description": "Open PRs immediately for digest/minor/patch; majors stay separate",
