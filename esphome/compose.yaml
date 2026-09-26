@@ -1,6 +1,6 @@
 services:
   esphome:
-    image: esphome/esphom:2026.9.0
+    image: esphome/esphome:2026.9.0
     volumes:
       - ${DOCKER_DATA_DIR}/esphome/config:/config
     environment:
