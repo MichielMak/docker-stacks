@@ -127,7 +127,7 @@ services:
     restart: "no"
 
   mcpjungle-docker-proxy:
-    image: linuxserver/socket-proxy:3.4.4@sha256:a8c700baae19c2fff5b2940b21a748e78cf3b91cc311ad65f990efabdd1361eb
+    image: linuxserver/socket-proxy:3.4.5@sha256:ca6c0301a652232d02cb0ff9f1c5d20d9b339f391e1c1dffaae6ef3bfc59d009
     container_name: mcpjungle-docker-proxy
     environment:
       # Read access - what the Docker MCP server needs to inspect the host.
