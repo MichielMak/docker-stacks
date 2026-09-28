@@ -29,7 +29,8 @@ services:
             mv /tmp/docker/docker /home/paseo/.npm-global/bin/docker' ) && ( /home/paseo/.docker/cli-plugins/docker-compose version --short 2>/dev/null | grep -qxF "$${DOCKER_COMPOSE_VERSION#v}" ||
           su paseo -s /bin/sh -c 'f=docker-compose-linux-$$(uname -m) && u=https://github.com/docker/compose/releases/download/$$DOCKER_COMPOSE_VERSION/$$f && cd /tmp &&
             curl -fsSLO $$u && curl -fsSLO $$u.sha256 && sha256sum -c $$f.sha256 && mkdir -p /home/paseo/.docker/cli-plugins && chmod +x $$f &&
-            mv $$f /home/paseo/.docker/cli-plugins/docker-compose && rm $$f.sha256' ) &&
+            mv $$f /home/paseo/.docker/cli-plugins/docker-compose && rm $$f.sha256' ) && ( [ -x /home/paseo/.npm-global/bin/twg ] ||
+          su paseo -s /bin/bash -c 'curl -fsSL --retry 2 https://teamwork-graph.atlassian.com/cli/install | HOME=/home/paseo bash -s -- --yes --skip-login --skip-skills --install-dir /home/paseo/.npm-global/bin' ) &&
         exec /usr/local/bin/paseo-docker-entrypoint
     volumes:
       - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
