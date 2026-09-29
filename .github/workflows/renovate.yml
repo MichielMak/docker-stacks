@@ -37,7 +37,8 @@ env:
   renovate_repos: |
     docker-stacks
     open_agb_firm
-  renovate_repositories: MichielMak/docker-stacks,MichielMak/open_agb_firm
+    flightscanner
+  renovate_repositories: MichielMak/docker-stacks,MichielMak/open_agb_firm,MichielMak/flightscanner
 
 concurrency:
   group: renovate
