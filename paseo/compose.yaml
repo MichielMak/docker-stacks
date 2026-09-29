@@ -14,7 +14,7 @@ services:
       # renovate: datasource=github-releases depName=docker/compose
       - DOCKER_COMPOSE_VERSION=v5.5.1
       # renovate: datasource=github-releases depName=DataDog/pup
-      - PUP_VERSION=v1.23.4
+      - PUP_VERSION=v1.23.5
     entrypoint:
       - /usr/bin/tini
       - --
