@@ -226,6 +226,9 @@ playlist_files:
     libraries:
     - Films
     - Tv-series
+    # These playlists are built from MDBList, which needs an API key
+    use_pokemon: false
+    use_dragonball: false
 
 ##########################################
 #  ____       _   _   _                  #
@@ -364,18 +367,6 @@ github:
 ##############################
 omdb:
   apikey: <<OMDB_API_KEY>>
-  cache_expiration: 60
-
-###################################################
-#  __  __ ____  ____  _     _     _               #
-# |  \/  |  _ \| __ )| |   (_)___| |_             #
-# | |\/| | | | |  _ \| |   | / __| __|            #
-# | |  | | |_| | |_) | |___| \__ \ |_             #
-# |_|  |_|____/|____/|_____|_|___/\__|            #
-#                                                 #
-###################################################
-mdblist:
-  apikey: <<MDBLIST_API_KEY>>
   cache_expiration: 60
 
 #################################
