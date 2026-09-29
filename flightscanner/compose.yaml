@@ -1,0 +1,33 @@
+# Flight price comparison across nearby airports and flexible dates: https://github.com/MichielMak/flightscanner
+# Per-stack env (Komodo): IGNAV_API_KEY (live prices), TRAVELPAYOUTS_TOKEN (cached month scan).
+# Without both keys the app runs in demo mode with fake prices.
+services:
+  flightscanner:
+    image: ghcr.io/michielmak/flightscanner:0.1.0@sha256:d4eef91d962d2abe46ff28182fcd9b335344931120d6fdeed49b09ae06b4ce22
+    container_name: flightscanner
+    restart: unless-stopped
+    user: ${PUID}:${PGID}
+    environment:
+      - IGNAV_API_KEY=${IGNAV_API_KEY}
+      - TRAVELPAYOUTS_TOKEN=${TRAVELPAYOUTS_TOKEN}
+    volumes:
+      # Only holds the counter of paid Ignav requests
+      - ${DOCKER_DATA_DIR}/flightscanner/data:/data
+    networks:
+      - npm
+    labels:
+      - homepage.group=Utilities
+      - homepage.name=Flightscanner
+      - homepage.icon=mdi-airplane
+      - homepage.href=https://flightscanner.${DOMAIN}/
+      - homepage.description=Flight prices from nearby airports
+      - traefik.enable=true
+      - traefik.http.routers.flightscanner.rule=Host(`flightscanner.${DOMAIN}`)
+      - traefik.http.routers.flightscanner.entrypoints=websecure
+      - traefik.http.routers.flightscanner.tls=true
+      # No login in the app itself, and every search spends paid live checks
+      - traefik.http.routers.flightscanner.middlewares=authentik-forwardauth@docker
+      - traefik.http.services.flightscanner.loadbalancer.server.port=8080
+networks:
+  npm:
+    external: true
