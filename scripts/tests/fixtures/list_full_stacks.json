@@ -1,0 +1,108 @@
+[
+  {
+    "_id": {
+      "$oid": "660000000000000000000001"
+    },
+    "name": "komodo",
+    "description": "",
+    "template": false,
+    "tags": [],
+    "info": {
+      "state": "running"
+    },
+    "config": {
+      "server_id": "650000000000000000000001",
+      "run_directory": "komodo",
+      "file_paths": [],
+      "files_on_host": false,
+      "linked_repo": "650000000000000000000009",
+      "repo": "",
+      "branch": "main",
+      "compose_cmd_wrapper": "",
+      "compose_cmd_wrapper_include": [],
+      "env_file_path": ".env",
+      "environment": "KOMODO_PASSKEY=FAKESECRET-komodo-passkey\n"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "660000000000000000000002"
+    },
+    "name": "mealie",
+    "description": "",
+    "template": false,
+    "tags": [],
+    "info": {
+      "state": "running"
+    },
+    "config": {
+      "server_id": "650000000000000000000001",
+      "run_directory": "mealie",
+      "file_paths": [],
+      "files_on_host": false,
+      "linked_repo": "650000000000000000000009",
+      "repo": "",
+      "branch": "main",
+      "compose_cmd_wrapper": "",
+      "compose_cmd_wrapper_include": [],
+      "env_file_path": ".env",
+      "environment": "DOMAIN=[[DOMAIN]]\nPOSTGRES_PASSWORD=[[SHARED_DB_PASSWORD]]\nOIDC_CLIENT_SECRET=\"FAKESECRET-oidc\"\n# a comment line\nBASE_URL=https://mealie.[[DOMAIN]] # trailing comment\nSMTP_TOKEN=[[SMTP_TOKEN]]\nALLOW_SIGNUP=false\n"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "660000000000000000000003"
+    },
+    "name": "spotweb",
+    "description": "",
+    "template": false,
+    "tags": [],
+    "info": {
+      "state": "running"
+    },
+    "config": {
+      "server_id": "650000000000000000000001",
+      "run_directory": "spotweb",
+      "file_paths": [],
+      "files_on_host": false,
+      "linked_repo": "",
+      "repo": "MichielMak/docker-stacks",
+      "branch": "main",
+      "compose_cmd_wrapper": "",
+      "compose_cmd_wrapper_include": [],
+      "env_file_path": ".env",
+      "environment": "DB_PASSWORD='FAKESECRET pass with spaces'\nAPI_KEY=FAKESECRET$dollar\nSOCIALACCOUNT_PROVIDERS={\"openid_connect\": {\"APPS\": [{\"secret\": \"FAKESECRET-json\"}]}}\nSPOTWEB_URL=https://spotweb.test\n"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "660000000000000000000004"
+    },
+    "name": "wizarr",
+    "description": "",
+    "template": false,
+    "tags": [],
+    "info": {
+      "state": "running"
+    },
+    "config": {
+      "server_id": "650000000000000000000001",
+      "run_directory": "[[DOCKER_STACKS_DIR]]/wizarr",
+      "file_paths": [],
+      "files_on_host": true,
+      "linked_repo": "",
+      "repo": "",
+      "branch": "main",
+      "compose_cmd_wrapper": "",
+      "compose_cmd_wrapper_include": [],
+      "env_file_path": ".env",
+      "environment": "TZ=Europe/Amsterdam\nAUTHENTIK_ERROR_REPORTING__ENABLED=false\nCORE_SECRET_REF=[[KOMODO_CORE_ONLY]]\nMIXED_KEY=prefix-[[UNDEFINED_VAR]]\n",
+      "additional_env_files": [
+        {
+          "path": "../global.env",
+          "track": false
+        }
+      ]
+    }
+  }
+]

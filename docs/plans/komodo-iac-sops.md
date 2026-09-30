@@ -1,6 +1,6 @@
 # Plan: Komodo as code (Resource Sync TOML) + SOPS secrets
 
-Status: Phase 1 in progress (PR `komodo-periphery-sops`). Written 2026-09-30 to be executed in a fresh session.
+Status: Phases 1–2 merged, Phase 3 in PR `komodo-migrate-script`. Written 2026-09-30 to be executed in a fresh session.
 Branch/worktree: `komodo-iac-sops` at `/home/paseo/workspace/docker-stacks-komodo-iac-sops`.
 
 ## Goal
@@ -191,6 +191,23 @@ For each stack with at least one secret key:
 - Unit-test the parsing, classification, dotenv escaping, and TOML emitting with a fake API fixture
   (`scripts/tests/fixtures/*.json`) containing obviously fake values.
 - Test the sops round trip with a throwaway age key generated inside the test.
+
+**Done:** `scripts/komodo-migrate.py`, tests in `scripts/tests/` (`python3 -m unittest discover -s scripts/tests`).
+Notes from implementing it (checked against komodo_client 2.3.2 and the Komodo v2.3.3 source):
+- `ListFullStacks` is paginated (default 30 per page), so the script pages until no new stacks come back.
+- `ListVariables` and the export return secret Variable values as `###` to non-admin keys. `--discover` and
+  `--write-toml` work with any read key. `--write-secrets` needs an admin key.
+- The export returns stack environments with values, so its raw TOML is never printed.
+- Komodo interpolates `[[VAR]]` into the whole env string, then writes `KEY=<raw value>` lines to `.env`, and
+  compose strips the quotes. `sops exec-env` passes values literally, so the script unquotes first. Values
+  with `$` or `\` are written but listed under REVIEW, because compose may have expanded them.
+- sops echoes bad input lines in its errors. The script hides sops stderr when it contains plaintext.
+- Alerter URLs are interpolated by Komodo, so they become `[[KOMODO_ALERTER_<NAME>_URL]]` refs. `webhook_secret`
+  and `passkey` are not interpolated, so they're dropped from the TOML and listed. The sync diff will show them.
+- `[[refs]]` to names that aren't Komodo Variables (core/periphery config secrets) stay in the TOML as refs.
+- `--write-toml` refuses to write if any known secret value (8+ chars) shows up in the output.
+- The `komodo` stack is excluded from both write modes by default (Phase 6).
+- Extra flags: `--stack` (canary), `--verify` (decrypt round trip, needs the private key), `--out`, `--allow-match`.
 
 ## Phase 4: Resource Sync definition (about 20 min)
 

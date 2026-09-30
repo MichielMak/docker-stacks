@@ -4,3 +4,6 @@
 *.key
 secrets.env
 .migration/
+
+# Python bytecode
+__pycache__/
