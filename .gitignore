@@ -1,0 +1,6 @@
+# Plaintext secrets and keys must never be committed.
+# Stack secrets go in <stack>/secrets.sops.env (SOPS-encrypted).
+*.agekey
+*.key
+secrets.env
+.migration/
