@@ -56,26 +56,24 @@ services:
       - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
       - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Groups=
   grimmorymariadb:
-    image: linuxserver/mariadb:11.8.8@sha256:71eb1840431c36d5ff4985afc7b59072c5de3d8a91fe5353b5791f7a6e9fb7f5
+    image: mariadb:12.3.3@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1
     container_name: grimmorymariadb
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
       - TZ=Europe/Amsterdam
       - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE=booklore
       - MYSQL_USER=booklore
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - ${DOCKER_DATA_DIR}/bookloremariadb/config:/config
+      - ${DOCKER_DATA_DIR}/bookloremariadb/config/databases:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
       test:
         - CMD
-        - mariadb-admin
-        - ping
-        - -h
-        - localhost
+        - healthcheck.sh
+        - --connect
+        - --innodb_initialized
       interval: 5s
       timeout: 5s
       retries: 10
