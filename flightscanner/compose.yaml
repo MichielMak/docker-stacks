@@ -3,7 +3,7 @@
 # Without both keys the app runs in demo mode with fake prices.
 services:
   flightscanner:
-    image: ghcr.io/michielmak/flightscanner:0.2.0@sha256:fe734b4b9d15627eb94e78f1e6d22572a995d53123b07819be9a7493a602c34d
+    image: ghcr.io/michielmak/flightscanner:0.3.0@sha256:cd229ca5681a9537785bd649b642124e93fce6db19017c61dfe75abafb79d02c
     container_name: flightscanner
     restart: unless-stopped
     user: ${PUID}:${PGID}
