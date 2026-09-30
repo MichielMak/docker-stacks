@@ -24,3 +24,13 @@ repos:
         language: system
         files: "(^|/)compose\\.ya?ml$"
         verbose: true
+      - id: sops-encrypted
+        name: SOPS files must be encrypted
+        entry: bash -c 'rc=0; for f in "$@"; do grep -q "^sops_mac=" "$f" || { echo "$f is not SOPS-encrypted (no sops_mac= line). Edit it with: sops $f"; rc=1; }; done; exit $rc' --
+        language: system
+        files: "\\.sops\\.env$"
+      - id: no-plaintext-secrets
+        name: No plaintext secret or age key files
+        entry: "Plaintext secrets/keys must not be committed. Put stack secrets in <stack>/secrets.sops.env (sops-encrypted)."
+        language: fail
+        files: "(^|/)secrets\\.env$|\\.agekey$"

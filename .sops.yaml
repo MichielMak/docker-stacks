@@ -1,0 +1,6 @@
+# SOPS config for per-stack secrets (<stack>/secrets.sops.env, dotenv format).
+# Only the age PUBLIC key lives here. The private key is on the Docker host
+# (mounted into komodo-periphery) and in the password manager.
+creation_rules:
+  - path_regex: (^|/)secrets\.sops\.env$
+    age: age1add2arnwmckcwkc0g8fqk3g3jprzemh9kzpzf9fyrwsvnunr4q2qpsk9vs
