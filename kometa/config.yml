@@ -230,6 +230,11 @@ playlist_files:
     # These playlists are built from MDBList, which needs an API key
     use_pokemon: false
     use_dragonball: false
+    # None of these titles are in the library, so the playlists never meet minimum_items
+    use_arrow: false
+    use_mcu: false
+    use_startrek: false
+    use_xmen: false
 
 ##########################################
 #  ____       _   _   _                  #
@@ -271,16 +276,16 @@ settings:
   - collections
   - overlays
   save_report: false
-  show_asset_not_needed: true
+  show_asset_not_needed: false
   show_filtered: false
   show_missing: true
-  show_missing_assets: true
+  show_missing_assets: false
   show_missing_episode_assets: false
   show_missing_season_assets: false
   show_options: true
-  show_unconfigured: true
+  show_unconfigured: false
   show_unfiltered: false
-  show_unmanaged: true
+  show_unmanaged: false
   sync_mode: append
   tvdb_language: eng
   verify_ssl: true
@@ -295,11 +300,11 @@ settings:
 #                                                  #
 ####################################################
 webhooks:
-  changes: gotify
-  delete: gotify
+  changes:
+  delete:
   error: gotify
   run_end: gotify
-  run_start: gotify
+  run_start:
   version:
 
 #######################
