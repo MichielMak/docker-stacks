@@ -9,7 +9,6 @@ services:
       - KOMETA_TMDB_API_KEY=${TMDB_API_KEY}
       - KOMETA_TRACEARR_URL=${TRACEARR_URL}
       - KOMETA_TRACEARR_API_KEY=${TRACEARR_API_KEY}
-      - KOMETA_GITHUB_TOKEN=${GITHUB_TOKEN}
       - KOMETA_OMDB_API_KEY=${OMDB_API_KEY}
       - KOMETA_GOTIFY_URL=${GOTIFY_URL}
       - KOMETA_GOTIFY_TOKEN=${GOTIFY_TOKEN}
@@ -18,9 +17,19 @@ services:
       - KOMETA_SONARR_URL=${SONARR_URL}
       - KOMETA_SONARR_TOKEN=${SONARR_TOKEN}
     container_name: kometa
+    # Kometa writes back to config.yml, so copy the git-managed file into /config
+    # on start instead of mounting it read-only. Keeps a one-time backup of the
+    # pre-git config.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        [ -f /config/config.yml ] && cp -n /config/config.yml /config/config.yml.pre-git
+        cp /defaults/config.yml /config/config.yml
+        exec /tini -s python3 kometa.py --
     volumes:
       - ${DOCKER_DATA_DIR}/kometa/config:/config
-      - ./config.yml:/config/config.yml:ro
+      - ./config.yml:/defaults/config.yml:ro
     restart: unless-stopped
     networks:
       - npm
