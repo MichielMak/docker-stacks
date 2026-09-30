@@ -26,7 +26,7 @@ repos:
         verbose: true
       - id: sops-encrypted
         name: SOPS files must be encrypted
-        entry: bash -c 'rc=0; for f in "$@"; do grep -q "^sops_mac=" "$f" || { echo "$f is not SOPS-encrypted (no sops_mac= line). Edit it with: sops $f"; rc=1; }; done; exit $rc' --
+        entry: bash -c 'rc=0; for f in "$@"; do grep -q "^sops_mac=" "$f" || { echo "$f is not SOPS-encrypted (no sops_mac= line). Edit it with sops $f"; rc=1; }; done; exit $rc' --
         language: system
         files: "\\.sops\\.env$"
       - id: no-plaintext-secrets
