@@ -1,0 +1,136 @@
+# Fake ExportAllResourcesToToml output, in Komodo's format. Every secret value
+# starts with FAKESECRET so the tests can check none of them leak.
+[[server]]
+name = "local"
+[server.config]
+address = "https://periphery:8120"
+enabled = true
+passkey = "FAKESECRET-server-passkey"
+
+##
+
+[[stack]]
+name = "komodo"
+[stack.config]
+server = "local"
+linked_repo = "docker-stacks"
+run_directory = "komodo"
+environment = """
+KOMODO_PASSKEY=FAKESECRET-komodo-passkey
+"""
+
+##
+
+[[stack]]
+name = "mealie"
+tags = ["food"]
+[stack.config]
+server = "local"
+linked_repo = "docker-stacks"
+run_directory = "mealie"
+pre_deploy.command = "echo pre"
+environment = """
+DOMAIN=[[DOMAIN]]
+POSTGRES_PASSWORD=[[SHARED_DB_PASSWORD]]
+OIDC_CLIENT_SECRET="FAKESECRET-oidc"
+# a comment line
+BASE_URL=https://mealie.[[DOMAIN]] # trailing comment
+SMTP_TOKEN=[[SMTP_TOKEN]]
+ALLOW_SIGNUP=false
+"""
+
+##
+
+[[stack]]
+name = "spotweb"
+[stack.config]
+server = "local"
+repo = "MichielMak/docker-stacks"
+run_directory = "spotweb"
+environment = """
+DB_PASSWORD='FAKESECRET pass with spaces'
+API_KEY=FAKESECRET$dollar
+SOCIALACCOUNT_PROVIDERS={"openid_connect": {"APPS": [{"secret": "FAKESECRET-json"}]}}
+SPOTWEB_URL=https://spotweb.test
+"""
+
+##
+
+[[stack]]
+name = "wizarr"
+[stack.config]
+server = "local"
+files_on_host = true
+run_directory = "[[DOCKER_STACKS_DIR]]/wizarr"
+webhook_secret = "FAKESECRET-stack-webhook"
+environment = """
+TZ=Europe/Amsterdam
+AUTHENTIK_ERROR_REPORTING__ENABLED=false
+CORE_SECRET_REF=[[KOMODO_CORE_ONLY]]
+MIXED_KEY=prefix-[[UNDEFINED_VAR]]
+"""
+
+##
+
+[[deployment]]
+name = "whoami"
+[deployment.config]
+server = "local"
+image.type = "Image"
+image.params.image = "traefik/whoami"
+environment = """
+WHOAMI_NAME=test
+WHOAMI_TOKEN=FAKESECRET-deploy-token
+"""
+
+##
+
+[[repo]]
+name = "docker-stacks"
+[repo.config]
+server = "local"
+repo = "MichielMak/docker-stacks"
+branch = "main"
+
+##
+
+[[procedure]]
+name = "pull-all"
+[procedure.config]
+schedule = "Every day at 04:00"
+
+[[procedure.config.stage]]
+name = "Stage 1"
+enabled = true
+executions = [
+  { execution.type = "BatchPullStack", execution.params.pattern = "*", enabled = true },
+  { execution.type = "Sleep", execution.params.duration_ms = 5000, enabled = false }
+]
+
+##
+
+[[alerter]]
+name = "discord"
+[alerter.config]
+enabled = true
+endpoint.type = "Discord"
+endpoint.params.url = "https://discord.test/api/webhooks/FAKESECRET-webhook"
+alert_types = ["ServerUnreachable", "StackStateChange"]
+
+##
+
+[[alerter]]
+name = "gotify"
+[alerter.config]
+enabled = true
+endpoint.type = "Custom"
+endpoint.params.url = "[[GOTIFY_ALERTER_URL]]"
+
+##
+
+[[builder]]
+name = "url-builder"
+[builder.config]
+type = "Url"
+params.address = "https://builder:8120"
+params.passkey = "FAKESECRET-builder-passkey"

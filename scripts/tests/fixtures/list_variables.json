@@ -1,0 +1,7 @@
+[
+  {"name": "DOCKER_STACKS_DIR", "value": "/srv/docker-stacks", "is_secret": false},
+  {"name": "DOMAIN", "value": "example.test", "description": "Base domain", "is_secret": false},
+  {"name": "GOTIFY_ALERTER_URL", "value": "FAKESECRET-gotify-alerter-url", "is_secret": true},
+  {"name": "SHARED_DB_PASSWORD", "value": "FAKESECRET-shared-db", "is_secret": true},
+  {"name": "SMTP_TOKEN", "value": "FAKESECRET-smtp-token", "is_secret": false}
+]
