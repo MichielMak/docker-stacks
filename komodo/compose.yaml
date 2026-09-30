@@ -84,8 +84,14 @@ services:
       PERIPHERY_ROOT_DIRECTORY: ${DOCKER_DATA_DIR}/komodo/periphery
       PERIPHERY_SSL_ENABLED: true
       PERIPHERY_CORE_PUBLIC_KEYS: ${KOMODO_PUBLIC_KEY}
+      SOPS_AGE_KEY_FILE: /config/sops/age.key
       TZ: Europe/Amsterdam
-    image: docker.io/moghtech/komodo-periphery:2.3.3@sha256:fa3f1a641a265216066676950d5eecdf506955a7bafe2f01996135ae93115cd5
+    # Upstream periphery + sops, see periphery.Dockerfile (base image is pinned there)
+    build:
+      context: .
+      dockerfile: periphery.Dockerfile
+    image: komodo-periphery-sops:local
+    pull_policy: build
     networks:
       - komodo
       - npm
@@ -96,6 +102,7 @@ services:
       - /proc:/proc
       - /var/run/docker.sock:/var/run/docker.sock
       - keys:/config/keys
+      - ${DOCKER_DATA_DIR}/komodo/sops/age.key:/config/sops/age.key:ro
 
 volumes:
   keys:

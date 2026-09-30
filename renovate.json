@@ -13,6 +13,7 @@
   "assignAutomerge": true,
   "enabledManagers": [
     "docker-compose",
+    "dockerfile",
     "pip_requirements",
     "github-actions",
     "custom.regex"
@@ -241,6 +242,20 @@
         "!/^ghcr\\.io\\/immich-app\\/postgres/",
         "!/^(?:docker\\.io\\/)?altran1502\\/immich-server/",
         "!/^(?:docker\\.io\\/)?altran1502\\/immich-machine-learning/"
+      ]
+    },
+    {
+      "description": "Periphery Dockerfile ships in the same PR as the komodo stack (core and periphery must match)",
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchFileNames": [
+        "komodo/periphery.Dockerfile"
+      ],
+      "groupName": "stack: komodo",
+      "groupSlug": "stack-komodo",
+      "addLabels": [
+        "stack:komodo"
       ]
     },
     {
