@@ -15,6 +15,12 @@ services:
       - DOCKER_COMPOSE_VERSION=v5.5.1
       # renovate: datasource=github-releases depName=DataDog/pup
       - PUP_VERSION=v1.23.6
+      # uv manages Python: patch releases arrive with uv updates, the minor version is bumped by hand
+      # renovate: datasource=github-releases depName=astral-sh/uv
+      - UV_VERSION=0.12.21
+      - PYTHON_VERSION=3.14
+      - UV_PYTHON_BIN_DIR=/home/paseo/.npm-global/bin
+      - UV_TOOL_BIN_DIR=/home/paseo/.npm-global/bin
     entrypoint:
       - /usr/bin/tini
       - --
@@ -35,7 +41,11 @@ services:
             mv $$f /home/paseo/.docker/cli-plugins/docker-compose && rm $$f.sha256' ) && ( /home/paseo/.npm-global/bin/pup --version 2>/dev/null | grep -qxF "pup $${PUP_VERSION#v}" ||
           su paseo -s /bin/sh -c 'v=$${PUP_VERSION#v} && f=pup_$${v}_Linux_$$(uname -m | sed s/aarch64/arm64/).tar.gz && u=https://github.com/DataDog/pup/releases/download/$$PUP_VERSION && cd /tmp &&
             curl -fsSLO $$u/$$f && curl -fsSL $$u/pup_$${v}_checksums.txt | grep " $$f\$$" | sha256sum -c - && tar -xzf $$f pup &&
-            mv pup /home/paseo/.npm-global/bin/pup && rm $$f' ) && ( [ -x /home/paseo/.npm-global/bin/twg ] ||
+            mv pup /home/paseo/.npm-global/bin/pup && rm $$f' ) && ( /home/paseo/.npm-global/bin/uv --version 2>/dev/null | grep -qF "uv $${UV_VERSION} " ||
+          su paseo -s /bin/sh -c 'f=uv-$$(uname -m)-unknown-linux-gnu.tar.gz && u=https://github.com/astral-sh/uv/releases/download/$$UV_VERSION/$$f && cd /tmp &&
+            curl -fsSLO $$u && curl -fsSLO $$u.sha256 && sha256sum -c $$f.sha256 && tar -xzf $$f --strip-components=1 -C /home/paseo/.npm-global/bin &&
+            rm $$f $$f.sha256' ) && su paseo -s /bin/sh -c 'HOME=/home/paseo /home/paseo/.npm-global/bin/uv python install --default --preview-features python-install-default $$PYTHON_VERSION &&
+            HOME=/home/paseo /home/paseo/.npm-global/bin/uv python upgrade $$PYTHON_VERSION' && ( [ -x /home/paseo/.npm-global/bin/twg ] ||
           su paseo -s /bin/bash -c 'export PATH=/home/paseo/.npm-global/bin:$$PATH && curl -fsSL --retry 2 https://teamwork-graph.atlassian.com/cli/install | HOME=/home/paseo bash -s -- --yes --skip-login --skip-skills --install-dir /home/paseo/.npm-global/bin' ) &&
         exec /usr/local/bin/paseo-docker-entrypoint
     volumes:
