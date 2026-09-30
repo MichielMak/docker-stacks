@@ -1,6 +1,6 @@
 # Plan: Komodo as code (Resource Sync TOML) + SOPS secrets
 
-Status: planned, not started. Written 2026-09-30 to be executed in a fresh session.
+Status: Phase 1 in progress (PR `komodo-periphery-sops`). Written 2026-09-30 to be executed in a fresh session.
 Branch/worktree: `komodo-iac-sops` at `/home/paseo/workspace/docker-stacks-komodo-iac-sops`.
 
 ## Goal
@@ -56,6 +56,8 @@ file needs to change.
 2. Where global vars (`DOMAIN`, `PUID`, …) come from: Komodo Variables interpolated as `[[VAR]]` into each
    stack's environment, or a host-level env file?
 3. Whether the `komodo` stack is itself managed by Komodo. This is a bootstrap problem, covered in Phase 6.
+   **Resolved (2026-09-30):** Komodo syncs the `komodo` stack files from git, but the user runs
+   `docker compose up` for it by hand. Komodo never deploys it.
 4. Which other resource types exist: procedures, actions, alerters, builders, repos, and more servers.
 5. Which cwd the wrapper runs in (assumed: the stack's `run_directory`). Verify during the canary.
 
@@ -70,7 +72,7 @@ The wrapper runs inside the **periphery** container, so periphery needs the `sop
 
 User does:
 1. `age-keygen -o komodo.agekey`, then save the file in the password manager.
-2. Copy it to the host at `${DOCKER_DATA_DIR}/komodo/sops/age.key` (mode 0400, owned by the user periphery runs as).
+2. Copy it to the host at `${DOCKER_DATA_DIR}/komodo/sops/age.key` (mode 0400, owned by root: the periphery image has no `USER`, so it runs as root).
 3. Give the agent the **public** key (the `age1…` line). Only that.
 
 Agent does:
@@ -92,6 +94,13 @@ Agent does:
    ```
 3. Make sure the Komodo stack for `komodo` builds on deploy (Komodo stack option `run_build`), or document
    a manual `docker compose build`.
+   **Done:** the `komodo` stack is deployed by hand, so the step is `docker compose up -d --build periphery`.
+   Notes from implementing it:
+   - The built image is tagged `komodo-periphery-sops:local` with `pull_policy: build`. Compose cannot tag a
+     build with a digest reference, so the upstream `image:` line moved into the Dockerfile.
+   - sops `v3.13.3-alpine`; binary lives at `/usr/local/bin/sops` (static Go, works on the Debian-based periphery).
+   - Renovate had no `dockerfile` manager enabled. Added it, plus a rule grouping `komodo/periphery.Dockerfile`
+     into the `stack: komodo` PR so core and periphery bump together.
 4. Verify: `docker exec komodo-periphery sops --version`, then decrypt a throwaway test file encrypted to the
    same key, checking the exit code only.
 
