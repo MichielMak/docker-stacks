@@ -164,7 +164,20 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "Immich Infrastructure: Ignore Redis/Valkey and PostgreSQL updates",
+      "description": "Immich Infrastructure: Ignore PostgreSQL updates",
+      "matchFileNames": [
+        "**/immich-app/compose.yaml",
+        "**/immich-app/compose.yml",
+        "**/immich-app/docker-compose.yaml",
+        "**/immich-app/docker-compose.yml"
+      ],
+      "matchPackageNames": [
+        "/^ghcr\\.io\\/immich-app\\/postgres/"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Immich Valkey/Redis: allow minor/patch, majors need approval",
       "matchFileNames": [
         "**/immich-app/compose.yaml",
         "**/immich-app/compose.yml",
@@ -173,10 +186,12 @@
       ],
       "matchPackageNames": [
         "/^docker\\.io\\/valkey\\//",
-        "/^docker\\.io\\/redis\\//",
-        "/^ghcr\\.io\\/immich-app\\/postgres/"
+        "/^docker\\.io\\/redis\\//"
       ],
-      "enabled": false
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
     },
     {
       "description": "Immich Apps: Group only immich-server and immich-machine-learning together",
@@ -213,8 +228,6 @@
         "stack:{{parentDir}}"
       ],
       "matchPackageNames": [
-        "!/^docker\\.io\\/valkey\\//",
-        "!/^docker\\.io\\/redis\\//",
         "!/^ghcr\\.io\\/immich-app\\/postgres/",
         "!/^(?:docker\\.io\\/)?altran1502\\/immich-server/",
         "!/^(?:docker\\.io\\/)?altran1502\\/immich-machine-learning/"
