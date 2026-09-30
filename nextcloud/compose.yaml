@@ -31,18 +31,17 @@ services:
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
   nextclouddb:
-    image: linuxserver/mariadb:11.8.8@sha256:71eb1840431c36d5ff4985afc7b59072c5de3d8a91fe5353b5791f7a6e9fb7f5
+    image: mariadb:12.3.3@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1
     container_name: nextclouddb
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PW}
       - TZ=Europe/Amsterdam
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PW}
+      - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - ${DOCKER_DATA_DIR}/nextclouddb/config:/config
+      - ${DOCKER_DATA_DIR}/nextclouddb/config/databases:/var/lib/mysql
     restart: unless-stopped
     networks:
       - npm
