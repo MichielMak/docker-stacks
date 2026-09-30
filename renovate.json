@@ -164,6 +164,16 @@
       "dependencyDashboardApproval": true
     },
     {
+      "description": "MariaDB: stay on the 12.3 LTS line — 13.x is a rolling release and data directories cannot be downgraded. RomM is already on 13.x.",
+      "matchFileNames": [
+        "!**/romm/compose.yaml"
+      ],
+      "matchPackageNames": [
+        "/^(?:docker\\.io\\/library\\/)?mariadb$/"
+      ],
+      "allowedVersions": "/^12\\.3\\.\\d+$/"
+    },
+    {
       "description": "Immich Infrastructure: Ignore PostgreSQL updates",
       "matchFileNames": [
         "**/immich-app/compose.yaml",
