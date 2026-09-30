@@ -37,7 +37,8 @@ env:
   renovate_repos: |
     docker-stacks
     open_agb_firm
-  renovate_repositories: MichielMak/docker-stacks,MichielMak/open_agb_firm
+    flightscanner
+  renovate_repositories: MichielMak/docker-stacks,MichielMak/open_agb_firm,MichielMak/flightscanner
 
 concurrency:
   group: renovate
@@ -81,10 +82,10 @@ jobs:
         run: sudo chown -R 12021:0 /tmp/renovate/
 
       - name: Run Renovate
-        uses: renovatebot/github-action@f3a31a786096ba6b40d0f0ffe11a494ef73bfa7c # v46.3.4
+        uses: renovatebot/github-action@6d26fcf0275dc65624cbc3d51fe78bc773f98321 # v46.3.6
         with:
           token: ${{ steps.app-token.outputs.token }}
-          renovate-version: 44.115.13
+          renovate-version: 44.121.4
         env:
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
           RENOVATE_PLATFORM: github

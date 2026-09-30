@@ -17,13 +17,10 @@ services:
       - KOMETA_RADARR_TOKEN=${RADARR_TOKEN}
       - KOMETA_SONARR_URL=${SONARR_URL}
       - KOMETA_SONARR_TOKEN=${SONARR_TOKEN}
-      - KOMETA_TRAKT_CLIENT_ID=${TRAKT_CLIENT_ID}
-      - KOMETA_TRAKT_CLIENT_SECRET=${TRAKT_CLIENT_SECRET}
-      - KOMETA_TRAKT_ACCESS_TOKEN=${TRAKT_ACCESS_TOKEN}
-      - KOMETA_TRAKT_REFRESH_TOKEN=${TRAKT_REFRESH_TOKEN}
     container_name: kometa
     volumes:
       - ${DOCKER_DATA_DIR}/kometa/config:/config
+      - ./config.yml:/config/config.yml:ro
     restart: unless-stopped
     networks:
       - npm

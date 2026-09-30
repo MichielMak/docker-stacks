@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:35.0.1@sha256:887f065c8eca9bd6b1311c3cedaffbba5a9156750840a6b834a2cf014d2be5ba
+    image: linuxserver/nextcloud:35.0.1@sha256:e2d2b2bc261e6ac0652f544b4c3db60221f9e9f78b430dfcfea46529b7e97b5b
     container_name: nextcloud
     restart: unless-stopped
     depends_on:
@@ -31,18 +31,18 @@ services:
       - homepage.widget.url=https://nextcloud:443
       - homepage.widget.key=${NEXTCLOUD_WIDGET_KEY}
   nextclouddb:
-    image: linuxserver/mariadb:11.8.8@sha256:71eb1840431c36d5ff4985afc7b59072c5de3d8a91fe5353b5791f7a6e9fb7f5
+    image: mariadb:12.3.3@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1
     container_name: nextclouddb
+    command: --transaction-isolation=READ-COMMITTED
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PW}
       - TZ=Europe/Amsterdam
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PW}
+      - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - ${DOCKER_DATA_DIR}/nextclouddb/config:/config
+      - ${DOCKER_DATA_DIR}/nextclouddb/config/databases:/var/lib/mysql
     restart: unless-stopped
     networks:
       - npm
