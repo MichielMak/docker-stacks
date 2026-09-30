@@ -56,7 +56,7 @@ services:
       - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Email=guest@${DOMAIN}
       - traefik.http.middlewares.grimmory-guest-auth.headers.customrequestheaders.Remote-Groups=
   grimmorymariadb:
-    image: linuxserver/mariadb:11.8.8@sha256:71eb1840431c36d5ff4985afc7b59072c5de3d8a91fe5353b5791f7a6e9fb7f5
+    image: linuxserver/mariadb:11.8.8@sha256:fb38247d1a4440239b2c62f0084c5285302715777268a92f61f77406dbc3552e
     container_name: grimmorymariadb
     environment:
       - PUID=${PUID}
