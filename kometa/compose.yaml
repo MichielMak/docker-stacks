@@ -19,13 +19,12 @@ services:
     container_name: kometa
     # Kometa writes back to config.yml, so copy the git-managed file into /config
     # on start instead of mounting it read-only. Keeps a one-time backup of the
-    # pre-git config and creates the asset directory Kometa expects.
+    # pre-git config.
     entrypoint:
       - /bin/sh
       - -c
       - |
         [ -f /config/config.yml ] && cp -n /config/config.yml /config/config.yml.pre-git
-        mkdir -p /config/assets
         cp /defaults/config.yml /config/config.yml
         exec /tini -s python3 kometa.py --
     volumes:
