@@ -33,6 +33,7 @@ services:
   nextclouddb:
     image: mariadb:12.3.3@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1
     container_name: nextclouddb
+    command: --transaction-isolation=READ-COMMITTED
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PW}
       - TZ=Europe/Amsterdam
