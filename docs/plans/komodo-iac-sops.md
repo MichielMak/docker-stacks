@@ -62,6 +62,19 @@ file needs to change.
 5. Which cwd the wrapper runs in (assumed: the stack's `run_directory`). Verify during the canary.
 
 Resolve 1, 2, and 4 with the discovery mode of the script (Phase 3), which prints structure and names only.
+
+**Resolved by `--discover` (2026-10-01):**
+1. 66 of 67 stacks use `linked_repo = "docker-stacks"` with `run_directory = "<stack>"`, so `secrets.sops.env`
+   sits next to `compose.yaml` and the wrapper's relative path should work (still verify in the canary).
+   The exception is `stash`: `files_on_host` at `/mnt/ssd0/docker/stacks/stash`, not in this repo. It's excluded
+   from the migration for now (script default).
+2. Globals are 8 plain Komodo Variables, referenced as `[[VAR]]` in each stack's env: `DOCKER_DATA_DIR`,
+   `DOCKER_STACKS_DIR`, `DOMAIN`, `MEDIA_DIR`, `OVERIG_DIR`, `PGID`, `PRESTAGE_DIR`, `PUID`. No secret Variables
+   exist, so `--write-secrets` works with a non-admin key.
+4. Other resources: 1 server, 2 repos, 6 procedures, 1 alerter, 1 builder. No deployments, builds or actions.
+   The `komodo` stack is not a Komodo stack resource.
+
+43 stacks have secrets (100 secret keys). Classification fixes are in `scripts/secret-classification.yaml`.
 Resolve 3 by asking the user.
 
 ---
