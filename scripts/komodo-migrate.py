@@ -49,9 +49,9 @@ WRAPPER = f"sops exec-env {SECRETS_FILE} '[[COMPOSE_COMMAND]]'"
 # Never add "config": Komodo 2.3.x logs the resolved compose config unredacted
 # when the wrapper applies to it (moghtech/komodo#1636).
 WRAPPER_INCLUDE = ["up", "pull", "build", "run"]
-# The komodo stack deploys periphery itself, so its secrets stay out of SOPS
-# for now (plan Phase 6).
-DEFAULT_EXCLUDE = ["komodo"]
+# komodo: deploys periphery itself, so its secrets stay out of SOPS for now (plan Phase 6).
+# stash: files_on_host outside this repo, so there's nowhere to put its secrets file.
+DEFAULT_EXCLUDE = ["komodo", "stash"]
 
 EXPORT_PARAMS = {
     "include_resources": True,
