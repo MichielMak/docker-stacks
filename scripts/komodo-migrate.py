@@ -15,6 +15,7 @@ Modes (pick one):
 
 Environment:
   KOMODO_URL, KOMODO_API_KEY, KOMODO_API_SECRET
+  Any that aren't set are asked for on the terminal (key and secret hidden).
 
 Classification overrides live in scripts/secret-classification.yaml (names only).
 
@@ -29,6 +30,7 @@ if sys.version_info < (3, 11):
     sys.exit("komodo-migrate needs Python 3.11 or newer (for tomllib)")
 
 import argparse
+import getpass
 import json
 import os
 import re
@@ -117,17 +119,12 @@ class Komodo:
 
     @classmethod
     def from_env(cls, insecure: bool = False) -> Komodo:
-        missing = [
-            name
-            for name in ("KOMODO_URL", "KOMODO_API_KEY", "KOMODO_API_SECRET")
-            if not os.environ.get(name)
-        ]
-        if missing:
-            raise KomodoError(f"set {', '.join(missing)} in the environment")
+        """Settings from the environment, or asked for on the terminal
+        (key and secret without echo, so they stay out of shell history)."""
         return cls(
-            os.environ["KOMODO_URL"],
-            os.environ["KOMODO_API_KEY"],
-            os.environ["KOMODO_API_SECRET"],
+            _setting("KOMODO_URL", hidden=False),
+            _setting("KOMODO_API_KEY", hidden=True),
+            _setting("KOMODO_API_SECRET", hidden=True),
             insecure,
         )
 
@@ -143,6 +140,23 @@ class Komodo:
             raise KomodoError(f"{request}: HTTP {e.code}: {_api_error(e)}") from None
         except urllib.error.URLError as e:
             raise KomodoError(f"{request}: cannot reach {self.url}: {e.reason}") from None
+
+
+def _setting(name: str, hidden: bool) -> str:
+    value = os.environ.get(name, "").strip()
+    if value:
+        return value
+    if not sys.stdin.isatty():
+        raise KomodoError(f"set {name} in the environment")
+    if hidden:
+        value = getpass.getpass(f"{name} (hidden): ")
+    else:
+        # Prompt on stderr so it still shows when stdout is piped (| tee).
+        print(f"{name}: ", end="", file=sys.stderr, flush=True)
+        value = input()
+    if not value.strip():
+        raise KomodoError(f"{name} is empty")
+    return value.strip()
 
 
 def _api_error(e: urllib.error.HTTPError) -> str:

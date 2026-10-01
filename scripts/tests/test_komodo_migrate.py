@@ -554,11 +554,29 @@ class SopsRoundTripTests(TempRepoCase):
 
 
 class CliTests(unittest.TestCase):
-    def test_missing_env(self):
+    def test_missing_env_without_terminal(self):
         err = io.StringIO()
-        with mock.patch.dict(os.environ, {}, clear=True), mock.patch("sys.stderr", err):
+        with mock.patch.dict(os.environ, {}, clear=True), mock.patch("sys.stderr", err), \
+                mock.patch("sys.stdin.isatty", return_value=False):
             self.assertEqual(km.main(["--discover", "--repo", str(REPO_ROOT)]), 1)
-        self.assertIn("KOMODO_URL", err.getvalue())
+        self.assertIn("set KOMODO_URL in the environment", err.getvalue())
+
+    def test_prompts_for_missing_settings(self):
+        env = {"KOMODO_URL": "https://komodo.example.test/"}
+        with mock.patch.dict(os.environ, env, clear=True), mock.patch("sys.stdin.isatty", return_value=True), \
+                mock.patch("getpass.getpass", side_effect=["FAKESECRET-key", "FAKESECRET-secret"]) as ask:
+            client = km.Komodo.from_env()
+        self.assertEqual(client.url, "https://komodo.example.test")
+        self.assertEqual(client.headers["X-Api-Key"], "FAKESECRET-key")
+        self.assertEqual(client.headers["X-Api-Secret"], "FAKESECRET-secret")
+        self.assertEqual([c.args[0] for c in ask.call_args_list], ["KOMODO_API_KEY (hidden): ", "KOMODO_API_SECRET (hidden): "])
+
+    def test_prompt_rejects_empty_input(self):
+        with mock.patch.dict(os.environ, {"KOMODO_URL": "u", "KOMODO_API_KEY": "k"}, clear=True), \
+                mock.patch("sys.stdin.isatty", return_value=True), mock.patch("getpass.getpass", return_value="  "):
+            with self.assertRaises(km.KomodoError) as ctx:
+                km.Komodo.from_env()
+        self.assertEqual(str(ctx.exception), "KOMODO_API_SECRET is empty")
 
 
 if __name__ == "__main__":
