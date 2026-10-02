@@ -14,7 +14,7 @@ services:
       # renovate: datasource=github-releases depName=docker/compose
       - DOCKER_COMPOSE_VERSION=v5.5.1
       # renovate: datasource=github-releases depName=DataDog/pup
-      - PUP_VERSION=v1.23.7
+      - PUP_VERSION=v1.24.0
       # uv manages Python: patch releases arrive with uv updates, the minor version is bumped by hand
       # renovate: datasource=github-releases depName=astral-sh/uv
       - UV_VERSION=0.12.22
