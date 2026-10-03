@@ -1,7 +1,7 @@
 services:
   bambuddy:
     container_name: bambuddy
-    image: docker.io/maziggy/bambuddy:1.2.5.6@sha256:38ab9d681550c40ac4025892e34eb7bc39cce4e84e9ab507b144b345a29ff367
+    image: docker.io/maziggy/bambuddy:1.2.5.7@sha256:807f67511fa8c2b644b09de50a5d41794372214d00bd04fda59f576d9958d280
     environment:
       - TZ=Europe/Amsterdam
       - PORT=8000
