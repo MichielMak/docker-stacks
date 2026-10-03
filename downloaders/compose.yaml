@@ -93,7 +93,7 @@ services:
     networks:
       - npm
   pyload:
-    image: linuxserver/pyload-ng:0.5.0@sha256:4cec0a2a8c181ec00c6daac085f318b09424a3a0aff60efa2908eef8ae3eeff8
+    image: linuxserver/pyload-ng:0.5.0@sha256:bb7a6536d6c8be04f38ce77bdd3f2e2d6b54a49bd680fd904e932767871e558a
     container_name: pyload
     environment:
       - PUID=${PUID}
