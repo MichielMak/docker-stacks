@@ -125,6 +125,14 @@
       "allowedVersions": "/^\\d+\\.\\d+\\.\\d+(?:\\.\\d+)?$/"
     },
     {
+      "description": "Spotweb: parse YYYYMMDD date tags (overrides the global hash-only rejection, since 8 digits also look like hex)",
+      "matchPackageNames": [
+        "/^(?:docker\\.io\\/)?jgeusebroek\\/spotweb$/"
+      ],
+      "versioning": "regex:^(?<major>\\d{4})(?<minor>\\d{2})(?<patch>\\d{2})$",
+      "allowedVersions": "/^20\\d{6}$/"
+    },
+    {
       "description": "Lidarr: only use pr-plugins branch",
       "matchPackageNames": [
         "ghcr.io/hotio/lidarr"
