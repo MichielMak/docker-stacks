@@ -10,6 +10,7 @@ services:
       USE_BOOK_TITLE: true
       BOOK_LANGUAGE: nl
       USE_CF_BYPASS: true
+      USING_EXTERNAL_BYPASSER: false
     restart: unless-stopped
     volumes:
       - ${MEDIA_DIR}/downloads/usenet/books:/books
