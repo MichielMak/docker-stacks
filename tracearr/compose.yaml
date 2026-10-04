@@ -14,7 +14,7 @@
 
 services:
   tracearr:
-    image: ghcr.io/connorgallopo/tracearr:2.6.1@sha256:4c4afa7b453a4a9efceccb9e3f48e57a88abaf8ef2e207abf0099fdac4c71aa4
+    image: ghcr.io/connorgallopo/tracearr:2.6.2@sha256:933af2d7835b82fe8d1cf3d9fc7694500c598b8f5f724558828dbd0b068acbb9
     container_name: tracearr
     environment:
       - NODE_ENV=production
