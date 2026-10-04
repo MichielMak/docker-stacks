@@ -10,6 +10,8 @@ services:
       USE_BOOK_TITLE: true
       BOOK_LANGUAGE: nl
       USE_CF_BYPASS: true
+      USING_EXTERNAL_BYPASSER: true
+      EXT_BYPASSER_URL: http://byparr:8191
     restart: unless-stopped
     volumes:
       - ${MEDIA_DIR}/downloads/usenet/books:/books
