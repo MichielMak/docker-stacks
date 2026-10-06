@@ -3,6 +3,279 @@
 # other secrets are [[KOMODO_...]] refs to secret Komodo Variables.
 
 [[stack]]
+name = "arl-sentinel"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "arl-sentinel"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "audiobookshelf"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "audiobookshelf"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "bambuddy"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "bambuddy"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+BAMBUDDY_IP=192.168.178.243
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "bazarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "bazarr"
+environment = """
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "bentopdf"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "bentopdf"
+environment = """
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "byparr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "byparr"
+
+[[stack]]
+name = "cloudcmd"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "cloudcmd"
+environment = """
+MEDIA_DIR=[[MEDIA_DIR]]
+OVERIG_DIR=[[OVERIG_DIR]]
+DEEMIX_DIR=/mnt/vol2/deemix
+DOMAIN=[[DOMAIN]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
+name = "code-server"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "code-server"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOCKER_STACKS_DIR=[[DOCKER_STACKS_DIR]]
+DOMAIN=[[DOMAIN]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
+name = "deemix"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "deemix"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DEEMIX_DOWNLOAD_DIR=/mnt/vol2/deemix
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
+name = "dispatcharr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "dispatcharr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DISPATCHARR_IP=192.168.178.242
+DISPATCHARR_USER=michiel
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "dockerproxy"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "dockerproxy"
+
+[[stack]]
+name = "duplicacy"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "duplicacy"
+environment = """
+PGID=[[PGID]]
+PUID=[[PUID]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+DOCKER_STACKS_DIR=[[DOCKER_STACKS_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "flightscanner"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "flightscanner"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "grimmory"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "grimmory"
+environment = """
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+DOMAIN=[[DOMAIN]]
+GRIMMORY_USERNAME=guest
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "handbrake"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "handbrake"
+environment = """
+MEDIA_DIR=[[MEDIA_DIR]]
+OVERIG_DIR=[[OVERIG_DIR]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOMAIN=[[DOMAIN]]
+PRESTAGE_DIR=[[PRESTAGE_DIR]]
+"""
+
+[[stack]]
+name = "headless-chrome"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "headless-chrome"
+
+[[stack]]
+name = "homepage"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "homepage"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+PGID=[[PGID]]
+PUID=[[PUID]]
+"""
+
+[[stack]]
+name = "lidarr"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "lidarr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DEEMIX_DIR=/mnt/vol2/deemix
+MEDIA_DIR=[[MEDIA_DIR]]
+PGID=[[PGID]]
+PUID=[[PUID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "maintainerr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "maintainerr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
 name = "mealie"
 
 [stack.config]
@@ -10,6 +283,8 @@ server = "Local"
 poll_for_updates = true
 linked_repo = "docker-stacks"
 run_directory = "mealie"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PGID=[[PGID]]
 PUID=[[PUID]]
@@ -19,5 +294,214 @@ OIDC_CLIENT_ID=vG8UUzLHxSAjwenhEZCFrSDffdRe1xE47sBwHS1i
 OIDC_CONFIGURATION_URL=https://auth.makstra.nl/application/o/mealie/.well-known/openid-configuration
 BASE_URL=https://mealie.makstra.nl
 """
+
+[[stack]]
+name = "musicassistant"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "musicassistant"
+environment = """
+MUSICASSISTANT_IP=192.168.178.238
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
+name = "netbootxyz"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "netbootxyz"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+ISO_DATA_DIR=/mnt/vol2/media/iso
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "podimo"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "podimo"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
 compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
 compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "profilarr"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "profilarr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
+name = "prowlarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "prowlarr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "proxmoxbackupserver"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "proxmoxbackupserver"
+environment = """
+PBS_IP=192.168.178.245
+DOMAIN=[[DOMAIN]]
+BACKUP_DIR=/mnt/vol2/pbs
+"""
+
+[[stack]]
+name = "quickstart"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "quickstart"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
+name = "retrom"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "retrom"
+environment = """
+MEDIA_DIR=[[MEDIA_DIR]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+
+[[stack]]
+name = "shelfmark"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "shelfmark"
+environment = """
+MEDIA_DIR=[[MEDIA_DIR]]
+UID=[[PUID]]
+GID=[[PGID]]
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
+name = "spotweb"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "spotweb"
+environment = """
+PUID=[[PUID]]
+PGID=[[PGID]]
+GUID=[[PGID]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "tdarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "tdarr"
+environment = """
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+OVERIG_DIR=[[OVERIG_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+"""
+
+[[stack]]
+name = "termix"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "termix"
+environment = """
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "triliumnext"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "triliumnext"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "uptime-kuma"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "uptime-kuma"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "wizarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "wizarr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""

@@ -978,6 +978,10 @@ def build_resources(
     for kind, resources in export.items():
         if kind == "variable":
             continue  # rebuilt from ListVariables below
+        if kind == "resource_sync":
+            # syncs.toml is written by hand: the export drops default values like delete = false.
+            result.notes.append(f"resource_sync: {len(resources)} left out, syncs.toml is maintained by hand")
+            continue
         kept = []
         for res in resources:
             try:
