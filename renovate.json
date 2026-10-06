@@ -320,6 +320,13 @@
         "ghcr.io/renovatebot/renovate"
       ],
       "pinDigests": false
+    },
+    {
+      "description": "Skip changelog fetching for Renovate's own image: paging through its thousands of releases adds ~2.5 minutes to every run",
+      "matchPackageNames": [
+        "ghcr.io/renovatebot/renovate"
+      ],
+      "fetchChangeLogs": "off"
     }
   ],
   "customManagers": [
