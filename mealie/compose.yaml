@@ -28,6 +28,8 @@ services:
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_AUTO_REDIRECT: "true"
       OIDC_REMEMBER_ME: "true"
+      # Authentik doesn't send email_verified=true; mealie >= 3.21 refuses OIDC logins without it
+      OIDC_REQUIRES_EMAIL_VERIFICATION: "false"
       OIDC_USER_GROUP: user
       OIDC_ADMIN_GROUP: admin
     networks:
