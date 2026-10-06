@@ -415,6 +415,13 @@ class BuildResourcesTests(TempRepoCase):
             ["KOMODO_DEPLOYMENT_WHOAMI_WHOAMI_TOKEN", "KOMODO_ALERTER_DISCORD_URL"],
         )
 
+    def test_resource_sync_is_not_written(self):
+        export = load_export()
+        export["resource_sync"] = [{"name": "docker-stacks", "config": {"resource_path": ["komodo/resources"]}}]
+        result = km.build_resources(export, load_vars(), OVERRIDES, self.repo)
+        self.assertNotIn("syncs.toml", result.files)
+        self.assertIn("resource_sync: 1 left out, syncs.toml is maintained by hand", result.notes)
+
     def test_variables_are_plain_only(self):
         result = self.build()
         self.assertEqual(
