@@ -9,12 +9,12 @@ name = "arl-sentinel"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "arl-sentinel"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "audiobookshelf"
@@ -23,6 +23,8 @@ name = "audiobookshelf"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "audiobookshelf"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
@@ -30,8 +32,6 @@ MEDIA_DIR=[[MEDIA_DIR]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "bambuddy"
@@ -53,6 +53,8 @@ name = "bazarr"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "bazarr"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
@@ -60,8 +62,6 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 MEDIA_DIR=[[MEDIA_DIR]]
 DOMAIN=[[DOMAIN]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "bentopdf"
@@ -135,13 +135,13 @@ name = "dispatcharr"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "dispatcharr"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DISPATCHARR_IP=192.168.178.242
 DISPATCHARR_USER=michiel
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "dockerproxy"
@@ -151,6 +151,26 @@ server = "Local"
 poll_for_updates = true
 linked_repo = "docker-stacks"
 run_directory = "dockerproxy"
+
+[[stack]]
+name = "downloaders"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "downloaders"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+OVERIG_DIR=[[OVERIG_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+PRESTAGE_DIR=[[PRESTAGE_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "duplicacy"
@@ -169,20 +189,36 @@ DOMAIN=[[DOMAIN]]
 """
 
 [[stack]]
+name = "esphome"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "esphome"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+ESPHOME_USERNAME=michieladmin
+ESPHOME_IP=192.168.178.246
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "flightscanner"
 
 [stack.config]
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "flightscanner"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "grimmory"
@@ -191,6 +227,8 @@ name = "grimmory"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "grimmory"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
@@ -199,8 +237,6 @@ MEDIA_DIR=[[MEDIA_DIR]]
 DOMAIN=[[DOMAIN]]
 GRIMMORY_USERNAME=guest
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "handbrake"
@@ -243,6 +279,30 @@ PUID=[[PUID]]
 """
 
 [[stack]]
+name = "kometa"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "kometa"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PLEX_URL=http://plex:32400
+TRACEARR_URL=http://tracearr:3000
+GOTIFY_URL=http://gotify
+RADARR_URL=http://radarr:7878
+SONARR_URL=http://sonarr:8989
+TRAKT_CLIENT_ID=030e24bcff562ae7d2397ed0fe9c74bac208ea9c20f6d2e96291820f11de730b
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack.config.config_files]]
+path = "config.yml"
+services = ["kometa"]
+requires = "Restart"
+
+[[stack]]
 name = "lidarr"
 
 [stack.config]
@@ -250,6 +310,8 @@ server = "Local"
 poll_for_updates = true
 linked_repo = "docker-stacks"
 run_directory = "lidarr"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
@@ -258,8 +320,6 @@ MEDIA_DIR=[[MEDIA_DIR]]
 PGID=[[PGID]]
 PUID=[[PUID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "maintainerr"
@@ -325,18 +385,63 @@ DOMAIN=[[DOMAIN]]
 """
 
 [[stack]]
+name = "overseerr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "overseerr"
+environment = """
+PGID=[[PGID]]
+PUID=[[PUID]]
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "papra"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "papra"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+PUID=[[PUID]]
+PGID=[[PGID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "plex-auto-languages"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "plex-auto-languages"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "podimo"
 
 [stack.config]
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "podimo"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "profilarr"
@@ -360,14 +465,14 @@ name = "prowlarr"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "prowlarr"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "proxmoxbackupserver"
@@ -393,6 +498,23 @@ run_directory = "quickstart"
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
+
+[[stack]]
+name = "radarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "radarr"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+DOMAIN=[[DOMAIN]]
+PGID=[[PGID]]
+PUID=[[PUID]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "retrom"
@@ -425,16 +547,80 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 
 [[stack]]
+name = "sonarr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "sonarr"
+environment = """
+PGID=[[PGID]]
+PUID=[[PUID]]
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+MEDIA_DIR=[[MEDIA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "spotizerr"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "spotizerr"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DEEMIX_DIR=/mnt/vol2/deemix
+PUID=[[PUID]]
+PGID=[[PGID]]
+UMASK=022
+TZ=Europe/Amsterdam
+REDIS_HOST=spotizerr-redis
+REDIS_PORT=6379
+REDIS_DB=0
+EXPLICIT_FILTER=false
+ENABLE_AUTH=false
+JWT_EXPIRATION_HOURS=24
+DEFAULT_ADMIN_USERNAME=michieladmin
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "spotweb"
 
 [stack.config]
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "spotweb"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
 GUID=[[PGID]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "tandoor"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "tandoor"
+environment = """
+DB_ENGINE=django.db.backends.postgresql
+POSTGRES_HOST=db_recipes
+POSTGRES_PORT=5432
+POSTGRES_USER=djangodba
+POSTGRES_DB=djangodb
+TZ=Europe/Amsterdam
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 """

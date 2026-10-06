@@ -856,6 +856,8 @@ class TomlResult:
     dropped: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     manual: list[str] = field(default_factory=list)
+    # stacks that get the wrapper but have no secrets.sops.env in the repo
+    missing_secrets: list[str] = field(default_factory=list)
     # (label, secret value) pairs for the leak check. Labels are names only.
     leak_check: list[tuple[str, str]] = field(default_factory=list)
 
@@ -954,7 +956,7 @@ def build_resources(
                 cfg["compose_cmd_wrapper_include"] = list(WRAPPER_INCLUDE)
                 repo_dir = find_repo_dir(repo, name, cfg.get("run_directory", ""))
                 if not repo_dir or not (repo / repo_dir / SECRETS_FILE).exists():
-                    result.notes.append(f"stack {name}: has secrets but no {SECRETS_FILE} in the repo yet (run --write-secrets)")
+                    result.missing_secrets.append(name)
         elif kind == "alerter":
             params = cfg.get("endpoint", {}).get("params", {})
             url = params.get("url")
@@ -1034,6 +1036,11 @@ def write_toml(client, repo: Path, overrides: Overrides, out_dir: Path, only=(),
     if set(only) - known_stacks:
         raise ValueError(f"no such stack: {', '.join(sorted(set(only) - known_stacks))}")
     result = build_resources(export, variables, overrides, repo, only, exclude)
+    if result.missing_secrets:
+        # Synced like this, these stacks would lose their secrets and fail to deploy.
+        p(f"These stacks have secrets but no {SECRETS_FILE} in the repo. Run --write-secrets for them first.")
+        p(f"Nothing written: {', '.join(result.missing_secrets)}")
+        return 1
 
     rendered = {}
     for fname, doc in result.files.items():
