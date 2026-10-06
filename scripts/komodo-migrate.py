@@ -1077,6 +1077,11 @@ def write_toml(client, repo: Path, overrides: Overrides, out_dir: Path, only=(),
 # --- CLI ----------------------------------------------------------------------
 
 
+def _names(values: list[str]) -> list[str]:
+    """--stack a,b --stack c -> [a, b, c]"""
+    return [name.strip() for value in values for name in value.split(",") if name.strip()]
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -1088,8 +1093,8 @@ def main(argv=None) -> int:
     mode.add_argument("--write-secrets", dest="mode", action="store_const", const="secrets", help="write <stack>/secrets.sops.env files")
     mode.add_argument("--write-toml", dest="mode", action="store_const", const="toml", help="write komodo/resources/*.toml")
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parent.parent, help="repo root (default: this repo)")
-    parser.add_argument("--stack", action="append", default=[], metavar="NAME", help="write modes: only this stack (repeatable)")
-    parser.add_argument("--exclude", action="append", metavar="NAME", help=f"write modes: skip this stack (repeatable, default: {', '.join(DEFAULT_EXCLUDE)})")
+    parser.add_argument("--stack", action="append", default=[], metavar="NAME", help="write modes: only these stacks (comma-separated or repeatable)")
+    parser.add_argument("--exclude", action="append", metavar="NAME", help=f"write modes: skip these stacks (comma-separated or repeatable, default: {','.join(DEFAULT_EXCLUDE)})")
     parser.add_argument("--force", action="store_true", help="overwrite existing output files")
     parser.add_argument("--verify", action="store_true", help="--write-secrets: decrypt with sops exec-env and compare in memory (needs the age private key)")
     parser.add_argument("--out", type=Path, help="--write-toml: output directory (default: <repo>/komodo/resources)")
@@ -1098,15 +1103,16 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
 
     repo = args.repo.resolve()
-    exclude = DEFAULT_EXCLUDE if args.exclude is None else args.exclude
+    only = _names(args.stack)
+    exclude = DEFAULT_EXCLUDE if args.exclude is None else _names(args.exclude)
     try:
         overrides = load_overrides(repo / "scripts" / "secret-classification.yaml")
         client = Komodo.from_env(args.insecure)
         if args.mode == "secrets":
-            return write_secrets(client, repo, overrides, args.stack, exclude, args.force, args.verify)
+            return write_secrets(client, repo, overrides, only, exclude, args.force, args.verify)
         if args.mode == "toml":
             out_dir = args.out or repo / "komodo" / "resources"
-            return write_toml(client, repo, overrides, out_dir, args.stack, exclude, args.force, args.allow_match)
+            return write_toml(client, repo, overrides, out_dir, only, exclude, args.force, args.allow_match)
         return discover(client, repo, overrides)
     except (KomodoError, SopsError, ValueError, OSError) as e:
         print(f"error: {e}", file=sys.stderr)
