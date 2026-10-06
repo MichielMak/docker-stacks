@@ -26,9 +26,12 @@ permissions:
   contents: read
 
 env:
-  # Directory Renovate itself uses for the repository cache. Caching this exact
-  # path avoids the permission problems that come with overriding `cacheDir`.
-  cache_dir: /tmp/renovate/cache/renovate/repository
+  # Directory Renovate itself uses for its caches. Caching this exact path
+  # avoids the permission problems that come with overriding `cacheDir`. It
+  # holds both the repository cache (`repository/`) and the package cache
+  # (`renovate-cache-v1/`); the package cache lets Docker Hub tag lookups stop
+  # after the first page instead of hitting the Hub rate limit every run.
+  cache_dir: /tmp/renovate/cache/renovate
   # Bump this value manually to invalidate every existing cache entry.
   cache_key: renovate-cache
   # Repositories this Renovate instance manages. Both lists must be kept in
