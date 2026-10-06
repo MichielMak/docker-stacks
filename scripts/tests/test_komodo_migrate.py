@@ -561,6 +561,9 @@ class CliTests(unittest.TestCase):
             self.assertEqual(km.main(["--discover", "--repo", str(REPO_ROOT)]), 1)
         self.assertIn("set KOMODO_URL in the environment", err.getvalue())
 
+    def test_stack_lists(self):
+        self.assertEqual(km._names(["a,b", " c ", "d,,"]), ["a", "b", "c", "d"])
+
     def test_prompts_for_missing_settings(self):
         env = {"KOMODO_URL": "https://komodo.example.test/"}
         with mock.patch.dict(os.environ, env, clear=True), mock.patch("sys.stdin.isatty", return_value=True), \

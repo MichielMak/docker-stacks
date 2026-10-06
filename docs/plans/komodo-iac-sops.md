@@ -1,6 +1,6 @@
 # Plan: Komodo as code (Resource Sync TOML) + SOPS secrets
 
-Status: Phases 1–2 merged, Phase 3 in PR `komodo-migrate-script`. Written 2026-09-30 to be executed in a fresh session.
+Status: Phases 1–4 merged, Phase 5 canary (mealie) passed 2026-10-06, rollout in progress. Written 2026-09-30 to be executed in a fresh session.
 Branch/worktree: `komodo-iac-sops` at `/home/paseo/workspace/docker-stacks-komodo-iac-sops`.
 
 ## Goal
@@ -254,7 +254,31 @@ The user creates the sync once in the UI with the same settings. After that, the
    - The Komodo Update log for the deploy contains no secret values. Check with `grep -c` for a known
      value, run by the user.
    - Wrapper cwd assumption holds. If not, switch the wrapper to an absolute path via `[[DOCKER_STACKS_DIR]]/<stack>/secrets.sops.env`.
-5. Roll out in batches of about 10 stacks, leaving critical ones for last: `traefik`, `authentik`, `cloudflared`, `pihole`, `komodo`.
+
+   **Canary done (mealie, 2026-10-06).** Lessons:
+   - Phase 1 wasn't fully applied on the host: periphery was still the upstream image (`sops: executable file not found`)
+     and the age key file was missing. Check before any deploy:
+     `docker exec komodo-periphery sops --version`, and in a stack dir
+     `docker exec -w <run dir> komodo-periphery sh -c 'sops exec-env secrets.sops.env true && echo DECRYPT_OK'`.
+   - The age key must be a plain-text age identity file. A copy saved with TextEdit was RTF (`unknown identity type`).
+     The working key was `~/Library/Application Support/sops/age/keys.txt`, which sops falls back to on macOS. That's
+     why `--verify` passed even with a broken `SOPS_AGE_KEY_FILE`.
+   - After replacing the key file, restart periphery: a single-file bind mount keeps pointing at the old file.
+   - The wrapper's cwd is the stack's run directory (`/mnt/ssd0/docker/stacks/publicstacks/<stack>`), so the relative
+     `secrets.sops.env` path works.
+   - mealie's SSO failure was unrelated: mealie ≥ 3.21 needs `email_verified` (fixed in #2914). The client secret's hash
+     matched Authentik's.
+5. Roll out in batches, leaving critical ones for last. Each batch: `--write-secrets --verify --stack <batch>`, then
+   `--write-toml --force --stack <everything migrated so far>` (stacks.toml is cumulative), PR, merge, refresh and
+   check the sync diff, execute, deploy the batch, check health.
+   1. `arl-sentinel,audiobookshelf,bazarr,dispatcharr,flightscanner,grimmory,lidarr,podimo,prowlarr,spotweb`,
+      plus the 24 stacks without secrets, which only join `stacks.toml` (no wrapper, the sync diff should be empty for them)
+   2. `downloaders,esphome,kometa,overseerr,papra,plex-auto-languages,radarr,sonarr,spotizerr,tandoor`
+   3. `diun,gotify,grafana,healthchecks,immich-app,mcpjungle,nextcloud,plex,romm,slskd`
+   4. `komodo-gotify,nebula-sync,paseo,teslamate,tracearr,tsbridge,victoriametrics`
+   5. `pihole,cloudflared,authentik,traefik`
+
+   `komodo` and `stash` stay excluded (Phase 6).
 6. After everything is green, review the sync diff with `delete = true` and enable it if it's clean.
 
 ## Phase 6: Special cases
