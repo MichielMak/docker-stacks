@@ -378,7 +378,7 @@ class BuildResourcesTests(TempRepoCase):
         )
         self.assertTrue(any("MIXED_KEY" in m for m in result.manual))
         self.assertIn("stack wizarr: webhook_secret", result.dropped)
-        self.assertTrue(any("stack mealie: has secrets but no secrets.sops.env" in n for n in result.notes))
+        self.assertEqual(result.missing_secrets, ["mealie", "spotweb"])
 
     def test_parse_error_names_the_resource(self):
         export = load_export()
@@ -455,6 +455,20 @@ class BuildResourcesTests(TempRepoCase):
 
 
 class WriteTomlTests(TempRepoCase):
+    def setUp(self):
+        super().setUp()
+        for name in EXPECTED_SECRETS:  # stand-ins; --write-toml only checks they exist
+            (self.repo / name / km.SECRETS_FILE).write_text("stand-in\n")
+
+    def test_refuses_without_secrets_files(self):
+        (self.repo / "spotweb" / km.SECRETS_FILE).unlink()
+        out_dir = self.repo / "komodo" / "resources"
+        buf = io.StringIO()
+        rc = km.write_toml(FakeKomodo(), self.repo, OVERRIDES, out_dir, exclude=["komodo"], out=buf)
+        self.assertEqual(rc, 1)
+        self.assertIn("Nothing written: spotweb", buf.getvalue())
+        self.assertFalse(out_dir.exists())
+
     def test_writes_files_without_secrets(self):
         out_dir = self.repo / "komodo" / "resources"
         buf = io.StringIO()
