@@ -150,11 +150,11 @@ name = "diun"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "diun"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "dockerproxy"
@@ -240,6 +240,8 @@ name = "gotify"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "gotify"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
@@ -252,8 +254,6 @@ GOTIFY_OIDC_USERNAMECLAIM=preferred_username
 GOTIFY_OIDC_LINK_BY_USERNAME=true
 GOTIFY_OIDC_SCOPES=openid,profile,email
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "grafana"
@@ -262,6 +262,8 @@ name = "grafana"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "grafana"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
@@ -269,8 +271,6 @@ DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 GRAFANA_ADMIN_USER=grafadmin
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "grimmory"
@@ -323,6 +323,8 @@ name = "healthchecks"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "healthchecks"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 HEALTHCHECKS_SITE_NAME=Makstra HealthChecks
@@ -330,8 +332,6 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "homepage"
@@ -355,6 +355,8 @@ server = "Local"
 poll_for_updates = true
 linked_repo = "docker-stacks"
 run_directory = "immich-app"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 UPLOAD_LOCATION=/mnt/vol2/media/photos
 DB_DATA_LOCATION=/mnt/ssd0/docker/data/immich/postgres
@@ -363,8 +365,6 @@ DB_USERNAME=postgres
 DB_DATABASE_NAME=immich
 DOMAIN=[[DOMAIN]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "kometa"
@@ -389,6 +389,19 @@ TRAKT_CLIENT_ID=030e24bcff562ae7d2397ed0fe9c74bac208ea9c20f6d2e96291820f11de730b
 path = "config.yml"
 services = ["kometa"]
 requires = "Restart"
+
+[[stack]]
+name = "komodo-gotify"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "gotify-alerter"
+environment = """
+GOTIFY_URL=http://gotify:80
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "lidarr"
@@ -430,13 +443,13 @@ name = "mcpjungle"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "mcpjungle"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 ignore_services = ["mcpjungle-truenas-mcp-init"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "mealie"
@@ -473,6 +486,19 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 
 [[stack]]
+name = "nebula-sync"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "nebula-sync"
+environment = """
+PIHOLE_IP=http://192.168.178.183
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "netbootxyz"
 
 [stack.config]
@@ -495,6 +521,8 @@ server = "Local"
 poll_for_updates = true
 linked_repo = "docker-stacks"
 run_directory = "nextcloud"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DB_NAME=nextcloud
@@ -505,8 +533,6 @@ PUID=[[PUID]]
 PGID=[[PGID]]
 COLLABORA_ADMIN_USER=michieladmin
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "overseerr"
@@ -541,12 +567,29 @@ PGID=[[PGID]]
 """
 
 [[stack]]
+name = "paseo"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "paseo"
+environment = """
+DOMAIN=[[DOMAIN]]
+TZ=Europe/Amsterdam
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "plex"
 
 [stack.config]
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "plex"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PLEX_IP=192.168.178.239
 DOMAIN=[[DOMAIN]]
@@ -555,8 +598,6 @@ PGID=[[PGID]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 MEDIA_DIR=[[MEDIA_DIR]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "plex-auto-languages"
@@ -679,6 +720,8 @@ name = "romm"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "romm"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 IGDB_ID=a54lnl1ovjlgbeu14tang67ir7mp8f
 OIDC_CLIENT_ID=J3XIFPLr6RXriwIAxjcIsQubYylJ9OI5Hb4eP1NB
@@ -691,8 +734,6 @@ DOMAIN=[[DOMAIN]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "shelfmark"
@@ -717,6 +758,8 @@ name = "slskd"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "slskd"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
@@ -727,8 +770,6 @@ SLSKD_IP=192.168.178.244
 SLSKD_INTERNAL_URL=http://slskd:5030
 SLSKD_METRICS_USERNAME=michielmetrics
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "sonarr"
@@ -839,6 +880,34 @@ DOMAIN=[[DOMAIN]]
 """
 
 [[stack]]
+name = "teslamate"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "teslamate"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
+name = "tracearr"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "tracearr"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "triliumnext"
 
 [stack.config]
@@ -851,6 +920,16 @@ DOMAIN=[[DOMAIN]]
 """
 
 [[stack]]
+name = "tsbridge"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "tsbridge"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "uptime-kuma"
 
 [stack.config]
@@ -861,6 +940,22 @@ environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 """
+
+[[stack]]
+name = "victoriametrics"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "victoriametrics"
+environment = """
+PUID=[[PUID]]
+PGID=[[PGID]]
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "wizarr"
