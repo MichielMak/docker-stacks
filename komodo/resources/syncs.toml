@@ -1,21 +1,21 @@
 # Komodo Resource Sync for komodo/resources/ (docs/plans/komodo-iac-sops.md, Phase 4).
-# Create it once in the Komodo UI with these settings. Once resource_path covers
-# this file, the sync manages itself.
-#
-# Canary: only stacks.toml is synced, and it holds just the canary stack.
-# The rollout widens resource_path to ["komodo/resources"].
+# This file is inside resource_path, so the sync manages itself.
+# Written by hand: scripts/komodo-migrate.py --write-toml leaves it alone.
 
 [[resource_sync]]
 name = "docker-stacks"
 
 [resource_sync.config]
 linked_repo = "docker-stacks"
-resource_path = ["komodo/resources/stacks.toml"]
+resource_path = ["komodo/resources"]
 # UI edits are not committed back to git.
 managed = false
-# Never delete resources that are missing from the TOML. Flip only after a clean diff.
+# Never delete resources that are missing from the TOML. Keep this false while:
+# - `stash` isn't in the TOML (its files live only on the host), and
+# - include_variables is true: secret Variables (like KOMODO_ALERTER_GOTIFY_URL)
+#   aren't in variables.toml, so delete = true would remove them.
 delete = false
 include_resources = true
-# Canary: variables.toml isn't synced yet.
-include_variables = false
+# variables.toml holds the plain Variables. Secret Variables stay in Komodo's DB.
+include_variables = true
 include_user_groups = false
