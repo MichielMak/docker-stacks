@@ -11,7 +11,7 @@ resource_path = ["komodo/resources"]
 # UI edits are not committed back to git.
 managed = false
 # Never delete resources that are missing from the TOML. Keep this false while:
-# - `stash` isn't in the TOML (its files live only on the host), and
+# - one stack isn't in the TOML (its files live only on the host), and
 # - include_variables is true: secret Variables (like KOMODO_ALERTER_GOTIFY_URL)
 #   aren't in variables.toml, so delete = true would remove them.
 delete = false

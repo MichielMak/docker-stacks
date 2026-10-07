@@ -66,8 +66,8 @@ Resolve 1, 2, and 4 with the discovery mode of the script (Phase 3), which print
 **Resolved by `--discover` (2026-10-01):**
 1. 66 of 67 stacks use `linked_repo = "docker-stacks"` with `run_directory = "<stack>"`, so `secrets.sops.env`
    sits next to `compose.yaml` and the wrapper's relative path should work (still verify in the canary).
-   The exception is `stash`: `files_on_host` at `/mnt/ssd0/docker/stacks/stash`, not in this repo. It's excluded
-   from the migration for now (script default).
+   The exception is one `files_on_host` stack whose files live only on the host, not in this repo. It's excluded
+   from the migration (pass it to `--exclude`).
 2. Globals are 8 plain Komodo Variables, referenced as `[[VAR]]` in each stack's env: `DOCKER_DATA_DIR`,
    `DOCKER_STACKS_DIR`, `DOMAIN`, `MEDIA_DIR`, `OVERIG_DIR`, `PGID`, `PRESTAGE_DIR`, `PUID`. No secret Variables
    exist, so `--write-secrets` works with a non-admin key.
@@ -278,9 +278,9 @@ The user creates the sync once in the UI with the same settings. After that, the
    4. `komodo-gotify,nebula-sync,paseo,teslamate,tracearr,tsbridge,victoriametrics`
    5. `pihole,cloudflared,authentik,traefik`
 
-   `komodo` and `stash` stay excluded (Phase 6).
+   `komodo` and the host-only stack stay excluded (Phase 6).
 
-   **Rollout done (2026-10-07).** All 5 batches deployed. 42 of 43 stacks with secrets use the wrapper (`stash` excluded).
+   **Rollout done (2026-10-07).** All 5 batches deployed. 42 of 43 stacks with secrets use the wrapper (the host-only stack is excluded).
    Lessons:
    - Unchanged values mean no container restarts on deploy. An unexpected restart means a value changed.
    - REVIEW values (quotes, `$`, `\`) need a hash check against the running container before deploying. Compose had
@@ -295,7 +295,7 @@ The user creates the sync once in the UI with the same settings. After that, the
    - In batch 2, `--write-secrets` failed but `--write-toml` still ran. `--write-toml` now refuses stacks that have
      secrets but no secrets file. Chain the commands with `&&`.
 6. After everything is green, review the sync diff with `delete = true` and enable it if it's clean.
-   Caveat: `delete = true` would remove `stash` (not in the TOML) and, with `include_variables = true`, the secret
+   Caveat: `delete = true` would remove the host-only stack (not in the TOML) and, with `include_variables = true`, the secret
    Variables (not in `variables.toml`). Both need a plan first, so `delete` stays false for now.
 
 ## Phase 6: Special cases
@@ -336,9 +336,9 @@ The user creates the sync once in the UI with the same settings. After that, the
 ## Done when
 
 - [x] Every Komodo resource except secret Variables and the `komodo` stack's own secrets is declared in `komodo/resources/`
-      (except the `stash` stack, whose files live only on the host)
-- [ ] The sync diff is empty with `delete = true` (blocked by `stash` and the secret Variables, see Phase 5 step 6)
-- [x] Every stack with secrets deploys through the SOPS wrapper and is healthy (42 of 43; `stash` excluded)
+      (except the host-only stack)
+- [ ] The sync diff is empty with `delete = true` (blocked by the host-only stack and the secret Variables, see Phase 5 step 6)
+- [x] Every stack with secrets deploys through the SOPS wrapper and is healthy (42 of 43; the host-only stack is excluded)
 - [x] The repo contains zero plaintext secrets (gitleaks clean, pre-commit hook enforced)
 - [ ] The age key is backed up in the password manager (check that it's the `AGE-SECRET-KEY-1…` line, as plain text)
 - [x] Docs are updated
