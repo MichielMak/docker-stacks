@@ -15,6 +15,9 @@ services:
       - DOCKER_COMPOSE_VERSION=v5.6.0
       # renovate: datasource=github-releases depName=DataDog/pup
       - PUP_VERSION=v1.24.2
+      # SOPS binary only, no age private key: agents can encrypt new secrets.sops.env files but not decrypt
+      # renovate: datasource=github-releases depName=getsops/sops
+      - SOPS_VERSION=v3.13.3
       # uv manages Python: patch releases arrive with uv updates, the minor version is bumped by hand
       # renovate: datasource=github-releases depName=astral-sh/uv
       - UV_VERSION=0.12.23
@@ -41,7 +44,10 @@ services:
             mv $$f /home/paseo/.docker/cli-plugins/docker-compose && rm $$f.sha256' ) && ( /home/paseo/.npm-global/bin/pup --version 2>/dev/null | grep -qxF "pup $${PUP_VERSION#v}" ||
           su paseo -s /bin/sh -c 'v=$${PUP_VERSION#v} && f=pup_$${v}_Linux_$$(uname -m | sed s/aarch64/arm64/).tar.gz && u=https://github.com/DataDog/pup/releases/download/$$PUP_VERSION && cd /tmp &&
             curl -fsSLO $$u/$$f && curl -fsSL $$u/pup_$${v}_checksums.txt | grep " $$f\$$" | sha256sum -c - && tar -xzf $$f pup &&
-            mv pup /home/paseo/.npm-global/bin/pup && rm $$f' ) && ( /home/paseo/.npm-global/bin/uv --version 2>/dev/null | grep -qF "uv $${UV_VERSION} " ||
+            mv pup /home/paseo/.npm-global/bin/pup && rm $$f' ) && ( /home/paseo/.npm-global/bin/sops --disable-version-check --version 2>/dev/null | grep -qF "sops $${SOPS_VERSION#v}" ||
+          su paseo -s /bin/sh -c 'f=sops-$$SOPS_VERSION.linux.$$(dpkg --print-architecture) && u=https://github.com/getsops/sops/releases/download/$$SOPS_VERSION && cd /tmp &&
+            curl -fsSLO $$u/$$f && curl -fsSL $$u/sops-$$SOPS_VERSION.checksums.txt | grep " $$f\$$" | sha256sum -c - && chmod +x $$f &&
+            mv $$f /home/paseo/.npm-global/bin/sops' ) && ( /home/paseo/.npm-global/bin/uv --version 2>/dev/null | grep -qF "uv $${UV_VERSION} " ||
           su paseo -s /bin/sh -c 'f=uv-$$(uname -m)-unknown-linux-gnu.tar.gz && u=https://github.com/astral-sh/uv/releases/download/$$UV_VERSION/$$f && cd /tmp &&
             curl -fsSLO $$u && curl -fsSLO $$u.sha256 && sha256sum -c $$f.sha256 && tar -xzf $$f --strip-components=1 -C /home/paseo/.npm-global/bin &&
             rm $$f $$f.sha256' ) && su paseo -s /bin/sh -c 'HOME=/home/paseo /home/paseo/.npm-global/bin/uv python install --default --preview-features python-install-default $$PYTHON_VERSION &&
