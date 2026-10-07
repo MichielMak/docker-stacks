@@ -1,0 +1,14 @@
+# Global git config for Claude sessions (GIT_CONFIG_GLOBAL in ~/.claude/settings.json).
+[user]
+	name = michiel-claude[bot]
+	email = 339110929+michiel-claude[bot]@users.noreply.github.com
+[commit]
+	gpgsign = false
+[tag]
+	gpgsign = false
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/claude-github-app/git-credential
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+	insteadOf = ssh://git@github.com/
