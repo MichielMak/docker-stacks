@@ -1,0 +1,5 @@
+#!/bin/sh
+# Runs the real gh as the GitHub App.
+GH_TOKEN=$(/opt/claude-github-app/token) || exit 1
+export GH_TOKEN
+exec /home/paseo/.npm-global/bin/gh "$@"

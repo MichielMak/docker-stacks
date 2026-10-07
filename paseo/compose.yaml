@@ -51,6 +51,8 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/paseo/home:/home/paseo
       - paseo-workspace:/workspace
+      # Scripts that let Claude sessions act on GitHub as the michiel-claude[bot] App, see the README
+      - ./claude-github-app:/opt/claude-github-app:ro
     labels:
       - homepage.group=Infra
       - homepage.name=Paseo

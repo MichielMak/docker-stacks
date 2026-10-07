@@ -1,0 +1,23 @@
+#!/bin/sh
+# Prints a GitHub App installation token. Tokens live 60 minutes; the cache is reused for 50.
+set -eu
+state=/home/paseo/.config/claude-github-app
+. "$state/app.env"
+cache="$state/.token"
+if [ -s "$cache" ] && [ -n "$(find "$cache" -mmin -50)" ]; then
+  cat "$cache"
+  exit 0
+fi
+b64() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+now=$(date +%s)
+header=$(printf '{"alg":"RS256","typ":"JWT"}' | b64)
+payload=$(printf '{"iat":%d,"exp":%d,"iss":"%s"}' $((now - 60)) $((now + 540)) "$APP_ID" | b64)
+sig=$(printf '%s.%s' "$header" "$payload" | openssl dgst -sha256 -sign "$state/private-key.pem" -binary | b64)
+token=$(curl -fsS -X POST \
+  -H "Authorization: Bearer $header.$payload.$sig" \
+  -H "Accept: application/vnd.github+json" \
+  "https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens" |
+  sed -n 's/.*"token": *"\([^"]*\)".*/\1/p')
+[ -n "$token" ] || { echo "claude-github-app: could not get installation token" >&2; exit 1; }
+(umask 077 && printf '%s\n' "$token" > "$cache.tmp" && mv "$cache.tmp" "$cache")
+printf '%s\n' "$token"
