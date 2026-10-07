@@ -67,17 +67,3 @@ enabled = true
 executions = [
   { execution.type = "PruneImages", execution.params.server = "Local", enabled = true },
 ]
-
-[[procedure]]
-name = "renovate"
-
-[procedure.config]
-schedule_enabled = false
-schedule = "Run every 15 minutes"
-
-[[procedure.config.stage]]
-name = "Stage 1"
-enabled = false
-executions = [
-  { execution.type = "DeployStack", execution.params.services = [], enabled = true },
-]
