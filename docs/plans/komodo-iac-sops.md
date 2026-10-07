@@ -1,6 +1,6 @@
 # Plan: Komodo as code (Resource Sync TOML) + SOPS secrets
 
-Status: Phases 1–5 done; rollout finished 2026-10-07 (42 stacks on SOPS). Next: widen the sync, then docs. Written 2026-09-30 to be executed in a fresh session.
+Status: Phases 1–5 and 7 done (2026-10-07). The sync covers all of `komodo/resources`. Open: `delete = true` and Phase 6. Written 2026-09-30 to be executed in a fresh session.
 Branch/worktree: `komodo-iac-sops` at `/home/paseo/workspace/docker-stacks-komodo-iac-sops`.
 
 ## Goal
@@ -335,12 +335,13 @@ The user creates the sync once in the UI with the same settings. After that, the
 
 ## Done when
 
-- [ ] Every Komodo resource except secret Variables and the `komodo` stack's own secrets is declared in `komodo/resources/`
-- [ ] The sync diff is empty with `delete = true`
-- [ ] Every stack with secrets deploys through the SOPS wrapper and is healthy
-- [ ] The repo contains zero plaintext secrets (gitleaks clean, pre-commit hook enforced)
-- [ ] The age key is backed up in the password manager
-- [ ] Docs are updated
+- [x] Every Komodo resource except secret Variables and the `komodo` stack's own secrets is declared in `komodo/resources/`
+      (except the `stash` stack, whose files live only on the host)
+- [ ] The sync diff is empty with `delete = true` (blocked by `stash` and the secret Variables, see Phase 5 step 6)
+- [x] Every stack with secrets deploys through the SOPS wrapper and is healthy (42 of 43; `stash` excluded)
+- [x] The repo contains zero plaintext secrets (gitleaks clean, pre-commit hook enforced)
+- [ ] The age key is backed up in the password manager (check that it's the `AGE-SECRET-KEY-1…` line, as plain text)
+- [x] Docs are updated
 
 ## Time estimate
 
