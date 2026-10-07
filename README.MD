@@ -6,14 +6,20 @@ This repository demonstrates a GitOps workflow for managing Docker stacks using 
 
 We use Komodo to declaratively manage Docker stacks via GitOps. All stack configurations are stored as code in this repository. Komodo continuously synchronizes the desired state defined here with your Docker environment, ensuring consistency and easy rollbacks.
 
+Everything Komodo manages (stacks, server, repos, procedures, alerter, builder, plain variables, and the sync itself) is declared as Resource Sync TOML in [`komodo/resources/`](komodo/resources/).
+
 ## ⚙️ Environment Variables
 
-Environment variables are managed globally and per-stack:
+Compose files only contain `${VARIABLE}` placeholders. The values come from:
 
-- **Global env files:** Shared environment variables applicable to all stacks are defined in global env files.
-- **Per-stack env files:** Each stack can have its own env files to override or extend global settings.
+- **Plain values:** each stack's `environment` in `komodo/resources/stacks.toml`. Shared values (`DOMAIN`, `PUID`, `DOCKER_DATA_DIR`, …) are Komodo Variables, referenced as `[[VAR]]`.
+- **Secrets:** `<stack>/secrets.sops.env`, encrypted with [SOPS](https://github.com/getsops/sops) and age. Komodo deploys these stacks through `sops exec-env`, so secrets only exist decrypted in the deploy process's memory.
 
-This separation allows flexible and maintainable configuration management.
+## 🔐 Secrets
+
+- **Editing:** run `sops <stack>/secrets.sops.env`, which needs the age private key. Commit, then redeploy the stack.
+- **The key:** `.sops.yaml` holds only the age **public** key. The private key lives on the Docker host and in a password manager.
+- **Guards:** pre-commit hooks block unencrypted `*.sops.env`, plaintext `secrets.env` and `*.agekey` files, and gitleaks scans every commit.
 
 ## 🌐 Traefik Reverse Proxy
 
