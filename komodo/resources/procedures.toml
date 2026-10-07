@@ -30,6 +30,15 @@ executions = [
   { execution.type = "PullRepo", execution.params.repo = "docker-stacks", enabled = true },
 ]
 
+# Apply komodo/resources before deploying, so a stack added to stacks.toml exists by the next stage.
+# DeployStackIfChanged fully deploys a stack that was never deployed.
+[[procedure.config.stage]]
+name = "Sync"
+enabled = true
+executions = [
+  { execution.type = "RunSync", execution.params.sync = "docker-stacks", enabled = true },
+]
+
 [[procedure.config.stage]]
 name = "upd"
 enabled = true
