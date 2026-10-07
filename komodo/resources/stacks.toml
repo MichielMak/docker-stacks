@@ -34,6 +34,24 @@ PGID=[[PGID]]
 """
 
 [[stack]]
+name = "authentik"
+
+[stack.config]
+server = "Local"
+poll_for_updates = true
+linked_repo = "docker-stacks"
+run_directory = "authentik"
+environment = """
+AUTHENTIK_ERROR_REPORTING__ENABLED=true
+DOMAIN=[[DOMAIN]]
+AUTHENTIK_INTERNAL_URL=http://192.168.178.4:9000
+AUTHENTIK_VERSION=2025.6.4
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+
+[[stack]]
 name = "bambuddy"
 
 [stack.config]
@@ -97,6 +115,20 @@ DOMAIN=[[DOMAIN]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
+
+[[stack]]
+name = "cloudflared"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "cloudflared"
+environment = """
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+DOMAIN=[[DOMAIN]]
+"""
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "code-server"
@@ -397,11 +429,11 @@ name = "komodo-gotify"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "gotify-alerter"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 GOTIFY_URL=http://gotify:80
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "lidarr"
@@ -492,11 +524,11 @@ name = "nebula-sync"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "nebula-sync"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PIHOLE_IP=http://192.168.178.183
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "netbootxyz"
@@ -573,9 +605,24 @@ name = "paseo"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "paseo"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 TZ=Europe/Amsterdam
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
+name = "pihole"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "pihole"
+environment = """
+DOMAIN=[[DOMAIN]]
+PIHOLE_IP=192.168.178.237
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
@@ -886,12 +933,12 @@ name = "teslamate"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "teslamate"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "tracearr"
@@ -900,9 +947,33 @@ name = "tracearr"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "tracearr"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 DOMAIN=[[DOMAIN]]
+"""
+
+[[stack]]
+name = "traefik"
+
+[stack.config]
+server = "Local"
+auto_pull = false
+linked_repo = "docker-stacks"
+run_directory = "traefik"
+registry_account = "makstra"
+environment = """
+DOMAIN=[[DOMAIN]]
+TRAEFIK_HOST=traefik.makstra.nl
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+HASS_IP=192.168.178.3
+UNIFI_IP=192.168.178.1
+PVE_IP=192.168.178.92
+TRUENAS_IP=192.168.178.4
+PIHOLE2_IP=192.168.178.183
+JETKVM_IP=192.168.178.66
+N8N_IP=100.79.42.36
 """
 compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
 compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
@@ -948,14 +1019,14 @@ name = "victoriametrics"
 server = "Local"
 linked_repo = "docker-stacks"
 run_directory = "victoriametrics"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 PUID=[[PUID]]
 PGID=[[PGID]]
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "wizarr"
