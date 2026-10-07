@@ -1,6 +1,6 @@
 # Plan: Komodo as code (Resource Sync TOML) + SOPS secrets
 
-Status: Phases 1–4 merged, Phase 5 canary (mealie) passed 2026-10-06, rollout in progress. Written 2026-09-30 to be executed in a fresh session.
+Status: Phases 1–5 done; rollout finished 2026-10-07 (42 stacks on SOPS). Next: widen the sync, then docs. Written 2026-09-30 to be executed in a fresh session.
 Branch/worktree: `komodo-iac-sops` at `/home/paseo/workspace/docker-stacks-komodo-iac-sops`.
 
 ## Goal
@@ -279,7 +279,24 @@ The user creates the sync once in the UI with the same settings. After that, the
    5. `pihole,cloudflared,authentik,traefik`
 
    `komodo` and `stash` stay excluded (Phase 6).
+
+   **Rollout done (2026-10-07).** All 5 batches deployed. 42 of 43 stacks with secrets use the wrapper (`stash` excluded).
+   Lessons:
+   - Unchanged values mean no container restarts on deploy. An unexpected restart means a value changed.
+   - REVIEW values (quotes, `$`, `\`) need a hash check against the running container before deploying. Compose had
+     changed 6 of them (likely `$` expansion), and the container's working value went into sops.
+     - Services that read the value on every start (Collabora's admin password) can simply get a fresh password.
+     - MariaDB only reads its root password at init, so change it in the database too. In nextcloud's DB, root is only
+       `root@'%'`. Recovery: start a temporary container on the same data with `--skip-grant-tables --skip-networking`.
+       `FLUSH PRIVILEGES` turns password checks back on for new connections. The `mariadb` client echoes a failing
+       statement, so pass passwords via a variable (`SET @pw` + `EXECUTE IMMEDIATE`).
+   - The leak check flagged a secret whose value is a common word that also appears in public names. It was accepted
+     with `--allow-match`.
+   - In batch 2, `--write-secrets` failed but `--write-toml` still ran. `--write-toml` now refuses stacks that have
+     secrets but no secrets file. Chain the commands with `&&`.
 6. After everything is green, review the sync diff with `delete = true` and enable it if it's clean.
+   Caveat: `delete = true` would remove `stash` (not in the TOML) and, with `include_variables = true`, the secret
+   Variables (not in `variables.toml`). Both need a plan first, so `delete` stays false for now.
 
 ## Phase 6: Special cases
 
