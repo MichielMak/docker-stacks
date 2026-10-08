@@ -1,0 +1,112 @@
+# Quartermaster Companion - setup/pairing server for the Quartermaster phone app.
+# https://github.com/lewlew-glitch/qm_companion
+#
+# Read-only profile: the socket proxy blocks all Docker writes (POST=0) and exec.
+# Service API keys are discovered from the existing homepage.widget.key labels,
+# so no service config files are mounted.
+#
+# Required per-stack secrets (secrets.sops.env):
+#   QM_SECRET_KEY   openssl rand -hex 32  (encrypts stored credentials; never change it)
+#   QM_PROXY_KEY    openssl rand -hex 32  (shared between companion and socket proxy)
+#
+# First run: open https://qm.${DOMAIN}, then claim the owner account with the
+# setup token from the companion log (docker logs qm-companion).
+
+services:
+  qm-socket-proxy:
+    image: ghcr.io/lewlew-glitch/qm-companion-socket-proxy:0.1.9@sha256:b0310c710a83c29dc9582720b03ba40117477076a8e2f066c206db9d547d3841
+    container_name: qm-socket-proxy
+    labels:
+      - qm.protected=true
+    environment:
+      - QM_PROXY_KEY=${QM_PROXY_KEY:?QM_PROXY_KEY is required}
+      - CONTAINERS=1
+      - EVENTS=1
+      - IMAGES=1
+      - INFO=1
+      - NETWORKS=1
+      - PING=1
+      - SYSTEM=1
+      - VERSION=1
+      - VOLUMES=1
+      - POST=0
+      - EXEC=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=4m,mode=1777
+      - /run:size=1m,mode=0755
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O - -T 3 --header="x-qm-proxy-key: $${QM_PROXY_KEY}"
+          http://127.0.0.1:2375/_ping | grep -qx OK
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - qm-internal
+    restart: unless-stopped
+
+  qm-companion:
+    image: ghcr.io/lewlew-glitch/qm-companion:0.1.9@sha256:88ad01732e5e3c3d6ce80fd8c27031fc6cd5bd0e3648893e9da1179626a41db7
+    container_name: qm-companion
+    depends_on:
+      qm-socket-proxy:
+        condition: service_healthy
+    environment:
+      - SECRET_KEY=${QM_SECRET_KEY:?QM_SECRET_KEY is required}
+      - QM_PROXY_KEY=${QM_PROXY_KEY:?QM_PROXY_KEY is required}
+      - QM_HOST=${QM_HOST}
+      - BIND_ADDRESS=0.0.0.0
+      - TRUST_PROXY=true
+      - DOCKER_HOST=tcp://qm-socket-proxy:2375
+      - DOCKER_ACCESS_MAX=read
+      - TZ=${TZ}
+    volumes:
+      # Named volume: the image runs as the node user and owns /data.
+      - qm-data:/data
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8787/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      - qm.protected=true
+      - homepage.group=Infra
+      - homepage.name=Quartermaster Companion
+      - homepage.icon=mdi-cellphone-link
+      - homepage.href=https://qm.${DOMAIN}/
+      - homepage.description=Pairing and Docker overview for the Quartermaster app
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.qm-companion.rule=Host(`qm.${DOMAIN}`)
+      - traefik.http.routers.qm-companion.entrypoints=websecure
+      - traefik.http.routers.qm-companion.tls=true
+      - traefik.http.services.qm-companion.loadbalancer.server.port=8787
+    networks:
+      - npm
+      - qm-internal
+    restart: unless-stopped
+
+volumes:
+  qm-data:
+
+networks:
+  npm:
+    external: true
+  # No internet or LAN access; only the companion can reach the socket proxy.
+  qm-internal:
+    driver: bridge
+    internal: true
