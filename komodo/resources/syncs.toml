@@ -1,5 +1,8 @@
 # Komodo Resource Sync for komodo/resources/ (docs/plans/komodo-iac-sops.md, Phase 4).
 # This file is inside resource_path, so the syncs manage themselves.
+# Exception: a running sync can't change its own config (Komodo 2.3.x fails with
+# "ResourceSync busy"). After changing the docker-stacks sync below, apply the
+# same change in the Komodo UI, then check that the sync shows no pending changes.
 # Written by hand: scripts/komodo-migrate.py --write-toml leaves it alone.
 
 # Resources. Only resources tagged "gitops" are synced, so delete = true removes
