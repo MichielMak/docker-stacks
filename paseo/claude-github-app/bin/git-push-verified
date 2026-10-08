@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 // Pushes the current branch by recreating its unpushed commits through the GitHub REST
 // git data API (blobs, trees, commits, refs). GitHub signs commits that a GitHub App
-// creates this way, so they show as "Verified" with michiel-claude[bot] as committer.
+// creates this way, so they show as "Verified". GitHub only signs when the request leaves
+// out author and committer: the commit then gets michiel-claude[bot] as author, GitHub as
+// committer, and the time of the push as its date. So this only pushes commits that the
+// bot authored; the local author date is not kept.
 //
 //   git-push-verified [-u] [-f|--force] [--resign] [<remote> [<branch>]]
 //   git push-verified ...            (same thing, as a git subcommand)
@@ -24,6 +27,7 @@ const path = require('node:path');
 const REAL_GIT = '/usr/bin/git';
 const TOKEN = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'token');
 const API = 'https://api.github.com';
+const BOT_EMAIL = '339110929+michiel-claude[bot]@users.noreply.github.com';
 
 function git(args, opts = {}) {
   return execFileSync(REAL_GIT, args, { encoding: opts.buffer ? null : 'utf8', maxBuffer: 1 << 30, stdio: ['ignore', 'pipe', opts.quiet ? 'ignore' : 'inherit'] });
@@ -103,22 +107,14 @@ async function api(method, endpoint, body) {
 
 // ---- helpers --------------------------------------------------------------------------
 
-function isoDate(epoch, tz) {
-  // "1728370000" "+0200" -> "2024-10-08T08:46:40+02:00" (local time of the author)
-  const sign = tz[0] === '-' ? -1 : 1;
-  const offsetMin = sign * (Number(tz.slice(1, 3)) * 60 + Number(tz.slice(3, 5)));
-  const local = new Date((Number(epoch) + offsetMin * 60) * 1000).toISOString().slice(0, 19);
-  return `${local}${tz.slice(0, 3)}:${tz.slice(3, 5)}`;
-}
-
 function readCommit(sha) {
   const raw = git(['cat-file', 'commit', sha]);
   const split = raw.indexOf('\n\n');
   const headers = raw.slice(0, split).split('\n');
   const message = raw.slice(split + 2);
   const parents = headers.filter((h) => h.startsWith('parent ')).map((h) => h.slice(7));
-  const a = headers.find((h) => h.startsWith('author ')).match(/^author (.*) <(.*)> (\d+) ([+-]\d{4})$/);
-  return { parents, message, author: { name: a[1], email: a[2], date: isoDate(a[3], a[4]) } };
+  const authorEmail = headers.find((h) => h.startsWith('author ')).match(/<(.*)>/)[1];
+  return { parents, message, authorEmail };
 }
 
 // Raw diff between parent and commit: [{ oldMode, newMode, newSha, status, path }]
@@ -188,6 +184,7 @@ async function treeEntry(e) {
   for (const sha of commits) {
     const c = readCommit(sha);
     if (c.parents.length !== 1) die(`${sha.slice(0, 7)} has ${c.parents.length} parents; only normal commits are supported`);
+    if (c.authorEmail !== BOT_EMAIL) die(`${sha.slice(0, 7)} is authored by ${c.authorEmail}, not michiel-claude[bot]; push it with plain git (GIT_PUSH_VERIFIED=0)`);
     const localParent = c.parents[0];
     const parent = mapped.get(localParent) ?? localParent;
     const parentTree = git(['rev-parse', `${localParent}^{tree}`]).trim();
@@ -202,7 +199,7 @@ async function treeEntry(e) {
     }
     if (tree !== localTree) die(`tree for ${sha.slice(0, 7)} came out as ${tree}, expected ${localTree}; nothing was pushed`);
 
-    const created = await api('POST', 'git/commits', { message: c.message, tree, parents: [parent], author: c.author });
+    const created = await api('POST', 'git/commits', { message: c.message, tree, parents: [parent] });
     if (!created.verification?.verified) {
       console.error(`git-push-verified: warning: ${created.sha.slice(0, 7)} is not verified (${created.verification?.reason})`);
     }
