@@ -19,7 +19,7 @@ services:
     labels:
       - qm.protected=true
     environment:
-      - QM_PROXY_KEY=${QM_PROXY_KEY:?QM_PROXY_KEY is required}
+      - QM_PROXY_KEY=${QM_PROXY_KEY}
       - CONTAINERS=1
       - EVENTS=1
       - IMAGES=1
@@ -60,8 +60,8 @@ services:
       qm-socket-proxy:
         condition: service_healthy
     environment:
-      - SECRET_KEY=${QM_SECRET_KEY:?QM_SECRET_KEY is required}
-      - QM_PROXY_KEY=${QM_PROXY_KEY:?QM_PROXY_KEY is required}
+      - SECRET_KEY=${QM_SECRET_KEY}
+      - QM_PROXY_KEY=${QM_PROXY_KEY}
       - QM_HOST=${QM_HOST}
       - BIND_ADDRESS=0.0.0.0
       - TRUST_PROXY=true
