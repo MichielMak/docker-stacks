@@ -7,7 +7,7 @@ services:
       - ${DOCKER_DATA_DIR}/diun/config:/data
     environment:
       - TZ=Europe/Amsterdam
-      - DIUN_PROVIDERS_DOCKER_ENDPOINT=tcp://dockerproxy:2375
+      - DIUN_PROVIDERS_DOCKER_ENDPOINT=tcp://diun-dockerproxy:2375
       - LOG_LEVEL=info
       - LOG_JSON=false
       - DIUN_WATCH_WORKERS=20
@@ -20,6 +20,29 @@ services:
     restart: unless-stopped
     networks:
       - npm
+      - diun-internal
+
+  diun-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.6@sha256:362cadf55b3c7920189347d0f4d60b389e2f80e929581bf10793f2371aab41e5
+    container_name: diun-dockerproxy
+    # Diun reads containers and their image digests.
+    environment:
+      - CONTAINERS=1
+      - IMAGES=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - diun-internal
+    read_only: true
+    tmpfs:
+      - /run
+
 networks:
   npm:
     external: true
+  # No internet or LAN access; only diun can reach the socket proxy.
+  diun-internal:
+    driver: bridge
+    internal: true

@@ -6,6 +6,7 @@ services:
       - ${DOCKER_DATA_DIR}/homepage/config:/app/config
     networks:
       - npm
+      - homepage-internal
     restart: unless-stopped
     environment:
       - PGID=${PGID}
@@ -13,11 +14,33 @@ services:
       - HOMEPAGE_ALLOWED_HOSTS=${DOMAIN}
     labels:
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.homepage.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.homepage.entrypoints=websecure
       - traefik.http.routers.homepage.tls=true
       - traefik.http.routers.homepage.middlewares=authentik-forwardauth@docker
       - traefik.http.services.homepage.loadbalancer.server.port=3000
+
+  homepage-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.6@sha256:362cadf55b3c7920189347d0f4d60b389e2f80e929581bf10793f2371aab41e5
+    container_name: homepage-dockerproxy
+    # Homepage reads container status, stats and homepage.* labels.
+    environment:
+      - CONTAINERS=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - homepage-internal
+    read_only: true
+    tmpfs:
+      - /run
+
 networks:
   npm:
     external: true
+  # No internet or LAN access; only homepage can reach the socket proxy.
+  homepage-internal:
+    driver: bridge
+    internal: true

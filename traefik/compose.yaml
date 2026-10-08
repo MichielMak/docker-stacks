@@ -1,14 +1,35 @@
 networks:
   npm:
     external: true
+  # No internet or LAN access; only Traefik can reach the socket proxy.
+  traefik-internal:
+    driver: bridge
+    internal: true
 
 services:
+  traefik-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.6@sha256:362cadf55b3c7920189347d0f4d60b389e2f80e929581bf10793f2371aab41e5
+    container_name: traefik-dockerproxy
+    # Traefik only reads container labels.
+    environment:
+      - CONTAINERS=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - traefik-internal
+    read_only: true
+    tmpfs:
+      - /run
+
   traefik:
     image: traefik:v3.7.14@sha256:e849695bc5c317da0cec22bfee4794fd9e15871fe554f864d31b625983e883ff
     container_name: traefik
     restart: unless-stopped
     networks:
       - npm
+      - traefik-internal
     ports:
       - 80:80
       - 443:443
@@ -25,7 +46,7 @@ services:
     command:
       # Providers
       - --providers.docker=true
-      - --providers.docker.endpoint=tcp://dockerproxy:2375
+      - --providers.docker.endpoint=tcp://traefik-dockerproxy:2375
       - --providers.file.directory=/dynamic
       - --providers.file.watch=true
       - --providers.docker.exposedbydefault=false

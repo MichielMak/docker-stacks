@@ -189,15 +189,6 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 
 [[stack]]
-name = "dockerproxy"
-
-[stack.config]
-server = "Local"
-poll_for_updates = true
-linked_repo = "docker-stacks"
-run_directory = "dockerproxy"
-
-[[stack]]
 name = "downloaders"
 
 [stack.config]
