@@ -8,16 +8,35 @@ services:
     environment:
       - TS_OAUTH_CLIENT_ID=${TS_OAUTH_CLIENT_ID}
       - TS_OAUTH_CLIENT_SECRET=${TS_OAUTH_CLIENT_SECRET}
-      - DOCKER_HOST=tcp://dockerproxy:2375  # Use socket proxy instead of direct mount
+      - DOCKER_HOST=tcp://tsbridge-dockerproxy:2375  # Use socket proxy instead of direct mount
     labels:
       - "tsbridge.tailscale.oauth_client_id_env=TS_OAUTH_CLIENT_ID"
       - "tsbridge.tailscale.oauth_client_secret_env=TS_OAUTH_CLIENT_SECRET"
       - "tsbridge.tailscale.state_dir=/var/lib/tsbridge"
       - "tsbridge.tailscale.default_tags=tag:michiel-docker"
+    depends_on:
+      - tsbridge-dockerproxy
     networks:
       - npm
-      - my-macvlan-net 
+      - my-macvlan-net
+      - tsbridge-internal
     restart: unless-stopped
+
+  tsbridge-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.6@sha256:362cadf55b3c7920189347d0f4d60b389e2f80e929581bf10793f2371aab41e5
+    container_name: tsbridge-dockerproxy
+    # tsbridge reads container labels and events.
+    environment:
+      - CONTAINERS=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - tsbridge-internal
+    read_only: true
+    tmpfs:
+      - /run
   # Example: Add your own services here and label them to expose via Tailscale
   # Uncomment and customize as needed:
   #
@@ -36,6 +55,10 @@ networks:
     external: true
   my-macvlan-net:
     external: true
+  # No internet or LAN access; only tsbridge can reach the socket proxy.
+  tsbridge-internal:
+    driver: bridge
+    internal: true
 
 volumes:
   tsbridge-state:
