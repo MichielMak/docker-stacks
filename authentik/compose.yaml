@@ -13,7 +13,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/authentik/database:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=${PG_PASS:?database password required}
+      - POSTGRES_PASSWORD=${PG_PASS}
       - POSTGRES_USER=${PG_USER:-authentik}
       - POSTGRES_DB=${PG_DB:-authentik}
       - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
