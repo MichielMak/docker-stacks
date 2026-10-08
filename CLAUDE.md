@@ -138,6 +138,10 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
 7. If it has secrets, create `<stack-name>/secrets.sops.env` with `sops` and add the wrapper lines (see "Secrets (SOPS)")
 8. Commit, open a PR, merge. The push to `main` triggers the Gitops procedure: it pulls the repo, runs the Resource Sync (which creates the stack) and deploys every stack whose compose files changed or that was never deployed. Changes to only `stacks.toml` or `secrets.sops.env` of an existing stack still need a manual deploy.
 
+## Pushing from Claude sessions (Paseo)
+
+Claude sessions in Paseo commit and push as the GitHub App `michiel-claude[bot]` (see `paseo/claude-github-app/README.md`). There, `git push` goes through `git-push-verified`, which recreates the commits through the GitHub API so they show as Verified. Their hashes change: the local branch is moved to the new commits. To make existing unsigned commits on a branch Verified, run `git push-verified --resign`. Tags, `--delete` and other refspecs still use a plain, unsigned push.
+
 ## Key Services Reference
 
 | Service | Directory | Purpose |
