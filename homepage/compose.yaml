@@ -4,6 +4,8 @@ services:
     container_name: homepage
     volumes:
       - ${DOCKER_DATA_DIR}/homepage/config:/app/config
+      # Versioned in git; overrides the file in the host config folder.
+      - ./config/docker.yaml:/app/config/docker.yaml:ro
     depends_on:
       - homepage-dockerproxy
     networks:
