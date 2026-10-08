@@ -1,0 +1,8 @@
+#!/bin/sh
+# Claude sessions: "git push" goes through git-push-verified, so pushed commits are Verified.
+# It hands anything it can't do (tags, refspecs, --delete, ...) to the real git push.
+if [ "${1:-}" = push ]; then
+  shift
+  exec "$(dirname "$0")/git-push-verified" --from-git-push "$@"
+fi
+exec /usr/bin/git "$@"

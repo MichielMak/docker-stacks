@@ -1,0 +1,226 @@
+#!/usr/bin/env node
+// Pushes the current branch by recreating its unpushed commits through the GitHub REST
+// git data API (blobs, trees, commits, refs). GitHub signs commits that a GitHub App
+// creates this way, so they show as "Verified" with michiel-claude[bot] as committer.
+//
+//   git-push-verified [-u] [-f|--force] [--resign] [<remote> [<branch>]]
+//   git push-verified ...            (same thing, as a git subcommand)
+//
+//   -u        set the upstream, like git push -u
+//   --force   allow replacing remote commits that are not in the local branch (with a
+//             lease: refuses if the remote moved since your last fetch)
+//   --resign  also recreate commits that are already on the remote branch (but on no
+//             other remote branch), to turn existing unsigned commits into Verified ones.
+//             Implies --force.
+//
+// Called by bin/git as "git-push-verified --from-git-push <git push args>": anything
+// it does not handle (tags, refspecs, --delete, --all, other flags) goes to the real
+// git push unchanged.
+'use strict';
+const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const REAL_GIT = '/usr/bin/git';
+const TOKEN = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'token');
+const API = 'https://api.github.com';
+
+function git(args, opts = {}) {
+  return execFileSync(REAL_GIT, args, { encoding: opts.buffer ? null : 'utf8', maxBuffer: 1 << 30, stdio: ['ignore', 'pipe', opts.quiet ? 'ignore' : 'inherit'] });
+}
+function gitOk(args) {
+  return spawnSync(REAL_GIT, args, { stdio: 'ignore' }).status === 0;
+}
+function die(msg) {
+  console.error(`git-push-verified: ${msg}`);
+  process.exit(1);
+}
+function passthrough(args) {
+  const r = spawnSync(REAL_GIT, ['push', ...args], { stdio: 'inherit' });
+  process.exit(r.status ?? 1);
+}
+
+// ---- arguments ----------------------------------------------------------------------
+
+let argv = process.argv.slice(2);
+const fromGitPush = argv[0] === '--from-git-push';
+if (fromGitPush) argv = argv.slice(1);
+const unsupported = (why) => (fromGitPush ? passthrough(argv) : die(why));
+
+if (process.env.GIT_PUSH_VERIFIED === '0') unsupported('disabled by GIT_PUSH_VERIFIED=0');
+
+let setUpstream = false, force = false, resign = false;
+const positional = [];
+for (const a of argv) {
+  if (a === '-u' || a === '--set-upstream') setUpstream = true;
+  else if (a === '-f' || a === '--force' || a === '--force-with-lease') force = true;
+  else if (a === '--resign' && !fromGitPush) resign = force = true;
+  else if (a.startsWith('-')) unsupported(`unsupported option ${a}`);
+  else positional.push(a);
+}
+if (positional.length > 2) unsupported('only one branch can be pushed');
+
+const branchRef = spawnSync(REAL_GIT, ['symbolic-ref', '-q', 'HEAD'], { encoding: 'utf8' }).stdout.trim();
+if (!branchRef.startsWith('refs/heads/')) unsupported('HEAD is not on a branch');
+const branch = branchRef.slice('refs/heads/'.length);
+
+const upstreamRemote = spawnSync(REAL_GIT, ['config', `branch.${branch}.remote`], { encoding: 'utf8' }).stdout.trim();
+const upstreamMerge = spawnSync(REAL_GIT, ['config', `branch.${branch}.merge`], { encoding: 'utf8' }).stdout.trim();
+const remote = positional[0] ?? (upstreamRemote || 'origin');
+let target = branch;
+if (positional[1] !== undefined) {
+  const spec = positional[1];
+  if (spec === branch || spec === 'HEAD' || spec === `HEAD:${branch}` || spec === `${branch}:${branch}`) target = branch;
+  else unsupported(`refspec ${spec} is not the current branch`);
+} else if (upstreamMerge && remote === upstreamRemote && upstreamMerge !== branchRef) {
+  unsupported(`upstream of ${branch} is ${upstreamMerge}, not a branch of the same name`);
+}
+
+const url = spawnSync(REAL_GIT, ['remote', 'get-url', '--push', remote], { encoding: 'utf8' }).stdout.trim();
+const m = url.match(/^(?:https:\/\/(?:[^@/]+@)?github\.com\/|git@github\.com:|ssh:\/\/git@github\.com\/)([^/]+)\/(.+?)(?:\.git)?\/?$/);
+if (!m) unsupported(`remote ${remote} is not a GitHub repository`);
+const repo = `${m[1]}/${m[2]}`;
+
+// ---- GitHub API ---------------------------------------------------------------------
+
+const token = execFileSync(TOKEN, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] }).trim();
+async function api(method, endpoint, body) {
+  const res = await fetch(`${API}/repos/${repo}/${endpoint}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      ...(body ? { 'Content-Type': 'application/json' } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (res.status === 404 && method === 'GET') return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) die(`${method} ${endpoint}: HTTP ${res.status} ${data.message ?? ''}`);
+  return data;
+}
+
+// ---- helpers --------------------------------------------------------------------------
+
+function isoDate(epoch, tz) {
+  // "1728370000" "+0200" -> "2024-10-08T08:46:40+02:00" (local time of the author)
+  const sign = tz[0] === '-' ? -1 : 1;
+  const offsetMin = sign * (Number(tz.slice(1, 3)) * 60 + Number(tz.slice(3, 5)));
+  const local = new Date((Number(epoch) + offsetMin * 60) * 1000).toISOString().slice(0, 19);
+  return `${local}${tz.slice(0, 3)}:${tz.slice(3, 5)}`;
+}
+
+function readCommit(sha) {
+  const raw = git(['cat-file', 'commit', sha]);
+  const split = raw.indexOf('\n\n');
+  const headers = raw.slice(0, split).split('\n');
+  const message = raw.slice(split + 2);
+  const parents = headers.filter((h) => h.startsWith('parent ')).map((h) => h.slice(7));
+  const a = headers.find((h) => h.startsWith('author ')).match(/^author (.*) <(.*)> (\d+) ([+-]\d{4})$/);
+  return { parents, message, author: { name: a[1], email: a[2], date: isoDate(a[3], a[4]) } };
+}
+
+// Raw diff between parent and commit: [{ oldMode, newMode, newSha, status, path }]
+function diffEntries(parent, sha) {
+  const out = git(['diff-tree', '-r', '-z', '--no-renames', '--raw', parent, sha]);
+  const parts = out.split('\0');
+  const entries = [];
+  for (let i = 0; i + 1 < parts.length; i += 2) {
+    const [oldMode, newMode, , newSha, status] = parts[i].slice(1).split(' ');
+    entries.push({ oldMode, newMode, newSha, status, path: parts[i + 1] });
+  }
+  return entries;
+}
+
+const blobCache = new Set();
+async function ensureBlob(sha) {
+  if (blobCache.has(sha)) return;
+  const content = git(['cat-file', 'blob', sha], { buffer: true }).toString('base64');
+  const res = await api('POST', 'git/blobs', { content, encoding: 'base64' });
+  if (res.sha !== sha) die(`blob ${sha} came back as ${res.sha}`);
+  blobCache.add(sha);
+}
+
+async function treeEntry(e) {
+  if (e.status === 'D') {
+    return { path: e.path, mode: e.oldMode, type: e.oldMode === '160000' ? 'commit' : 'blob', sha: null };
+  }
+  if (e.newMode === '160000') return { path: e.path, mode: e.newMode, type: 'commit', sha: e.newSha };
+  await ensureBlob(e.newSha);
+  return { path: e.path, mode: e.newMode, type: 'blob', sha: e.newSha };
+}
+
+// ---- main -----------------------------------------------------------------------------
+
+(async () => {
+  const trackingRef = `refs/remotes/${remote}/${target}`;
+  const leaseSha = spawnSync(REAL_GIT, ['rev-parse', '-q', '--verify', trackingRef], { encoding: 'utf8' }).stdout.trim();
+  git(['fetch', '--quiet', '--prune', remote]);
+
+  const remoteRef = await api('GET', `git/ref/heads/${encodeURIComponent(target).replace(/%2F/g, '/')}`);
+  const remoteSha = remoteRef?.object?.sha ?? null;
+  const head = git(['rev-parse', 'HEAD']).trim();
+
+  if (remoteSha === head) {
+    console.log(`${remote}/${target} is already at ${head.slice(0, 7)}`);
+  }
+  if (remoteSha && !gitOk(['cat-file', '-e', `${remoteSha}^{commit}`])) die(`fetch did not bring ${remoteSha}`);
+  const fastForward = !remoteSha || gitOk(['merge-base', '--is-ancestor', remoteSha, head]);
+  if (!fastForward && !force) {
+    die(`${remote}/${target} has commits that are not in ${branch}. Pull/rebase first, or pass --force to replace them.`);
+  }
+  if (force && remoteSha && leaseSha && remoteSha !== leaseSha) {
+    die(`${remote}/${target} moved from ${leaseSha.slice(0, 7)} to ${remoteSha.slice(0, 7)} since your last fetch. Look at it first.`);
+  }
+
+  // Commits to recreate: everything in HEAD that no branch on the remote has. With --resign
+  // the target branch itself does not count, so its commits get recreated (and signed).
+  const exclude = git(['for-each-ref', '--format=%(refname)', `refs/remotes/${remote}/`])
+    .split('\n')
+    .filter((r) => r && r !== `refs/remotes/${remote}/HEAD` && !(resign && r === trackingRef));
+  if (remoteSha && !resign) exclude.push(remoteSha);
+  const commits = git(['rev-list', '--reverse', '--topo-order', head, '--not', ...exclude]).split('\n').filter(Boolean);
+  if (git(['rev-list', '--merges', head, '--not', ...exclude]).trim()) die('merge commits are not supported; rebase instead');
+
+  const mapped = new Map(); // local sha -> remote sha
+  let newHead = head;
+  for (const sha of commits) {
+    const c = readCommit(sha);
+    if (c.parents.length !== 1) die(`${sha.slice(0, 7)} has ${c.parents.length} parents; only normal commits are supported`);
+    const localParent = c.parents[0];
+    const parent = mapped.get(localParent) ?? localParent;
+    const parentTree = git(['rev-parse', `${localParent}^{tree}`]).trim();
+    const localTree = git(['rev-parse', `${sha}^{tree}`]).trim();
+
+    let tree = parentTree;
+    const entries = diffEntries(localParent, sha);
+    if (entries.length) {
+      const items = [];
+      for (const e of entries) items.push(await treeEntry(e));
+      tree = (await api('POST', 'git/trees', { base_tree: parentTree, tree: items })).sha;
+    }
+    if (tree !== localTree) die(`tree for ${sha.slice(0, 7)} came out as ${tree}, expected ${localTree}; nothing was pushed`);
+
+    const created = await api('POST', 'git/commits', { message: c.message, tree, parents: [parent], author: c.author });
+    if (!created.verification?.verified) {
+      console.error(`git-push-verified: warning: ${created.sha.slice(0, 7)} is not verified (${created.verification?.reason})`);
+    }
+    mapped.set(sha, created.sha);
+    newHead = created.sha;
+    console.log(`${sha.slice(0, 7)} -> ${created.sha.slice(0, 7)} ${c.message.split('\n')[0]}`);
+  }
+
+  if (remoteSha !== newHead) {
+    const ref = `heads/${target}`;
+    if (remoteSha) await api('PATCH', `git/refs/${ref}`, { sha: newHead, force: !gitOk(['merge-base', '--is-ancestor', remoteSha, head]) || resign });
+    else await api('POST', 'git/refs', { ref: `refs/${ref}`, sha: newHead });
+    console.log(`${remote}/${target}: ${remoteSha ? remoteSha.slice(0, 7) : '(new branch)'} -> ${newHead.slice(0, 7)}`);
+  }
+
+  // Point the local branch at the API-created commits. Their trees are identical to the
+  // local ones, so the index and working tree stay as they are.
+  git(['fetch', '--quiet', remote, `+refs/heads/${target}:${trackingRef}`]);
+  if (newHead !== head) git(['update-ref', '-m', 'git-push-verified', branchRef, newHead, head]);
+  if (setUpstream) git(['branch', '--quiet', `--set-upstream-to=${remote}/${target}`, branch]);
+})().catch((err) => die(err.stack || String(err)));
