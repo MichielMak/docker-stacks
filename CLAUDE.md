@@ -125,6 +125,7 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
    ```toml
    [[stack]]
    name = "<stack-name>"
+   tags = ["gitops"]  # required: the Resource Sync only manages resources with this tag
 
    [stack.config]
    server = "Local"
@@ -136,7 +137,9 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
    """
    ```
 7. If it has secrets, create `<stack-name>/secrets.sops.env` with `sops` and add the wrapper lines (see "Secrets (SOPS)")
-8. Commit, open a PR, merge. The push to `main` triggers the Gitops procedure: it pulls the repo, runs the Resource Sync (which creates the stack) and deploys every stack whose compose files changed or that was never deployed. Changes to only `stacks.toml` or `secrets.sops.env` of an existing stack still need a manual deploy.
+8. Commit, open a PR, merge. The push to `main` triggers the Gitops procedure: it pulls the repo, runs the Resource Syncs (which create the stack) and deploys every stack whose compose files changed or that was never deployed. Changes to only `stacks.toml` or `secrets.sops.env` of an existing stack still need a manual deploy.
+
+To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (destroying its containers). Resources without the `gitops` tag, like the `komodo` stack and stacks whose files live only on the host, are never touched.
 
 ## Pushing from Claude sessions (Paseo)
 

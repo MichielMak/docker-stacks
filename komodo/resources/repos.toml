@@ -4,10 +4,12 @@
 
 [[repo]]
 name = "dhi.io"
+tags = ["gitops"]
 config = {}
 
 [[repo]]
 name = "docker-stacks"
+tags = ["gitops"]
 
 [repo.config]
 server = "Local"

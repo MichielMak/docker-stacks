@@ -4,6 +4,7 @@
 
 [[stack]]
 name = "arl-sentinel"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -18,6 +19,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "audiobookshelf"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -35,6 +37,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "authentik"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -53,6 +56,7 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "bambuddy"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -66,6 +70,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "bazarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -83,6 +88,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "bentopdf"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -94,6 +100,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "byparr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -102,6 +109,7 @@ run_directory = "byparr"
 
 [[stack]]
 name = "cloudcmd"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -118,6 +126,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "cloudflared"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -132,6 +141,7 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "code-server"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -147,6 +157,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "deemix"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -162,6 +173,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "dispatcharr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -177,6 +189,7 @@ DISPATCHARR_USER=michiel
 
 [[stack]]
 name = "diun"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -190,6 +203,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "downloaders"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -210,6 +224,7 @@ PRESTAGE_DIR=[[PRESTAGE_DIR]]
 
 [[stack]]
 name = "duplicacy"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -226,6 +241,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "esphome"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -242,6 +258,7 @@ ESPHOME_IP=192.168.178.246
 
 [[stack]]
 name = "flightscanner"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -258,6 +275,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "gotify"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -280,6 +298,7 @@ GOTIFY_OIDC_SCOPES=openid,profile,email
 
 [[stack]]
 name = "grafana"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -297,6 +316,7 @@ GRAFANA_ADMIN_USER=grafadmin
 
 [[stack]]
 name = "grimmory"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -315,6 +335,7 @@ GRIMMORY_USERNAME=guest
 
 [[stack]]
 name = "handbrake"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -332,6 +353,7 @@ PRESTAGE_DIR=[[PRESTAGE_DIR]]
 
 [[stack]]
 name = "headless-chrome"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -341,6 +363,7 @@ run_directory = "headless-chrome"
 
 [[stack]]
 name = "healthchecks"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -358,6 +381,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "homepage"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -372,6 +396,7 @@ PUID=[[PUID]]
 
 [[stack]]
 name = "immich-app"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -391,6 +416,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "kometa"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -415,6 +441,7 @@ requires = "Restart"
 
 [[stack]]
 name = "komodo-gotify"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -428,6 +455,7 @@ GOTIFY_URL=http://gotify:80
 
 [[stack]]
 name = "lidarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -447,6 +475,7 @@ PUID=[[PUID]]
 
 [[stack]]
 name = "maintainerr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -461,6 +490,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "mcpjungle"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -476,6 +506,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "mealie"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -496,6 +527,7 @@ BASE_URL=https://mealie.makstra.nl
 
 [[stack]]
 name = "musicassistant"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -510,6 +542,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "nebula-sync"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -523,6 +556,7 @@ PIHOLE_IP=http://192.168.178.183
 
 [[stack]]
 name = "netbootxyz"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -538,6 +572,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "nextcloud"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -559,6 +594,7 @@ COLLABORA_ADMIN_USER=michieladmin
 
 [[stack]]
 name = "overseerr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -575,6 +611,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "papra"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -591,6 +628,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "paseo"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -606,6 +644,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "pihole"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -621,6 +660,7 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "plex"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -639,6 +679,7 @@ MEDIA_DIR=[[MEDIA_DIR]]
 
 [[stack]]
 name = "plex-auto-languages"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -652,6 +693,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "podimo"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -666,6 +708,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "profilarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -681,6 +724,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "prowlarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -697,6 +741,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "proxmoxbackupserver"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -710,6 +755,7 @@ BACKUP_DIR=/mnt/vol2/pbs
 
 [[stack]]
 name = "quickstart"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -722,6 +768,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "qm-companion"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -737,6 +784,7 @@ TZ=Europe/Amsterdam
 
 [[stack]]
 name = "radarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -754,6 +802,7 @@ PUID=[[PUID]]
 
 [[stack]]
 name = "retrom"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -768,6 +817,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "romm"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -790,6 +840,7 @@ PGID=[[PGID]]
 
 [[stack]]
 name = "shelfmark"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -806,6 +857,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "slskd"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -826,6 +878,7 @@ SLSKD_METRICS_USERNAME=michielmetrics
 
 [[stack]]
 name = "sonarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -843,6 +896,7 @@ MEDIA_DIR=[[MEDIA_DIR]]
 
 [[stack]]
 name = "spotizerr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -870,6 +924,7 @@ DEFAULT_ADMIN_USERNAME=michieladmin
 
 [[stack]]
 name = "spotweb"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -887,6 +942,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "tandoor"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -907,6 +963,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "tdarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -923,6 +980,7 @@ MEDIA_DIR=[[MEDIA_DIR]]
 
 [[stack]]
 name = "termix"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -934,6 +992,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "teslamate"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -948,6 +1007,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "tracearr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -962,6 +1022,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "traefik"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -986,6 +1047,7 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "triliumnext"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -998,6 +1060,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "tsbridge"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -1008,6 +1071,7 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
 name = "uptime-kuma"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -1020,6 +1084,7 @@ DOMAIN=[[DOMAIN]]
 
 [[stack]]
 name = "victoriametrics"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"
@@ -1036,6 +1101,7 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 
 [[stack]]
 name = "wizarr"
+tags = ["gitops"]
 
 [stack.config]
 server = "Local"

@@ -5,7 +5,7 @@
 [[procedure]]
 name = "Backup Core Database"
 description = "Triggers the Core database backup at the scheduled time."
-tags = ["system"]
+tags = ["system", "gitops"]
 
 [procedure.config]
 schedule = "Every day at 01:00"
@@ -20,6 +20,7 @@ executions = [
 [[procedure]]
 name = "Gitops"
 description = "Pulls repo + deploys stacks on webhook call"
+tags = ["gitops"]
 
 [procedure.config]
 
@@ -37,6 +38,7 @@ name = "Sync"
 enabled = true
 executions = [
   { execution.type = "RunSync", execution.params.sync = "docker-stacks", enabled = true },
+  { execution.type = "RunSync", execution.params.sync = "docker-stacks-variables", enabled = true },
 ]
 
 [[procedure.config.stage]]
@@ -49,7 +51,7 @@ executions = [
 [[procedure]]
 name = "Global Auto Update"
 description = "Pulls and auto updates Stacks and Deployments using 'poll_for_updates' or 'auto_update'."
-tags = ["system"]
+tags = ["system", "gitops"]
 
 [procedure.config]
 schedule = "Every day at 03:00"
@@ -63,10 +65,12 @@ executions = [
 
 [[procedure]]
 name = "Update non-gitops"
+tags = ["gitops"]
 config = {}
 
 [[procedure]]
 name = "clean images"
+tags = ["gitops"]
 
 [procedure.config]
 

@@ -4,6 +4,7 @@
 
 [[builder]]
 name = "Local"
+tags = ["gitops"]
 
 [builder.config]
 type = "Server"
