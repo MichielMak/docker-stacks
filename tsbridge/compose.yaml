@@ -14,6 +14,8 @@ services:
       - "tsbridge.tailscale.oauth_client_secret_env=TS_OAUTH_CLIENT_SECRET"
       - "tsbridge.tailscale.state_dir=/var/lib/tsbridge"
       - "tsbridge.tailscale.default_tags=tag:michiel-docker"
+    depends_on:
+      - tsbridge-dockerproxy
     networks:
       - npm
       - my-macvlan-net

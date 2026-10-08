@@ -18,6 +18,8 @@ services:
       - DIUN_NOTIF_GOTIFY_ENDPOINT=${ENDPOINT}
       - DIUN_NOTIF_GOTIFY_TOKEN=${TOKEN}
     restart: unless-stopped
+    depends_on:
+      - diun-dockerproxy
     networks:
       - npm
       - diun-internal

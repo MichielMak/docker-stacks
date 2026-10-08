@@ -4,6 +4,8 @@ services:
     container_name: homepage
     volumes:
       - ${DOCKER_DATA_DIR}/homepage/config:/app/config
+    depends_on:
+      - homepage-dockerproxy
     networks:
       - npm
       - homepage-internal
