@@ -721,6 +721,21 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 
 [[stack]]
+name = "qm-companion"
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "qm-companion"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+environment = """
+DOMAIN=[[DOMAIN]]
+QM_HOST=192.168.178.4
+TZ=Europe/Amsterdam
+"""
+
+[[stack]]
 name = "radarr"
 
 [stack.config]
