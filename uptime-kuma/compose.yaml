@@ -9,8 +9,11 @@ services:
       - ${DOCKER_DATA_DIR}/uptime-kuma/config:/app/data
     container_name: uptime-kuma
     image: louislam/uptime-kuma:2.5.5@sha256:c74379ac4509ce2d2c2633f509e67003ee2e45b6e995c5e43fc101f45a0e1fbe
+    depends_on:
+      - uptime-kuma-dockerproxy
     networks:
       - npm
+      - uptime-kuma-internal
     labels:
       - homepage.group=Infra
       - homepage.name=Uptime Kuma
@@ -21,10 +24,33 @@ services:
       - homepage.widget.url=http://uptime-kuma:3001
       - homepage.widget.slug=public
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.uptime.rule=Host(`uptime.${DOMAIN}`)
       - traefik.http.routers.uptime.entrypoints=websecure
       - traefik.http.routers.uptime.tls=true
       - traefik.http.services.uptime.loadbalancer.server.port=3001
+
+  uptime-kuma-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.6@sha256:362cadf55b3c7920189347d0f4d60b389e2f80e929581bf10793f2371aab41e5
+    container_name: uptime-kuma-dockerproxy
+    # Docker container monitors inspect containers; INFO is for the "Test" button on the Docker host.
+    environment:
+      - CONTAINERS=1
+      - INFO=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - uptime-kuma-internal
+    read_only: true
+    tmpfs:
+      - /run
+
 networks:
   npm:
     external: true
+  # No internet or LAN access; only uptime-kuma can reach the socket proxy.
+  uptime-kuma-internal:
+    driver: bridge
+    internal: true
