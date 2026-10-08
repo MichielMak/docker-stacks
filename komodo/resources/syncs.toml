@@ -1,21 +1,39 @@
 # Komodo Resource Sync for komodo/resources/ (docs/plans/komodo-iac-sops.md, Phase 4).
-# This file is inside resource_path, so the sync manages itself.
+# This file is inside resource_path, so the syncs manage themselves.
 # Written by hand: scripts/komodo-migrate.py --write-toml leaves it alone.
 
+# Resources. Only resources tagged "gitops" are synced, so delete = true removes
+# a tagged resource once it's gone from the TOML. Untagged resources (the komodo
+# stack, stacks whose files live only on the host) are never touched.
+# Every resource in komodo/resources/ needs tags = ["gitops"], or this sync skips it.
 [[resource_sync]]
 name = "docker-stacks"
+tags = ["gitops"]
 
 [resource_sync.config]
 linked_repo = "docker-stacks"
 resource_path = ["komodo/resources"]
 # UI edits are not committed back to git.
 managed = false
-# Never delete resources that are missing from the TOML. Keep this false while:
-# - one stack isn't in the TOML (its files live only on the host), and
-# - include_variables is true: secret Variables (like KOMODO_ALERTER_GOTIFY_URL)
-#   aren't in variables.toml, so delete = true would remove them.
-delete = false
+match_tags = ["gitops"]
+delete = true
 include_resources = true
-# variables.toml holds the plain Variables. Secret Variables stay in Komodo's DB.
+# Variables have no tags, so match_tags can't protect the secret ones.
+# They're synced by docker-stacks-variables below, without delete.
+include_variables = false
+include_user_groups = false
+
+# Plain Variables from variables.toml. Secret Variables (like KOMODO_ALERTER_GOTIFY_URL)
+# stay in Komodo's DB and aren't in the TOML, so delete must stay false here.
+[[resource_sync]]
+name = "docker-stacks-variables"
+tags = ["gitops"]
+
+[resource_sync.config]
+linked_repo = "docker-stacks"
+resource_path = ["komodo/resources"]
+managed = false
+delete = false
+include_resources = false
 include_variables = true
 include_user_groups = false

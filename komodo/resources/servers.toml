@@ -4,6 +4,7 @@
 
 [[server]]
 name = "Local"
+tags = ["gitops"]
 
 [server.config]
 address = "https://periphery:8120"

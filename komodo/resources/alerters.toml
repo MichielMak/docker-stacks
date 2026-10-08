@@ -4,6 +4,7 @@
 
 [[alerter]]
 name = "gotify"
+tags = ["gitops"]
 
 [alerter.config]
 enabled = true
