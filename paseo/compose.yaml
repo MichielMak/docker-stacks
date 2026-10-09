@@ -20,7 +20,7 @@ services:
       - SOPS_VERSION=v3.13.3
       # uv manages Python: patch releases arrive with uv updates, the minor version is bumped by hand
       # renovate: datasource=github-releases depName=astral-sh/uv
-      - UV_VERSION=0.12.24
+      - UV_VERSION=0.13.0
       - PYTHON_VERSION=3.14
       - UV_PYTHON_BIN_DIR=/home/paseo/.npm-global/bin
       - UV_TOOL_BIN_DIR=/home/paseo/.npm-global/bin
