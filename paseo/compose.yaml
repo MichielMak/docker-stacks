@@ -10,7 +10,7 @@ services:
       - DX_API_TOKEN=${DX_API_TOKEN}
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
       # renovate: datasource=github-tags depName=docker/cli
-      - DOCKER_CLI_VERSION=v29.8.2
+      - DOCKER_CLI_VERSION=v29.9.0
       # renovate: datasource=github-releases depName=docker/compose
       - DOCKER_COMPOSE_VERSION=v5.6.0
       # renovate: datasource=github-releases depName=DataDog/pup
