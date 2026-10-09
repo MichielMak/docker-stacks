@@ -14,7 +14,7 @@ services:
       # renovate: datasource=github-releases depName=docker/compose
       - DOCKER_COMPOSE_VERSION=v5.6.0
       # renovate: datasource=github-releases depName=DataDog/pup
-      - PUP_VERSION=v1.25.0
+      - PUP_VERSION=v1.26.0
       # SOPS binary only, no age private key: agents can encrypt new secrets.sops.env files but not decrypt
       # renovate: datasource=github-releases depName=getsops/sops
       - SOPS_VERSION=v3.13.3
