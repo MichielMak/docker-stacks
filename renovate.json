@@ -259,6 +259,21 @@
       ]
     },
     {
+      "description": "Socket proxy sidecars live in many stacks: bump them all in one PR (must stay after the per-stack grouping rule)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "/^(?:docker\\.io\\/)?linuxserver\\/socket-proxy$/",
+        "/^lscr\\.io\\/linuxserver\\/socket-proxy$/"
+      ],
+      "groupName": "linuxserver/socket-proxy (all stacks)",
+      "groupSlug": "socket-proxy",
+      "addLabels": [
+        "socket-proxy"
+      ]
+    },
+    {
       "description": "Minimum release age for Docker to avoid fresh-tag churn",
       "matchDatasources": [
         "docker"
