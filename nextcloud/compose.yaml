@@ -53,33 +53,26 @@ services:
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - npm
-  collabora:
-    container_name: collabora
-    image: collabora/code:26.04.5.1.1@sha256:bb8f3c9c5c9016045f25fccb5f0649be94469ebc7c7cc379f3576e470cccf33d
+  eurooffice:
+    container_name: eurooffice
+    image: ghcr.io/euro-office/documentserver:v9.3.5@sha256:b303064a69d0a4f81ba5945126c4c484fc08bf42436fc97bb85413429e27ba9e
     restart: unless-stopped
-    command:
-      - --o:ssl.enable=false
-      - --o:ssl.termination=true
-    healthcheck:
-      test: ["CMD", "/usr/bin/coolwsd", "--probe", "--disable-ssl"]
-      interval: 30s
-      timeout: 10s
-      start_period: 30s
-      retries: 3
-    cap_add:
-      - MKNOD
     environment:
-      - domain=nextcloud\.${DOMAIN}
-      - username=${COLLABORA_ADMIN_USER}
-      - password=${COLLABORA_ADMIN_PASSWORD}
+      - JWT_ENABLED=true
+      - JWT_SECRET=${EUROOFFICE_JWT_SECRET}
+      # nextcloud.${DOMAIN} resolves to a LAN IP; without this the server refuses to fetch documents
+      - ALLOW_PRIVATE_IP_ADDRESS=true
+    volumes:
+      - ${DOCKER_DATA_DIR}/eurooffice/data:/var/www/euro-office/Data
+      - ${DOCKER_DATA_DIR}/eurooffice/lib:/var/lib/euro-office/documentserver
     networks:
       - npm
     labels:
       - traefik.enable=true
-      - traefik.http.routers.collabora.rule=Host(`collabora.${DOMAIN}`)
-      - traefik.http.routers.collabora.entrypoints=websecure
-      - traefik.http.routers.collabora.tls=true
-      - traefik.http.services.collabora.loadbalancer.server.port=9980
+      - traefik.http.routers.eurooffice.rule=Host(`office.${DOMAIN}`)
+      - traefik.http.routers.eurooffice.entrypoints=websecure
+      - traefik.http.routers.eurooffice.tls=true
+      - traefik.http.services.eurooffice.loadbalancer.server.port=80
 networks:
   npm:
     external: true

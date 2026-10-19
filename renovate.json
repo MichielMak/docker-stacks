@@ -109,6 +109,14 @@
       "versioning": "regex:^(?:release-|pr-plugins-)?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:\\.(?<build>\\d+))?$"
     },
     {
+      "description": "Euro-Office: only v<semver> releases (registry also holds branch/buildcache tags)",
+      "matchPackageNames": [
+        "ghcr.io/euro-office/documentserver"
+      ],
+      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      "allowedVersions": "/^v\\d+\\.\\d+\\.\\d+$/"
+    },
+    {
       "description": "BamBuddy: parse a.b.c.d versioning",
       "matchPackageNames": [
         "/^(?:docker\\.io\\/)?maziggy\\/bambuddy$/"
