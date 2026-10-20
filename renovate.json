@@ -213,7 +213,7 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "Immich Apps: Group only immich-server and immich-machine-learning together",
+      "description": "Immich Apps: server and machine-learning must stay on the same version, so only open a PR once both have an update",
       "matchFileNames": [
         "**/immich-app/compose.yaml",
         "**/immich-app/compose.yml",
@@ -226,6 +226,7 @@
       ],
       "groupName": "immich-apps",
       "groupSlug": "immich-apps",
+      "minimumGroupSize": 2,
       "addLabels": [
         "immich-apps"
       ]
