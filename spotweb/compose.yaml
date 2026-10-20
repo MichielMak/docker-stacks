@@ -13,7 +13,7 @@ services:
       - SPOTWEB_DB_NAME=spotweb
       - SPOTWEB_DB_USER=spotweb
       - SPOTWEB_DB_PASS=${MYSQL_PASSWORD}
-      - SPOTWEB_CRON_RETRIEVE=* */2 * * *
+      - SPOTWEB_CRON_RETRIEVE=0 */3 * * *
     depends_on:
       - spotweb_db
     #    ports:
