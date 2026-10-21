@@ -1,6 +1,6 @@
 services:
   profilarr:
-    image: ghcr.io/dictionarry-hub/profilarr:2.2.0@sha256:ddcdd0f340043c2ec0a85ca74b9a6be9be42b1c0288c75fc36a26a43f695860b
+    image: ghcr.io/dictionarry-hub/profilarr:2.3.0@sha256:11ed9f4c62311b956f1a89b44e19cf0908cd3e5169c3e43d59ab8144bbf7fe7d
     container_name: profilarr
     volumes:
       - ${DOCKER_DATA_DIR}/profilarr/config:/config
@@ -31,7 +31,7 @@ services:
       - traefik.http.services.profilarr.loadbalancer.server.port=6868
 
   profilarr-parser:
-    image: ghcr.io/dictionarry-hub/profilarr-parser:2.2.0@sha256:3cd3f8c4979ee66304a518462cc6c5b59825bae6b25e7dfa51b30178b9265df7
+    image: ghcr.io/dictionarry-hub/profilarr-parser:2.3.0@sha256:02a511132a6881f9e82f08632a7843c4d298fb72bf11bfe73ac0017eb3a03639
     container_name: profilarr-parser
     environment:
       - TZ=${TZ}
