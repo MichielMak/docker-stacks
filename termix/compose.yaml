@@ -6,7 +6,7 @@ networks:
 
 services:
   termix:
-    image: bugattiguy527/termix:26.10.2@sha256:9a30ecec2f4fe471c496472cd91e6cd8bb99845eb2489e645991bbe165dd5d9b
+    image: bugattiguy527/termix:26.10.3@sha256:b40d35bb0b1cbc5d9f761d962a390edfec17806d7687d97b54d2fd109a600fd6
     container_name: termix
     restart: unless-stopped
     volumes:
