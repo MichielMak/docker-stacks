@@ -21,7 +21,7 @@ services:
       - AUTHENTIK_BOOTSTRAP_PASSWORD=${AUTHENTIK_BOOTSTRAP_PASSWORD}
       - AUTHENTIK_API=${AUTHENTIK_API}
   server:
-    image: docker.io/authentik/server:2026.8.4@sha256:e7226ae116dac5aa0a5643803e735b010038f492c401e08e16b3bf1ac54c090c
+    image: docker.io/authentik/server:2026.8.5@sha256:602227a86455d6772e3d16b7d852713c4f864f40df5df894abd1285bb53979a5
     restart: unless-stopped
     command: server
     networks:
@@ -68,7 +68,7 @@ services:
       - traefik.http.routers.authentik.middlewares=sec-headers@docker
 
   worker:
-    image: docker.io/authentik/server:2026.8.4@sha256:e7226ae116dac5aa0a5643803e735b010038f492c401e08e16b3bf1ac54c090c
+    image: docker.io/authentik/server:2026.8.5@sha256:602227a86455d6772e3d16b7d852713c4f864f40df5df894abd1285bb53979a5
     restart: unless-stopped
     command: worker
     user: root
