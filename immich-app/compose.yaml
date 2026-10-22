@@ -9,7 +9,7 @@
 services:
   immich-server:
     container_name: immich_server
-    image: docker.io/altran1502/immich-server:v3.3.4@sha256:f6475c58b07a8d89ec845aa8782731d36656c3c17d943e0a101dc6ed99a2e53f
+    image: docker.io/altran1502/immich-server:v3.3.5@sha256:485d546a2e31d6a8b4db8423fcba5c109de8c218d93410af115fd1ccfc4352a6
     environment:
       - TZ=Europe/Amsterdam
       - UPLOAD_LOCATION=${UPLOAD_LOCATION}
@@ -56,7 +56,7 @@ services:
     #      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: docker.io/altran1502/immich-machine-learning:v3.3.4@sha256:1ab8674e7cec41009abb3812de62a16cc1917e73d486233a5471b048d26fc14d
+    image: docker.io/altran1502/immich-machine-learning:v3.3.5@sha256:5b28c9352c8374b8a1ed96fbdd8d6755fea6e43510ec43fdf6538aa02ea40f56
     networks:
       - npm
     environment:
