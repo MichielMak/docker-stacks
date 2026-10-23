@@ -10,6 +10,9 @@ services:
       # npm global installs (and Claude Code self-updates) go to the persisted home volume, not root-owned /usr/local
       - NPM_CONFIG_PREFIX=/home/paseo/.npm-global
       - DX_API_TOKEN=${DX_API_TOKEN}
+      # Long-lived Claude Code token from `claude setup-token`. Avoids the OAuth refresh-token
+      # race when several Claude agents refresh ~/.claude/.credentials.json at the same time.
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
       # renovate: datasource=github-tags depName=docker/cli
       - DOCKER_CLI_VERSION=v29.9.2
