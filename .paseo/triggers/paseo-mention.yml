@@ -38,6 +38,8 @@ run:
     First check the repository in the event. If it is not michielmak/docker-stacks, reply that this
     trigger only handles michielmak/docker-stacks, change nothing, and call finish_execution.
 
+    Start with `git fetch origin`, so new worktrees and branches start from the latest main.
+
     Rules:
     - Follow CLAUDE.md. Never push to main, never merge a PR, never decrypt or print secrets.
     - Work in your own git worktree under .claude/worktrees/, never in the main checkout:
