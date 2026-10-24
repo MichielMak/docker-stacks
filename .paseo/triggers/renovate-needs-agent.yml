@@ -30,6 +30,8 @@ run:
     First check the repository in the event. If it is not michielmak/docker-stacks, reply that this
     trigger only handles michielmak/docker-stacks, change nothing, and call finish_execution.
 
+    Start with `git fetch origin`, so new worktrees and branches start from the latest main.
+
     Do this:
     1. Check out the PR branch in your own git worktree under .claude/worktrees/.
     2. Read the diff and the upstream release notes or changelog for every version jump in it.
