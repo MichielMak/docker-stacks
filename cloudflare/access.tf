@@ -1,7 +1,7 @@
 locals {
   # Cloudflare Access login: the Authentik OIDC identity provider and the Access group of its users.
   access_idp_id         = "20d4fa7c-8b38-41e1-adcd-86ddf3901cc1"
-  access_users_group_id = "f4e2a446-5af3-426c-91c5-5e5c8f811605"
+  access_users_group_id = "f4e2a446-5af3-426c-91c5-5e5c8f811605" # gitleaks:allow (Access group ID, not a secret)
 
   # Hosts behind Cloudflare Access, keyed by <name>.${var.domain}. Each must also be in public_hosts.
   # guests = true also lets in the addresses in var.access_guest_emails.
