@@ -120,7 +120,15 @@ def _run_reconfigure_flow(base_url: str, token: str, step: dict, arl: str) -> No
         if time.time() > deadline:
             raise MusicAssistantError("reconfigure flow timed out")
         time.sleep(FLOW_POLL_INTERVAL_SECONDS)
-        step = api_command(base_url, token, "config/flows/get", {"flow_id": step["flow_id"]})
+        try:
+            step = api_command(base_url, token, "config/flows/get", {"flow_id": step["flow_id"]})
+        except MusicAssistantError:
+            # A finished flow is dropped right away, and polling it then fails with
+            # HTTP 500 ("Unknown (or finished) setup flow"). Ask the provider instead.
+            error = get_musicassistant_deezer_error(base_url, token)
+            if error:
+                raise MusicAssistantError(f"reconfigure flow ended, Deezer provider reports: {error}")
+            return
 
 
 def set_musicassistant_arl(base_url: str, token: str, arl: str) -> None:
