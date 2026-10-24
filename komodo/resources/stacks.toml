@@ -691,21 +691,6 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 
 [[stack]]
-name = "podimo"
-tags = ["gitops"]
-
-[stack.config]
-server = "Local"
-linked_repo = "docker-stacks"
-run_directory = "podimo"
-compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
-compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
-environment = """
-DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
-DOMAIN=[[DOMAIN]]
-"""
-
-[[stack]]
 name = "profilarr"
 tags = ["gitops"]
 
