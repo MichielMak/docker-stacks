@@ -155,6 +155,7 @@ Claude sessions in Paseo commit and push as the GitHub App `michiel-claude[bot]`
 | Authentik | `authentik/` | OIDC / SSO / ForwardAuth |
 | Homepage | `homepage/` | Service dashboard |
 | Renovate | `.github/workflows/renovate.yml` | Automated image updates (GitHub Actions) |
+| Paseo Hub | `hub/` | Runs Paseo agents from GitHub events and schedules (triggers in `.paseo/triggers/`) |
 | Plex | `plex/` | Media server |
 | Nextcloud | `nextcloud/` | File storage |
 | Immich | `immich-app/` | Photo management |

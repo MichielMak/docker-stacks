@@ -395,6 +395,21 @@ PUID=[[PUID]]
 """
 
 [[stack]]
+name = "hub"
+tags = ["gitops"]
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "hub"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
 name = "immich-app"
 tags = ["gitops"]
 

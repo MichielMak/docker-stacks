@@ -13,6 +13,9 @@ services:
       # Long-lived Claude Code token from `claude setup-token`. Avoids the OAuth refresh-token
       # race when several Claude agents refresh ~/.claude/.credentials.json at the same time.
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+      # Gotify app token for the weekly homelab check that Paseo Hub schedules (.paseo/triggers/)
+      - GOTIFY_URL=http://gotify
+      - GOTIFY_HEALTH_TOKEN=${GOTIFY_HEALTH_TOKEN}
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
       # renovate: datasource=github-tags depName=docker/cli
       - DOCKER_CLI_VERSION=v29.9.2
