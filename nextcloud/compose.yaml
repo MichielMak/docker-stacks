@@ -55,7 +55,7 @@ services:
       - npm
   eurooffice:
     container_name: eurooffice
-    image: ghcr.io/euro-office/documentserver:v9.3.6@sha256:091a4cb09764d49d52eb634698d92f759345c2dba75773d7621475129ea99045
+    image: ghcr.io/euro-office/documentserver:v9.3.7@sha256:39c4cdad8c335d05ea5653926e1fc3a69da006d9c1729936b2b4193140cd2962
     restart: unless-stopped
     environment:
       - JWT_ENABLED=true
