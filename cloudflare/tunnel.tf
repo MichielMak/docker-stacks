@@ -34,9 +34,8 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "home" {
         hostname = "${name}.${var.domain}"
         service  = "https://traefik:443"
         origin_request = {
-          # Send the real hostname as SNI so Traefik picks the right router and cert.
+          # Use the real hostname for SNI and for verifying Traefik's *.${var.domain} certificate.
           origin_server_name = "${name}.${var.domain}"
-          no_tls_verify      = true
         }
       }],
       [for name, route in local.webhook_routes : {
@@ -45,7 +44,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "home" {
         service  = route.service
         origin_request = startswith(route.service, "https://") ? {
           origin_server_name = "${name}.${var.domain}"
-          no_tls_verify      = true
         } : null
       }],
       [{ service = "http_status:404" }],

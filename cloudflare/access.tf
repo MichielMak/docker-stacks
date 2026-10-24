@@ -43,7 +43,6 @@ resource "cloudflare_zero_trust_access_application" "app" {
   options_preflight_bypass   = false
   http_only_cookie_attribute = each.value.http_only_cookie
   session_duration           = "24h"
-  tags                       = []
 
   policies = concat(
     [{ id = cloudflare_zero_trust_access_policy.allow_users.id, precedence = 1 }],
