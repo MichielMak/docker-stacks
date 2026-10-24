@@ -1,9 +1,10 @@
 name: renovate-needs-agent
 enabled: true
 on:
+  # TODO: add `repo: michielmak/docker-stacks` back once Hub > 0.10.0 is deployed. 0.10.0 never
+  # fills its repository catalog, so any repo filter fails validation (getpaseo/hub#138, fixed in #167).
   github.pull_request_label_added:
     filters:
-      repo: michielmak/docker-stacks
       # The person who adds the label, not the PR author.
       from_users: [MichielMak]
       label: needs-agent
@@ -25,6 +26,9 @@ run:
     <<<GITHUB_EVENT
     ${{ paseo.context }}
     GITHUB_EVENT
+
+    First check the repository in the event. If it is not michielmak/docker-stacks, reply that this
+    trigger only handles michielmak/docker-stacks, change nothing, and call finish_execution.
 
     Do this:
     1. Check out the PR branch in your own git worktree under .claude/worktrees/.
