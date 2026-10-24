@@ -1,0 +1,42 @@
+name: weekly-homelab-check
+enabled: true
+on:
+  schedule.tick:
+    recurrence:
+      start: "2026-10-26T09:00:00"
+      rule: "FREQ=WEEKLY;BYDAY=MO"
+      timezone: Europe/Amsterdam
+run:
+  target:
+    daemon: ba650f671649
+    cwd: /home/paseo/workspace/docker-stacks
+  agent:
+    provider: claude
+    # A classifier reviews tool calls instead of skipping all checks: this run is read-only.
+    mode: auto
+  continuation:
+    mode: new
+  title: "Weekly homelab check ${{ paseo.execution.id }}"
+  prompt: |
+    Weekly homelab health check. This run is READ-ONLY: never restart, stop, remove, update,
+    scrub, reboot or change anything, never edit files, and never run git or gh.
+
+    Check with the MCP tools:
+    - TrueNAS: list_alerts, query_pools and analyze_capacity (flag pools above 80%),
+      get_scrub_status (flag a last scrub older than 35 days or with errors), check_updates.
+    - Docker (TrueNAS_Docker): list_containers with all=true. Flag containers that are
+      unhealthy, restarting, or exited with a non-zero code.
+    - Home Assistant: ha_get_system_health and ha_manage_updates (list pending updates only).
+
+    Then send ONE Gotify message with curl, without ever printing the token:
+
+      curl -fsS -X POST "$GOTIFY_URL/message?token=$GOTIFY_HEALTH_TOKEN" \
+        -F "title=Homelab weekly check: <OK or N issues>" \
+        -F "message=<short plain-text summary, one line per finding>" \
+        -F "priority=<2 if all OK, 5 if there are findings, 8 if a pool is degraded or above 90%>"
+
+    Keep the message under 20 lines. If a check fails, say so in the message instead of
+    skipping it. Then call finish_execution.
+  max_runtime: 30m
+  idle_timeout: 10m
+  auto_archive: true
