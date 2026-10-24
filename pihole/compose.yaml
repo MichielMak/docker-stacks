@@ -9,8 +9,10 @@ services:
       # Never forward ${DOMAIN} queries upstream: the wildcard A record only covers A lookups, so
       # HTTPS-type (65) lookups for Cloudflare tunnel hostnames returned Cloudflare's ECH config,
       # and Chrome then failed against Traefik with ERR_ECH_FALLBACK_CERTIFICATE_INVALID.
+      # server=/ts.net/ forwards Tailscale MagicDNS names to the tailscale resolver.
+      # This env var replaces the whole list in pihole.toml (";" separates entries) and locks it in the UI.
       # Only settable via pihole.toml or env, not the API, so nebula-sync can't copy it to the replica.
-      FTLCONF_misc_dnsmasq_lines: local=/${DOMAIN}/
+      FTLCONF_misc_dnsmasq_lines: local=/${DOMAIN}/;server=/ts.net/100.100.100.100
     volumes:
       - ${DOCKER_DATA_DIR}/pihole/etc-pihole:/etc/pihole
       - ${DOCKER_DATA_DIR}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
