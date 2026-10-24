@@ -1,0 +1,92 @@
+# Paseo Hub - runs Paseo agents from GitHub events and schedules
+# https://github.com/getpaseo/hub
+#
+# Secrets (hub/secrets.sops.env):
+#   HUB_DB_PASSWORD                  database password (hex, no "$")
+#   PASEO_BOOTSTRAP_ORGANIZATION     first-run organization name
+#   PASEO_BOOTSTRAP_OWNER_EMAIL      first-run owner login
+#   PASEO_BOOTSTRAP_OWNER_PASSWORD   temporary owner password, change it after the first login
+#
+# The GitHub App (michiel-claude) is configured in Hub's Apps page, not here: it is
+# stored in Hub's database, which avoids a multi-line private key in a dotenv file.
+#
+# Exposure:
+#   - LAN: https://hub.${DOMAIN} through Traefik. No Authentik: Hub has its own
+#     login and invite-only registration, same as the paseo stack.
+#   - Internet: only POST /webhook (HMAC-signed GitHub deliveries). The Cloudflare
+#     tunnel public hostname hub.${DOMAIN} is restricted to the path ^/webhook$ in
+#     the cloudflared UI, so every other path returns 404 at Cloudflare.
+#
+# The Paseo daemon dials out to Hub (websocket /api/daemons/socket), Hub never
+# connects to the daemon. Enroll it from the paseo container with:
+#   paseo hub login https://hub.${DOMAIN}
+#   paseo hub connect
+#   paseo hub permissions grant hub.execute
+#
+# Triggers live in .paseo/triggers/ and are deployed with `paseo hub deploy`.
+
+services:
+  hub:
+    image: ghcr.io/getpaseo/hub:0.10.0@sha256:090d987c6d1d163f5492439dd9150233c17a8d16fc6d6c5f4e1a570f93a12b88
+    container_name: hub
+    environment:
+      - PASEO_HUB_APP_URL=https://hub.${DOMAIN}
+      - PORT=3000
+      - DATABASE_URL=postgres://paseo:${HUB_DB_PASSWORD}@hub-db:5432/paseo_hub
+      - PASEO_REGISTRATION_MODE=invite_only
+      - PASEO_ORGANIZATION_CREATION=disabled
+      # Traefik sets X-Forwarded-For, use it for client IPs in the audit log
+      - PASEO_HUB_TRUSTED_CLIENT_IP_HEADER=x-forwarded-for
+      - PASEO_BOOTSTRAP_ORGANIZATION=${PASEO_BOOTSTRAP_ORGANIZATION}
+      - PASEO_BOOTSTRAP_OWNER_EMAIL=${PASEO_BOOTSTRAP_OWNER_EMAIL}
+      - PASEO_BOOTSTRAP_OWNER_PASSWORD=${PASEO_BOOTSTRAP_OWNER_PASSWORD}
+    depends_on:
+      hub-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - homepage.group=Infra
+      - homepage.name=Paseo Hub
+      - homepage.icon=https://paseo.sh/favicon.svg
+      - homepage.href=https://hub.${DOMAIN}/
+      - homepage.description=Runs Paseo agents from GitHub events and schedules
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.hub.rule=Host(`hub.${DOMAIN}`)
+      - traefik.http.routers.hub.entrypoints=websecure
+      - traefik.http.routers.hub.tls=true
+      - traefik.http.services.hub.loadbalancer.server.port=3000
+    networks:
+      - default
+      - hub-internal
+    restart: unless-stopped
+
+  hub-db:
+    image: postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    container_name: hub-db
+    environment:
+      - POSTGRES_USER=paseo
+      - POSTGRES_PASSWORD=${HUB_DB_PASSWORD}
+      - POSTGRES_DB=paseo_hub
+    volumes:
+      - ${DOCKER_DATA_DIR}/hub/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paseo -d paseo_hub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hub-internal
+    restart: unless-stopped
+
+networks:
+  default:
+    external: true
+    name: npm
+  hub-internal:
+    driver: bridge
