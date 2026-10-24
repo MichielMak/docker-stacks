@@ -7,3 +7,10 @@ secrets.env
 
 # Python bytecode
 __pycache__/
+
+# OpenTofu working files (state lives in R2)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan

@@ -22,6 +22,7 @@ Notable directories:
 - `komodo/resources/` — everything Komodo manages, as Resource Sync TOML (stacks, server, repos, procedures, alerter, builder, plain Variables, the sync itself)
 - `scripts/` — `komodo-migrate.py`, the one-off migration tool that moved stack secrets into SOPS and generated the TOML
 - `homepage/` — dashboard aggregating all services
+- `cloudflare/` — OpenTofu config for the Cloudflare tunnel routes, DNS and Access (see "Cloudflare (OpenTofu)")
 - `authentik/` — OIDC provider for SSO/ForwardAuth
 
 ## Compose File Conventions
@@ -141,6 +142,20 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
 
 To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (destroying its containers). Resources without the `gitops` tag, like the `komodo` stack and stacks whose files live only on the host, are never touched.
 
+## Cloudflare (OpenTofu)
+
+`cloudflare/` manages the Cloudflare Tunnel routes ("Published applications"), their DNS records and Access with OpenTofu. Don't change these in the dashboard: the next apply reverts it.
+
+- **Publish a service:** add its name to `public_hosts` in `cloudflare/tunnel.tf`. The tunnel sends `<name>.${DOMAIN}` to `https://traefik:443`, and Traefik routes it by its `Host()` label. Put an Access app in front unless the service has its own login.
+- **Put Cloudflare Access in front:** add it to `access_apps` in `cloudflare/access.tf`. Members of the Authentik users group get in; with `guests = true`, so do the addresses in the `ACCESS_GUEST_EMAILS` secret (a JSON list).
+- **Webhook-only exposure:** add it to `webhook_routes` with a path regex, so only that path is public.
+- `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`. State lives in the R2 bucket `tofu-state`.
+- Credentials are GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `ACCESS_GUEST_EMAILS`. Account, zone and tunnel IDs are repository variables (`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_TUNNEL_ID`).
+- The repo and its Actions logs are public. Never commit email addresses or other personal data: pass them in through a secret and a `sensitive = true` variable.
+- Only the tunnel CNAMEs are managed. Other DNS records (mail, SPF, DKIM) and the WARP login app are still dashboard-only.
+- The `cloudflared` container itself stays a remotely-managed tunnel (token in `cloudflared/secrets.sops.env`), deployed by Komodo.
+- Renovate doesn't automerge the provider or OpenTofu: merging applies to the live config.
+
 ## Pushing from Claude sessions (Paseo)
 
 Claude sessions in Paseo commit and push as the GitHub App `michiel-claude[bot]` (see `paseo/claude-github-app/README.md`). There, `git push` goes through `git-push-verified`, which recreates the commits through the GitHub API so they show as Verified. Their hashes change: the local branch is moved to the new commits. To make existing unsigned commits on a branch Verified, run `git push-verified --resign`. Tags, `--delete` and other refspecs still use a plain, unsigned push.
@@ -155,6 +170,7 @@ Claude sessions in Paseo commit and push as the GitHub App `michiel-claude[bot]`
 | Authentik | `authentik/` | OIDC / SSO / ForwardAuth |
 | Homepage | `homepage/` | Service dashboard |
 | Renovate | `.github/workflows/renovate.yml` | Automated image updates (GitHub Actions) |
+| Cloudflare | `cloudflare/` | Tunnel routes, DNS, Access (OpenTofu) |
 | Paseo Hub | `hub/` | Runs Paseo agents from GitHub events and schedules (triggers in `.paseo/triggers/`) |
 | Plex | `plex/` | Media server |
 | Nextcloud | `nextcloud/` | File storage |
