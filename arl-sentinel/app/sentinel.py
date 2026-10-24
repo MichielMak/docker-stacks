@@ -4,7 +4,9 @@ Periodically checks whether the Deezer ARL shared by spotizerr, deemix and
 Music Assistant is still valid. If the user drops a new ARL into
 /inbox/new_arl.txt, validates it and propagates it to all three (restarting
 the deemix and spotizerr containers; Music Assistant is updated over its API
-and reloads its Deezer provider itself). If the current ARL has expired,
+and reloads its Deezer provider itself). Music Assistant is re-synced on later
+cycles until it has the current ARL and its Deezer provider reports no error.
+If the current ARL has expired,
 sends a Gotify notification asking for a new one, and optionally attempts an
 automated Deezer login (see auto_login.py).
 """
@@ -19,7 +21,7 @@ import traceback
 import requests
 
 from deezer_api import check_arl
-from musicassistant import set_musicassistant_arl
+from musicassistant import get_musicassistant_deezer_error, set_musicassistant_arl
 from propagate import restart_container, write_deemix_login, write_spotizerr_arl
 
 STATE_PATH = "/data/state.json"
@@ -94,38 +96,73 @@ def archive_inbox() -> None:
         os.replace(INBOX_PATH, f"{INBOX_PATH}.applied_{int(time.time())}")
 
 
-def update_musicassistant(arl: str) -> None:
+def musicassistant_enabled() -> bool:
+    return bool(MUSICASSISTANT_URL and MUSICASSISTANT_TOKEN)
+
+
+def update_musicassistant(arl: str) -> bool:
     """Push the ARL to Music Assistant, if it is configured.
 
     Failures here must not undo the deemix/spotizerr update, so they are
-    reported instead of raised.
+    reported instead of raised. Returns True when Music Assistant has the ARL.
     """
-    if not MUSICASSISTANT_URL or not MUSICASSISTANT_TOKEN:
-        return
+    if not musicassistant_enabled():
+        return False
     try:
         set_musicassistant_arl(MUSICASSISTANT_URL, MUSICASSISTANT_TOKEN, arl)
         print("Music Assistant's Deezer provider updated.")
+        return True
     except Exception as exc:
         notify(
             "ARL not applied to Music Assistant",
-            f"deemix and spotizerr were updated, but Music Assistant refused the new ARL: {exc}",
+            f"Music Assistant refused the ARL (will retry next cycle): {exc}",
             priority=8,
         )
+        return False
+
+
+def sync_musicassistant(state: dict) -> None:
+    """Re-push the known-good ARL if Music Assistant is behind or its Deezer provider errors."""
+    if not musicassistant_enabled():
+        return
+    arl = state["arl"]
+    reason = None
+    if state.get("musicassistant_arl") != arl:
+        reason = "it does not have the current ARL yet"
+    else:
+        try:
+            error = get_musicassistant_deezer_error(MUSICASSISTANT_URL, MUSICASSISTANT_TOKEN)
+        except Exception as exc:
+            print(f"Could not read Music Assistant's Deezer provider status: {exc}")
+            return
+        if error:
+            reason = f"its Deezer provider reports: {error}"
+    if reason is None:
+        return
+    print(f"Re-syncing Music Assistant: {reason}")
+    if update_musicassistant(arl):
+        state["musicassistant_arl"] = arl
+        save_state(state)
+        notify("ARL Sentinel", f"Re-synced Music Assistant's ARL ({reason}).")
 
 
 def targets_label() -> str:
     targets = ["deemix", "spotizerr"]
-    if MUSICASSISTANT_URL and MUSICASSISTANT_TOKEN:
+    if musicassistant_enabled():
         targets.append("Music Assistant")
     return ", ".join(targets)
 
 
 def propagate(arl: str) -> None:
+    """Apply the ARL everywhere and record it as the known-good state."""
     write_deemix_login(arl, DEEMIX_LOGIN_PATH)
     write_spotizerr_arl(arl, SPOTIZERR_DB_PATH)
     restart_container("deemix", DOCKERPROXY_URL)
     restart_container("spotizerr", DOCKERPROXY_URL)
-    update_musicassistant(arl)
+    state = {"arl": arl, "checked_at": time.time()}
+    if update_musicassistant(arl):
+        state["musicassistant_arl"] = arl
+    save_state(state)
 
 
 def try_auto_login() -> None:
@@ -148,7 +185,6 @@ def try_auto_login() -> None:
         return
 
     propagate(result["arl"])
-    save_state({"arl": result["arl"], "checked_at": time.time()})
     notify("ARL auto-refreshed", f"Logged into Deezer automatically and refreshed {targets_label()}.")
 
 
@@ -165,7 +201,6 @@ def run_cycle() -> None:
         result = check_arl(candidate)
         if result["valid"]:
             propagate(candidate)
-            save_state({"arl": candidate, "checked_at": time.time()})
             archive_inbox()
             notify("ARL updated", f"New ARL applied to {targets_label()} (user_id={result['user_id']}).")
         else:
@@ -190,6 +225,7 @@ def run_cycle() -> None:
             write_deemix_login(current_arl, DEEMIX_LOGIN_PATH)
             restart_container("deemix", DOCKERPROXY_URL)
             notify("ARL Sentinel", "Re-synced deemix's ARL to match the known-good value.")
+        sync_musicassistant(state)
         return
 
     notify(

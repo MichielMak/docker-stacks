@@ -6,6 +6,8 @@ services:
     command: sh -c "pip install --no-cache-dir -r requirements.txt && python sentinel.py"
     environment:
       - TZ=Europe/Amsterdam
+      # Without this, print() output is buffered and never shows in the logs.
+      - PYTHONUNBUFFERED=1
       - CHECK_INTERVAL_SECONDS=21600
       - GOTIFY_URL=http://gotify
       - GOTIFY_TOKEN=${ARL_SENTINEL_GOTIFY_TOKEN}
@@ -18,7 +20,8 @@ services:
       - MUSICASSISTANT_URL=http://musicassistant:8095
       - MUSICASSISTANT_TOKEN=${MUSICASSISTANT_TOKEN}
     volumes:
-      - ${DOCKER_DATA_DIR}/arl-sentinel/app:/app
+      # Code comes from this repo, so changes deploy with the stack.
+      - ./app:/app:ro
       - ${DOCKER_DATA_DIR}/arl-sentinel/data:/data
       - ${DOCKER_DATA_DIR}/arl-sentinel/inbox:/inbox
       - ${DOCKER_DATA_DIR}/deemix/config:/targets/deemix
@@ -39,7 +42,7 @@ services:
       - TZ=Europe/Amsterdam
       - WEB_PORT=8080
     volumes:
-      - ${DOCKER_DATA_DIR}/arl-sentinel/app:/app:ro
+      - ./app:/app:ro
       - ${DOCKER_DATA_DIR}/arl-sentinel/data:/data:ro
     restart: unless-stopped
     depends_on:
