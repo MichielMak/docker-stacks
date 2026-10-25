@@ -33,6 +33,8 @@ services:
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.routers.plex.tls=true
+      # Plex clients send X-Plex-Token in the query string: keep it out of the access log
+      - traefik.http.routers.plex.observability.accesslogs=false
       - traefik.http.services.plex.loadbalancer.server.port=32400
     restart: unless-stopped
 networks:
