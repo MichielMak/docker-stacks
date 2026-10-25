@@ -17,6 +17,9 @@ executions = [
   { execution.type = "BackupCoreDatabase", execution.params = {}, enabled = true },
 ]
 
+# WARNING: Gitops runs the docker-stacks sync, and a procedure can't be updated while it runs.
+# After changing anything in this procedure, run Syncs -> docker-stacks -> Execute in the
+# Komodo UI by hand, or every Gitops run fails ("procedure sync loop exited after max iterations").
 [[procedure]]
 name = "Gitops"
 description = "Pulls repo + deploys stacks on webhook call, and every 15 minutes in case a webhook is missed"
