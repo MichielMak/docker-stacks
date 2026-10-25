@@ -227,10 +227,10 @@ playlist_files:
     libraries:
     - Films
     - Tv-series
+    use_mcu: true
     # These playlists are built from MDBList, which needs an API key
     use_pokemon: false
     use_dragonball: false
-    use_mcu: true
     # None of these titles are in the library, so the playlists never meet minimum_items
     use_arrow: false
     use_startrek: false
