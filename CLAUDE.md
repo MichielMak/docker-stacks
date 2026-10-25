@@ -138,9 +138,11 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
    """
    ```
 7. If it has secrets, create `<stack-name>/secrets.sops.env` with `sops` and add the wrapper lines (see "Secrets (SOPS)")
-8. Commit, open a PR, merge. The push to `main` triggers the Gitops procedure: it pulls the repo, runs the Resource Syncs (which create the stack) and deploys every stack whose compose files changed or that was never deployed. Changes to only `stacks.toml` or `secrets.sops.env` of an existing stack still need a manual deploy.
+8. Commit, open a PR, merge. The push to `main` triggers the Gitops procedure (it also runs every 15 minutes, in case a webhook delivery fails): it pulls the repo, runs the Resource Syncs (which create the stack) and deploys every stack whose compose files changed or that was never deployed. Changes to only `stacks.toml` or `secrets.sops.env` of an existing stack still need a manual deploy.
 
 To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (destroying its containers). Resources without the `gitops` tag, like the `komodo` stack and stacks whose files live only on the host, are never touched.
+
+**Changing the Gitops procedure itself** (in `komodo/resources/procedures.toml`) breaks it until you act by hand. The procedure runs the `docker-stacks` sync, and Komodo won't update a procedure while it's running, so the sync stage fails with `procedure sync loop exited after max iterations` and no stacks deploy. After merging, run Syncs → `docker-stacks` → Execute in the Komodo UI, then check that Gitops runs green.
 
 ## Cloudflare (OpenTofu)
 
