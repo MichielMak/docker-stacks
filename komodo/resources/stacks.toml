@@ -1069,6 +1069,20 @@ compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
 compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 
 [[stack]]
+name = "unifi-network-mcp"
+tags = ["gitops"]
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "unifi-network-mcp"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+environment = """
+UNIFI_NETWORK_HOST=192.168.178.1
+"""
+
+[[stack]]
 name = "uptime-kuma"
 tags = ["gitops"]
 
