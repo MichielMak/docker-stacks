@@ -68,6 +68,16 @@ services:
       - DOCKER_HOST=tcp://qm-socket-proxy:2375
       - DOCKER_ACCESS_MAX=read
       - TZ=${TZ}
+      # Direct HTTPS connection for the phone app (LAN only). It has its own
+      # certificate tied to QM_ADVERTISED_ORIGIN, so it can't go through
+      # Traefik. Changing the origin means re-pairing every phone.
+      - MOBILE_API_ENABLED=true
+      - MOBILE_ENROLMENT_ENABLED=true
+      - MOBILE_PORT=8788
+      - MOBILE_BIND_ADDRESS=0.0.0.0
+      - QM_ADVERTISED_ORIGIN=${QM_ADVERTISED_ORIGIN}
+    ports:
+      - ${QM_MOBILE_BIND_IP}:8788:8788
     volumes:
       # Named volume: the image runs as the node user and owns /data.
       - qm-data:/data

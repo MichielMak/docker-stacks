@@ -778,6 +778,8 @@ compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
 environment = """
 DOMAIN=[[DOMAIN]]
 QM_HOST=192.168.178.4
+QM_MOBILE_BIND_IP=192.168.178.4
+QM_ADVERTISED_ORIGIN=https://192.168.178.4:8788
 TZ=Europe/Amsterdam
 """
 
