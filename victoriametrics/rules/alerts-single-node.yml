@@ -51,7 +51,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          dashboard: "{{ $externalURL }}/d/oS7Bi_0Wz?viewPanel=53&var-instance={{ $labels.instance }}"
+          dashboard: "{{ $externalURL }}/d/wNf0q_kZk?viewPanel=53&var-instance={{ $labels.instance }}"
           summary: "Instance {{ $labels.instance }} will become read-only in 3 days"
           description: "Taking into account current ingestion rate and free disk space
               instance {{ $labels.instance }} is writable for {{ $value | humanizeDuration }}.\n
