@@ -1,0 +1,116 @@
+# Container and host alerts, from cAdvisor (job "cadvisor") and node-exporter (job "node").
+# No host CPU alerts: transcoding (tdarr, handbrake, plex) keeps CPU high by design.
+groups:
+  - name: containers
+    rules:
+      # cAdvisor drops a stopped container's series, so "gone" means: seen in the last hour, not now.
+      # A container removed on purpose (stack deleted or renamed) also fires, for up to an hour.
+      - alert: ContainerDown
+        expr: |
+          max by (name, container_label_com_docker_compose_project) (max_over_time(container_last_seen{job="cadvisor", name!=""}[1h]))
+            unless
+          max by (name, container_label_com_docker_compose_project) (container_last_seen{job="cadvisor", name!=""})
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} is down"
+          description: >
+            Container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
+            was running in the last hour but has been gone for 5 minutes.
+
+      # A restart keeps the container ID but changes its start time. A redeploy creates a new
+      # container (new series), so deploys don't count.
+      - alert: ContainerRestarting
+        expr: changes(container_start_time_seconds{job="cadvisor", name!=""}[15m]) > 2
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting over and over"
+          description: >
+            Container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
+            restarted {{ $value }} times in the last 15 minutes. It might be crashlooping.
+
+      - alert: ContainerOOMKilled
+        expr: increase(container_oom_events_total{job="cadvisor", name!=""}[10m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} ran out of memory"
+          description: >
+            A process in container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
+            was killed by the kernel OOM killer in the last 10 minutes.
+
+      # Catches a normally quiet container stuck at 100% of a core for hours (busy loop, stuck job).
+      # Stacks that are busy by design are excluded; add a stack here if it keeps firing for normal work.
+      - alert: ContainerHighCPU
+        expr: |
+          sum by (name, container_label_com_docker_compose_project) (
+            rate(container_cpu_usage_seconds_total{job="cadvisor", name!="", container_label_com_docker_compose_project!~"tdarr|handbrake|plex|immich-app"}[2h])
+          ) > 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} has used over 1 CPU core for 2 hours"
+          description: >
+            Container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
+            averaged {{ $value | printf "%.1f" }} CPU cores over the last 2 hours. It might be stuck in a loop.
+
+  - name: host-disk
+    rules:
+      # ZFS datasets all report the pool's free space, but only their own used space.
+      # Pool free ratio = free / (free + sum of used over the pool's datasets).
+      # Snapshots aren't counted, so this under-reports usage; TrueNAS's own pool alerts are exact.
+      - record: zfs_pool:free_ratio
+        expr: |
+          min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
+            /
+          (
+            min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
+              +
+            sum by (pool) (label_replace(node_filesystem_size_bytes{job="node", fstype="zfs"} - node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
+          )
+
+      - alert: ZFSPoolFillingUp
+        expr: zfs_pool:free_ratio < 0.15
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZFS pool {{ $labels.pool }} is over 85% full"
+          description: "Pool {{ $labels.pool }} has {{ $value | humanizePercentage }} free."
+
+      - alert: ZFSPoolAlmostFull
+        expr: zfs_pool:free_ratio < 0.05
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZFS pool {{ $labels.pool }} is over 95% full"
+          description: "Pool {{ $labels.pool }} has {{ $value | humanizePercentage }} free."
+
+      # Based on the last 6 hours, the pool runs out of space within a day.
+      - alert: ZFSPoolFullWithin24h
+        expr: |
+          predict_linear(min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))[6h:5m], 86400) < 0
+            and
+          zfs_pool:free_ratio < 0.25
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZFS pool {{ $labels.pool }} will be full within 24 hours"
+          description: "At the rate of the last 6 hours, pool {{ $labels.pool }} runs out of space within a day."
+
+      # Non-ZFS filesystems (ext4, xfs). EFI partitions (vfat) are small and mostly full, so skipped.
+      - alert: HostDiskFillingUp
+        expr: |
+          node_filesystem_avail_bytes{job="node", fstype=~"ext4|xfs|btrfs"}
+            / node_filesystem_size_bytes{job="node", fstype=~"ext4|xfs|btrfs"} < 0.10
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Filesystem {{ $labels.mountpoint }} is over 90% full"
+          description: "{{ $labels.mountpoint }} ({{ $labels.device }}) has {{ $value | humanizePercentage }} free."
