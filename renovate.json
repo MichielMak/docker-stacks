@@ -381,6 +381,16 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
+  "customDatasources": {
+    "twg": {
+      "description": "Atlassian Teamwork Graph CLI: the CDN manifest lists the latest stable release",
+      "defaultRegistryUrlTemplate": "https://teamwork-graph.atlassian.com/cli/manifest.json",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": version, \"releaseTimestamp\": publishedAt}], \"changelogUrl\": releaseNotesUrl, \"homepage\": installPageUrl}"
+      ]
+    }
+  },
   "hostRules": [
     {
       "matchHost": "lscr.io",
