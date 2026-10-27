@@ -27,7 +27,10 @@ tags = ["gitops"]
 
 [procedure.config]
 # Safety net for failed GitHub webhook deliveries. A run with no changes only refreshes stack caches.
-schedule = "Every 15 minutes"
+# Cron, not English: "Every 15 minutes" becomes "0 0/15 * * * ?", which Komodo then rejects.
+# Komodo cron has a seconds field: sec min hour day month weekday.
+schedule_format = "Cron"
+schedule = "0 */15 * * * *"
 
 [[procedure.config.stage]]
 name = "PullRepo"
