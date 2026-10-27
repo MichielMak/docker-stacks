@@ -513,7 +513,6 @@ linked_repo = "docker-stacks"
 run_directory = "mcpjungle"
 compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
 compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
-ignore_services = ["mcpjungle-truenas-mcp-init"]
 environment = """
 DOMAIN=[[DOMAIN]]
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]

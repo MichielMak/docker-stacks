@@ -16,8 +16,8 @@ run:
     Diagnostic run. Do not change any files and do not run git or gh.
 
     1. List every MCP server and tool you can call, grouped by server (names only).
-    2. Say whether these are available: TrueNAS (mcpjungle__Truenas__*), Docker
-       (mcpjungle__TrueNAS_Docker__*) and Home Assistant (mcpjungle__hass__*).
+    2. Say whether these are available: Docker (mcpjungle__TrueNAS_Docker__*) and
+       Home Assistant (mcpjungle__hass__*).
     3. Report whether the environment variables GOTIFY_URL and GOTIFY_HEALTH_TOKEN are set,
        by name only. Never print their values.
 
