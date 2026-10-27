@@ -1,5 +1,5 @@
 # Container and host alerts, from cAdvisor (job "cadvisor") and node-exporter (job "node").
-# No CPU alerts on purpose: transcoding (tdarr, handbrake, plex) keeps CPU high by design.
+# No host CPU alerts: transcoding (tdarr, handbrake, plex) keeps CPU high by design.
 groups:
   - name: containers
     rules:
@@ -40,6 +40,22 @@ groups:
           description: >
             A process in container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
             was killed by the kernel OOM killer in the last 10 minutes.
+
+      # Catches a normally quiet container stuck at 100% of a core for hours (busy loop, stuck job).
+      # Stacks that are busy by design are excluded; add a stack here if it keeps firing for normal work.
+      - alert: ContainerHighCPU
+        expr: |
+          sum by (name, container_label_com_docker_compose_project) (
+            rate(container_cpu_usage_seconds_total{job="cadvisor", name!="", container_label_com_docker_compose_project!~"tdarr|handbrake|plex|immich-app"}[2h])
+          ) > 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} has used over 1 CPU core for 2 hours"
+          description: >
+            Container {{ $labels.name }} (stack {{ $labels.container_label_com_docker_compose_project }})
+            averaged {{ $value | printf "%.1f" }} CPU cores over the last 2 hours. It might be stuck in a loop.
 
   - name: host-disk
     rules:
