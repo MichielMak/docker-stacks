@@ -15,52 +15,15 @@
 # does not cover.
 
 #
-# truenas-mcp init sidecar
-# ------------------------
-# truenas-mcp (https://github.com/truenas/truenas-mcp) does not publish a Docker
-# image. It is a single static Go binary that only speaks MCP over stdio.
-# MCPJungle runs stdio servers as child processes *inside its own container*, so
-# the binary has to exist on mcpjungle's filesystem - a separate service would
-# not help. The init sidecar below downloads the pinned release, verifies its
-# checksum, and drops the binary into a shared volume that mcpjungle mounts
-# read-only at /opt/mcp-bin.
-#
-# After the stack is up, register the server yourself in the MCPJungle web UI
-# (it is stored in mcpjungle's Postgres DB - compose cannot declare it):
-#   Transport:    stdio
-#   Session mode: stateful   <-- the UI defaults to "stateless", change it!
-#   Command:      /opt/mcp-bin/truenas-mcp
-#   Arguments:    (none)
-#   Environment variables:
-#     TRUENAS_URL=wss://<truenas-ip>:444/websocket
-#       Port 444 is verified working on this homelab. <truenas-ip> is the same
-#       host as ${TRUENAS_IP} in traefik/dynamic/truenas.yml - type it in by
-#       hand, stdio registrations live in mcpjungle's Postgres DB, not here.
-#     TRUENAS_API_KEY=<key from TrueNAS System Settings -> API Keys>
-#     TRUENAS_INSECURE=1        # TrueNAS uses a self-signed cert here; the
-#                               # safer alternative is TRUENAS_TLS_CA=<pem path>
-#
-# Session mode MUST be "stateful". In stateless mode MCPJungle starts a brand
-# new truenas-mcp process for every single tool call, and each of those would
-# have to redo the very slow TrueNAS authentication (see the timeout note on
-# the mcpjungle service below). Stateful keeps the process and its already
-# authenticated WebSocket alive between calls.
-#
-# WARNING: do NOT commit the TrueNAS API key to this repo. Enter it in the web
-# UI only - it lives in mcpjungle's database.
-
-#
 # Docker MCP server + socket proxy
 # --------------------------------
-# truenas-mcp above queries the TrueNAS middleware "app.query" API, so it only
-# ever sees containers installed from the TrueNAS App Store. Everything Komodo
-# deploys from this repo is invisible to it. mcp-server-docker talks to the
-# Docker API directly, so it sees every container on the host.
+# mcp-server-docker talks to the Docker API directly, so it sees every
+# container on the host.
 #
 # mcp-server-docker (https://pypi.org/project/mcp-server-docker/) is a stdio
-# Python package and publishes no Docker image. Unlike truenas-mcp it needs no
-# init sidecar: the mcpjungle "-stdio" image already ships uv/uvx and Python, so
-# mcpjungle can run the package straight from PyPI as a child process.
+# Python package and publishes no Docker image. The mcpjungle "-stdio" image
+# already ships uv/uvx and Python, so mcpjungle can run the package straight
+# from PyPI as a child process.
 #
 # The Docker socket is deliberately NOT mounted into mcpjungle. MCPJungle runs
 # whatever MCP servers are defined in its database, so giving it the raw socket
@@ -81,51 +44,6 @@
 # this server is for inspecting containers plus start/stop/restart, nothing more.
 
 services:
-  mcpjungle-truenas-mcp-init:
-    image: curlimages/curl:8.23.0@sha256:a134550be58ab783810e613ae96fd253c38f7bdd16d9bf9be350700c7a29ac06
-    container_name: mcpjungle-truenas-mcp-init
-    # Runs as root so it can write into the shared mcpjungle-bin volume.
-    user: "0:0"
-    environment:
-      # renovate: datasource=github-releases depName=truenas/truenas-mcp
-      - TRUENAS_MCP_VERSION=v0.0.7
-      # Must be updated together with TRUENAS_MCP_VERSION above. Renovate bumps
-      # the version but cannot know the new checksum, so update it by hand from
-      # the release page when a version PR comes in.
-      - TRUENAS_MCP_SHA256=920a1042763f2ed31937c5cf3072fbd2defdd863dbfb3e1078aeed0275f5fa1d
-    volumes:
-      - mcpjungle-bin:/opt/mcp-bin
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        set -eu
-        target=/opt/mcp-bin/truenas-mcp
-        stamp=/opt/mcp-bin/.truenas-mcp.version
-        asset=truenas-mcp-linux-amd64
-        url="https://github.com/truenas/truenas-mcp/releases/download/$${TRUENAS_MCP_VERSION}/$${asset}.tar.gz"
-
-        # Idempotent: the stamp file records which version is installed, so a
-        # restart of the stack does not re-download the release.
-        if [ -x "$$target" ] && [ "$$(cat "$$stamp" 2>/dev/null)" = "$${TRUENAS_MCP_VERSION}" ]; then
-          echo "truenas-mcp $${TRUENAS_MCP_VERSION} already installed, nothing to do"
-          exit 0
-        fi
-
-        tmp=$$(mktemp -d)
-        trap 'rm -rf "$$tmp"' EXIT
-
-        echo "Downloading $$url"
-        curl -fsSL --retry 3 -o "$$tmp/$$asset.tar.gz" "$$url"
-        # Checksum of the release tarball - a mismatch aborts the install.
-        echo "$${TRUENAS_MCP_SHA256}  $$tmp/$$asset.tar.gz" | sha256sum -c -
-        tar -xzf "$$tmp/$$asset.tar.gz" -C "$$tmp"
-        install -m 0755 "$$tmp/$$asset" "$$target"
-        echo "$${TRUENAS_MCP_VERSION}" > "$$stamp"
-        echo "Installed truenas-mcp $${TRUENAS_MCP_VERSION} at $$target"
-    networks:
-      - mcpjungle-internal
-    restart: "no"
-
   mcpjungle-docker-proxy:
     image: linuxserver/socket-proxy:3.4.7@sha256:e5d819de59b343c01b2fe7adc7fad3c7a60e5dba08e45f1ac317352bc08599b5
     container_name: mcpjungle-docker-proxy
@@ -178,12 +96,9 @@ services:
       - DATABASE_URL=postgres://mcpjungle:${MCPJUNGLE_DB_PASSWORD}@mcpjungle-db:5432/mcpjungle
       - SERVER_MODE=development
       - OTEL_ENABLED=false
-      # truenas-mcp authenticates to TrueNAS *before* it answers the MCP
-      # initialize request, so a slow login blocks registration entirely. On
-      # this system auth.login_with_api_key has been observed taking ~58s, so
-      # the 10s default made registration fail every time. 120s gives headroom.
-      # It also covers the first uvx run of a stdio server, which downloads the
-      # package before the server can answer.
+      # The first uvx run of a stdio server downloads the package before the
+      # server can answer the MCP initialize request, which can take longer
+      # than the 10s default.
       - MCP_SERVER_INIT_REQ_TIMEOUT_SEC=120
       # Persistent uv cache so uvx-based stdio MCP servers start fast instead
       # of re-downloading their package on every session.
@@ -191,15 +106,11 @@ services:
     volumes:
       # Read-only host data exposed to filesystem-type MCP servers
       - ${DOCKER_DATA_DIR}/mcpjungle/host:/host:ro
-      # stdio MCP server binaries installed by the init sidecars
-      - mcpjungle-bin:/opt/mcp-bin:ro
       # Writable uv package cache (see UV_CACHE_DIR above)
       - mcpjungle-uv-cache:/opt/uv-cache
     depends_on:
       mcpjungle-db:
         condition: service_healthy
-      mcpjungle-truenas-mcp-init:
-        condition: service_completed_successfully
     labels:
       - homepage.group=Infra
       - homepage.name=MCPJungle
@@ -257,7 +168,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  mcpjungle-bin:
   mcpjungle-uv-cache:
 
 networks:
