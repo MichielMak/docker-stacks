@@ -88,7 +88,7 @@ services:
     user: "0:0"
     environment:
       # renovate: datasource=github-releases depName=truenas/truenas-mcp
-      - TRUENAS_MCP_VERSION=v0.0.6
+      - TRUENAS_MCP_VERSION=v0.0.7
       # Must be updated together with TRUENAS_MCP_VERSION above. Renovate bumps
       # the version but cannot know the new checksum, so update it by hand from
       # the release page when a version PR comes in.
