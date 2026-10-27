@@ -59,18 +59,23 @@ groups:
 
   - name: host-disk
     rules:
-      # ZFS datasets all report the pool's free space, but only their own used space.
-      # Pool free ratio = free / (free + sum of used over the pool's datasets).
-      # Snapshots aren't counted, so this under-reports usage; TrueNAS's own pool alerts are exact.
-      - record: zfs_pool:free_ratio
+      # node-exporter has no pool capacity metric, so it's derived from the pool's datasets:
+      # - free: the highest free space of any dataset. Datasets with a quota (TrueNAS's 1 GiB
+      #   ssd0/.system/cores) report less than the pool has, so the lowest would be wrong.
+      # - used: each dataset's own used space, counted once (some datasets are mounted twice).
+      # Snapshots aren't counted, so usage is a little low; TrueNAS's own pool alerts are exact.
+      - record: zfs_pool:avail_bytes
+        expr: max by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
+
+      - record: zfs_pool:used_bytes
         expr: |
-          min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
-            /
-          (
-            min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
-              +
-            sum by (pool) (label_replace(node_filesystem_size_bytes{job="node", fstype="zfs"} - node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))
-          )
+          sum by (pool) (label_replace(
+            max by (device) (node_filesystem_size_bytes{job="node", fstype="zfs"} - node_filesystem_avail_bytes{job="node", fstype="zfs"}),
+            "pool", "$1", "device", "([^/]+).*"
+          ))
+
+      - record: zfs_pool:free_ratio
+        expr: zfs_pool:avail_bytes / (zfs_pool:avail_bytes + zfs_pool:used_bytes)
 
       - alert: ZFSPoolFillingUp
         expr: zfs_pool:free_ratio < 0.15
@@ -93,7 +98,7 @@ groups:
       # Based on the last 6 hours, the pool runs out of space within a day.
       - alert: ZFSPoolFullWithin24h
         expr: |
-          predict_linear(min by (pool) (label_replace(node_filesystem_avail_bytes{job="node", fstype="zfs"}, "pool", "$1", "device", "([^/]+).*"))[6h:5m], 86400) < 0
+          predict_linear(zfs_pool:avail_bytes[6h], 86400) < 0
             and
           zfs_pool:free_ratio < 0.25
         for: 1h
