@@ -53,6 +53,66 @@ services:
       - traefik.http.services.vmagent.loadbalancer.server.port=8429
     networks:
       - npm
+      - victoriametrics-internal
+
+  # Per-container CPU, memory, network and disk I/O metrics.
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6@sha256:b8e7d1093144fd088f425ff003d75a4aa405de075db78dae3bc563730b1bd07a
+    container_name: cadvisor
+    restart: unless-stopped
+    # cAdvisor reads cgroups and /dev/kmsg (OOM events), which needs privileged.
+    privileged: true
+    devices:
+      - /dev/kmsg
+    depends_on:
+      - victoriametrics-dockerproxy
+    command:
+      - --docker=tcp://victoriametrics-dockerproxy:2375
+      - --docker_only=true
+      - --housekeeping_interval=30s
+      - --enable_metrics=cpu,diskIO,memory,network,oom_event
+      # Only these labels become metric labels; the rest (traefik.*, homepage.*) would blow up cardinality.
+      - --store_container_labels=false
+      - --whitelisted_container_labels=com.docker.compose.project,com.docker.compose.service
+    volumes:
+      - /:/rootfs:ro
+      - /sys:/sys:ro
+      - /dev/disk:/dev/disk:ro
+      # TrueNAS keeps the Docker root dir here instead of /var/lib/docker.
+      - /mnt/.ix-apps/docker:/mnt/.ix-apps/docker:ro
+    networks:
+      - victoriametrics-internal
+
+  # Host CPU, memory, load, filesystem and ZFS metrics.
+  node-exporter:
+    image: prom/node-exporter:v1.12.1@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host
+    command:
+      - --path.rootfs=/host
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|run/credentials/.+|sys|var/lib/docker/.+|mnt/\.ix-apps/docker/.+)($$|/)
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - victoriametrics-internal
+
+  victoriametrics-dockerproxy:
+    image: linuxserver/socket-proxy:3.4.7@sha256:e5d819de59b343c01b2fe7adc7fad3c7a60e5dba08e45f1ac317352bc08599b5
+    container_name: victoriametrics-dockerproxy
+    # cAdvisor reads the container list, container details and docker info.
+    environment:
+      - CONTAINERS=1
+      - INFO=1
+      - POST=0 # read-only
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - victoriametrics-internal
+    read_only: true
+    tmpfs:
+      - /run
 
   # Evaluates alerting and recording rules from ./rules.
   vmalert:
@@ -131,3 +191,7 @@ services:
 networks:
   npm:
     external: true
+  # No internet or LAN access; only vmagent can reach the exporters and socket proxy.
+  victoriametrics-internal:
+    driver: bridge
+    internal: true
