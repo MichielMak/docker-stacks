@@ -38,6 +38,8 @@ services:
       - victoriametrics
     command:
       - --promscrape.config=/etc/prometheus/prometheus.yml
+      # Picks up scrape config changes from git without a redeploy.
+      - --promscrape.configCheckInterval=1m
       - --remoteWrite.url=http://victoriametrics:8428/api/v1/write
       - --remoteWrite.tmpDataPath=/vmagentdata
     volumes:
@@ -129,6 +131,8 @@ services:
       - --remoteWrite.url=http://vmagent:8429/
       - --notifier.url=http://alertmanager:9093/
       - --rule=/etc/alerts/*.yml
+      # Picks up rule changes from git without a redeploy (Gitops only redeploys on compose changes).
+      - --configCheckInterval=1m
       # Makes "Source" links in alerts point at the Grafana stack.
       - --external.url=https://grafana.${DOMAIN}
       - --external.alert.source=explore?orgId=1&left={"datasource":"VictoriaMetrics","queries":[{"expr":{{.Expr|jsonEscape|queryEscape}},"refId":"A"}],"range":{"from":"{{ .ActiveAt.UnixMilli }}","to":"now"}}
