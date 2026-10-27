@@ -6,6 +6,10 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "5.28.1"
     }
+    http = {
+      source  = "hashicorp/http"
+      version = "3.6.3"
+    }
   }
 
   # State lives in Cloudflare R2. The endpoint holds the account ID, so CI passes it with -backend-config.

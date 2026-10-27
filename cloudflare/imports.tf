@@ -39,3 +39,13 @@ import {
   to = cloudflare_zero_trust_access_application.app[each.key]
   id = "accounts/${var.account_id}/${each.value}"
 }
+
+# The custom rules were built in the dashboard. Its ruleset ID is looked up, not hardcoded.
+data "cloudflare_rulesets" "zone" {
+  zone_id = var.zone_id
+}
+
+import {
+  to = cloudflare_ruleset.custom
+  id = "zones/${var.zone_id}/${one([for r in data.cloudflare_rulesets.zone.rulesets : r.id if r.phase == "http_request_firewall_custom" && r.kind == "zone"])}"
+}

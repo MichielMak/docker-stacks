@@ -1,6 +1,7 @@
 name: Cloudflare
 
-# Plans cloudflare/ on pull requests and applies it on main.
+# Plans cloudflare/ on pull requests and applies it on main, and daily so the
+# GitHub webhook ranges in waf.tf stay current.
 # This repo is public, so the job logs are too: keep sensitive values in
 # `sensitive = true` variables so OpenTofu redacts them.
 
@@ -14,6 +15,8 @@ on:
     paths:
       - "cloudflare/**"
       - ".github/workflows/cloudflare.yml"
+  schedule:
+    - cron: "23 5 * * *"
   workflow_dispatch:
 
 permissions:

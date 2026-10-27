@@ -151,7 +151,8 @@ To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (
 - **Publish a service:** add its name to `public_hosts` in `cloudflare/tunnel.tf`. The tunnel sends `<name>.${DOMAIN}` to `https://traefik:443`, and Traefik routes it by its `Host()` label. Put an Access app in front unless the service has its own login.
 - **Put Cloudflare Access in front:** add it to `access_apps` in `cloudflare/access.tf`. Members of the Authentik users group get in; with `guests = true`, so do the addresses in the `ACCESS_GUEST_EMAILS` secret (a JSON list).
 - **Webhook-only exposure:** add it to `webhook_routes` with a path regex, so only that path is public.
-- `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`. State lives in the R2 bucket `tofu-state`.
+- **WAF custom rules** live in `cloudflare/waf.tf`. The GitHub webhook allow rules read GitHub's hook IP ranges from `api.github.com/meta` on every plan.
+- `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`, and daily at 05:23 UTC so new GitHub ranges go live. State lives in the R2 bucket `tofu-state`.
 - Credentials are GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `ACCESS_GUEST_EMAILS`. Account, zone and tunnel IDs are repository variables (`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_TUNNEL_ID`).
 - The repo and its Actions logs are public. Never commit email addresses or other personal data: pass them in through a secret and a `sensitive = true` variable.
 - Only the tunnel CNAMEs are managed. Other DNS records (mail, SPF, DKIM) and the WARP login app are still dashboard-only.
