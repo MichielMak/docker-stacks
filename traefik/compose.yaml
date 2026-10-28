@@ -73,6 +73,9 @@ services:
       # Cloudflare tunnel traffic only. Not published on the host; only routers that list it are reachable.
       - --entrypoints.tunnel.address=:8443
       - --entrypoints.tunnel.http.tls=true
+      # Pass on the visitor IP that Cloudflare sets in X-Forwarded-For. Only cloudflared is in this
+      # subnet, and Cloudflare strips visitor-supplied proxy headers (cloudflare/transform.tf).
+      - --entrypoints.tunnel.forwardedHeaders.trustedIPs=10.250.250.0/28
 
       # Let's Encrypt (ACME) via DNS-01 (wildcard)
       - --certificatesresolvers.letsencrypt.acme.email=${LE_EMAIL}
