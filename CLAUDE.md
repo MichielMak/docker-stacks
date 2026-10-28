@@ -48,7 +48,7 @@ networks:
     external: true
 ```
 
-The `tunnel` network (created by the traefik stack, internal, fixed subnet `10.250.250.0/28`) is only for the Cloudflare tunnel: traefik, cloudflared and Komodo core. Don't attach anything else to it.
+The `tunnel` network (created by the traefik stack, internal, IPv4 only, fixed subnet `10.250.250.0/28`) is only for the Cloudflare tunnel: traefik, cloudflared and Komodo core. Don't attach anything else to it.
 
 ### Traefik labels (required for HTTPS exposure)
 ```yaml
