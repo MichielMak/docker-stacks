@@ -5,6 +5,15 @@ networks:
   traefik-internal:
     driver: bridge
     internal: true
+  # Cloudflare tunnel: only traefik, cloudflared and komodo core join it.
+  # Fixed subnet so Traefik can tell tunnel traffic apart by source IP.
+  tunnel:
+    name: tunnel
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.250.250.0/28
 
 services:
   traefik-dockerproxy:
@@ -32,6 +41,7 @@ services:
     networks:
       - npm
       - traefik-internal
+      - tunnel
     ports:
       - 80:80
       - 443:443
@@ -58,6 +68,9 @@ services:
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --entrypoints.websecure.address=:443
+      # Cloudflare tunnel traffic only. Not published on the host; only routers that list it are reachable.
+      - --entrypoints.tunnel.address=:8443
+      - --entrypoints.tunnel.http.tls=true
 
       # Let's Encrypt (ACME) via DNS-01 (wildcard)
       - --certificatesresolvers.letsencrypt.acme.email=${LE_EMAIL}

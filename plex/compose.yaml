@@ -31,7 +31,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
-      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.routers.plex.entrypoints=websecure,tunnel
       - traefik.http.routers.plex.tls=true
       # Plex clients send X-Plex-Token in the query string: keep it out of the access log
       - traefik.http.routers.plex.observability.accesslogs=false

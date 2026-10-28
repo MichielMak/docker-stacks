@@ -22,7 +22,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.deemix.rule=Host(`deemix.${DOMAIN}`)
-      - traefik.http.routers.deemix.entrypoints=websecure
+      - traefik.http.routers.deemix.entrypoints=websecure,tunnel
       - traefik.http.routers.deemix.tls=true
       - traefik.http.services.deemix.loadbalancer.server.port=6595
     restart: unless-stopped

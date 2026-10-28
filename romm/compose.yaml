@@ -42,7 +42,7 @@ services:
       - homepage.widget.password=${ROMM_PASSWORD}
       - traefik.enable=true
       - traefik.http.routers.romm.rule=Host(`romm.${DOMAIN}`)
-      - traefik.http.routers.romm.entrypoints=websecure
+      - traefik.http.routers.romm.entrypoints=websecure,tunnel
       - traefik.http.routers.romm.tls=true
       - traefik.http.services.romm.loadbalancer.server.port=8080
     depends_on:

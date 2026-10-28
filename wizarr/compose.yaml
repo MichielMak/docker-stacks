@@ -25,7 +25,7 @@ services:
         management system for Plex
       - traefik.enable=true
       - traefik.http.routers.wizarr.rule=Host(`wizarr.${DOMAIN}`)
-      - traefik.http.routers.wizarr.entrypoints=websecure
+      - traefik.http.routers.wizarr.entrypoints=websecure,tunnel
       - traefik.http.routers.wizarr.tls=true
 #      - traefik.http.services.wizarr.loadbalancer.server.port=5690
 

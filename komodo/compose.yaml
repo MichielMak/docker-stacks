@@ -3,6 +3,9 @@ networks:
     driver: bridge
   npm:
     external: true
+  # Created by the traefik stack. The Cloudflare tunnel reaches the webhook listener here.
+  tunnel:
+    external: true
 services:
   core:
     container_name: komodo-core
@@ -34,6 +37,7 @@ services:
     networks:
       - komodo
       - npm
+      - tunnel
     expose:
       - "30160"
     restart: unless-stopped
@@ -92,9 +96,9 @@ services:
       dockerfile: periphery.Dockerfile
     image: komodo-periphery-sops:local
     pull_policy: build
+    # Only core talks to periphery, over the komodo network.
     networks:
       - komodo
-      - npm
     restart: unless-stopped
     volumes:
       - ${DOCKER_STACKS_DIR}:${DOCKER_STACKS_DIR}

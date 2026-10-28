@@ -41,7 +41,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=npm
       - traefik.http.routers.spotizerr.rule=Host(`spotizerr.${DOMAIN}`)
-      - traefik.http.routers.spotizerr.entrypoints=websecure
+      - traefik.http.routers.spotizerr.entrypoints=websecure,tunnel
       - traefik.http.routers.spotizerr.tls=true
       - traefik.http.services.spotizerr.loadbalancer.server.port=7171
     depends_on:

@@ -46,7 +46,7 @@ services:
       - traefik.http.services.grimmory.loadbalancer.server.port=6060
       # Test router for books.${DOMAIN} with guest auto-login
       - traefik.http.routers.grimmory-test.rule=Host(`books.${DOMAIN}`)
-      - traefik.http.routers.grimmory-test.entrypoints=websecure
+      - traefik.http.routers.grimmory-test.entrypoints=websecure,tunnel
       - traefik.http.routers.grimmory-test.tls=true
       - traefik.http.routers.grimmory-test.service=grimmory
       - traefik.http.routers.grimmory-test.middlewares=grimmory-guest-auth

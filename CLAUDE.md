@@ -48,6 +48,8 @@ networks:
     external: true
 ```
 
+The `tunnel` network (created by the traefik stack, internal, fixed subnet `10.250.250.0/28`) is only for the Cloudflare tunnel: traefik, cloudflared and Komodo core. Don't attach anything else to it.
+
 ### Traefik labels (required for HTTPS exposure)
 ```yaml
 labels:
@@ -61,6 +63,7 @@ If a container has multiple networks, also add:
 ```yaml
   - traefik.docker.network=npm
 ```
+Traefik has two TLS entrypoints: `websecure` (:443, LAN and tailnet) and `tunnel` (:8443, Cloudflare tunnel only, not published on the host). Routers use `websecure`; only routers published through the tunnel also list `tunnel` (`entrypoints=websecure,tunnel`).
 
 ### Homepage dashboard labels
 ```yaml
@@ -148,9 +151,9 @@ To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (
 
 `cloudflare/` manages the Cloudflare Tunnel routes ("Published applications"), their DNS records and Access with OpenTofu. Don't change these in the dashboard: the next apply reverts it.
 
-- **Publish a service:** add its name to `public_hosts` in `cloudflare/tunnel.tf`. The tunnel sends `<name>.${DOMAIN}` to `https://traefik:443`, and Traefik routes it by its `Host()` label. Put an Access app in front unless the service has its own login.
+- **Publish a service:** add its name to `public_hosts` in `cloudflare/tunnel.tf`. The tunnel sends `<name>.${DOMAIN}` to `https://traefik:443`, and Traefik routes it by its `Host()` label. Also add `tunnel` to the router's entrypoints (`entrypoints=websecure,tunnel`). Put an Access app in front unless the service has its own login.
 - **Put Cloudflare Access in front:** add it to `access_apps` in `cloudflare/access.tf`. Members of the Authentik users group get in; with `guests = true`, so do the addresses in the `ACCESS_GUEST_EMAILS` secret (a JSON list).
-- **Webhook-only exposure:** add it to `webhook_routes` with a path regex, so only that path is public.
+- **Webhook-only exposure:** add it to `webhook_routes` with a path regex, so only that path is public. If it goes through Traefik, add a separate router on the `tunnel` entrypoint with the same path in its rule (see `hub-webhook` in `hub/compose.yaml`).
 - **WAF custom rules** live in `cloudflare/waf.tf`. The GitHub webhook allow rules read GitHub's hook IP ranges from `api.github.com/meta` on every plan.
 - `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`, and daily at 05:23 UTC so new GitHub ranges go live. State lives in the R2 bucket `tofu-state`.
 - Credentials are GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `ACCESS_GUEST_EMAILS`. Account, zone and tunnel IDs are repository variables (`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_TUNNEL_ID`).
