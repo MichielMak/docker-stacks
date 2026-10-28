@@ -57,7 +57,7 @@ services:
       - homepage.description=Current Deezer ARL token
       - traefik.enable=true
       - traefik.http.routers.arl.rule=Host(`arl.${DOMAIN}`)
-      - traefik.http.routers.arl.entrypoints=websecure
+      - traefik.http.routers.arl.entrypoints=websecure,tunnel
       - traefik.http.routers.arl.tls=true
       - traefik.http.services.arl.loadbalancer.server.port=8080
 

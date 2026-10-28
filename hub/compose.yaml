@@ -61,6 +61,11 @@ services:
       - traefik.http.routers.hub.entrypoints=websecure
       - traefik.http.routers.hub.tls=true
       - traefik.http.services.hub.loadbalancer.server.port=3000
+      # Via the Cloudflare tunnel only the GitHub webhook is reachable.
+      - traefik.http.routers.hub-webhook.rule=Host(`hub.${DOMAIN}`) && Path(`/webhook`)
+      - traefik.http.routers.hub-webhook.entrypoints=tunnel
+      - traefik.http.routers.hub-webhook.tls=true
+      - traefik.http.routers.hub-webhook.service=hub
     networks:
       - default
       - hub-internal
