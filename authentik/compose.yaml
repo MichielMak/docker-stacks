@@ -71,9 +71,7 @@ services:
     image: docker.io/authentik/server:2026.8.5@sha256:602227a86455d6772e3d16b7d852713c4f864f40df5df894abd1285bb53979a5
     restart: unless-stopped
     command: worker
-    user: root
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ${DOCKER_DATA_DIR}/authentik/data:/data
       - ${DOCKER_DATA_DIR}/authentik/certs:/certs
       - ${DOCKER_DATA_DIR}/authentik/custom-templates:/templates
