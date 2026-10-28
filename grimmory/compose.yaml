@@ -27,6 +27,7 @@ services:
     restart: unless-stopped
     networks:
       - npm
+      - default
     labels:
       - homepage.group=Media
       - homepage.name=Grimmory
@@ -78,7 +79,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - npm
+      - default
 networks:
   npm:
     external: true

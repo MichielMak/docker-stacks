@@ -41,6 +41,7 @@ services:
       - homepage.widget.username=${ROMM_USER}
       - homepage.widget.password=${ROMM_PASSWORD}
       - traefik.enable=true
+      - traefik.docker.network=npm
       - traefik.http.routers.romm.rule=Host(`romm.${DOMAIN}`)
       - traefik.http.routers.romm.entrypoints=websecure,tunnel
       - traefik.http.routers.romm.tls=true
@@ -49,6 +50,7 @@ services:
       - romm-db
     networks:
       - npm
+      - default
   romm-db:
     image: mariadb:13.0.2@sha256:831e1993f97fc7a25ea7ce5d07db61a5bb7fdc5cf28cdedcca4c84db4feb0760
     container_name: romm-db
@@ -64,7 +66,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/rommdb/data:/var/lib/mysql
     networks:
-      - npm
+      - default
 networks:
   npm:
     external: true
