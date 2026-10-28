@@ -1,4 +1,7 @@
 locals {
+  # Traefik's tunnel entrypoint: only routers that list `tunnel` in their entrypoints are reachable.
+  traefik_tunnel = "https://traefik:8443"
+
   # Published through the tunnel as <name>.${var.domain}, all via Traefik.
   # To publish a service: add its name here. Traefik routes it by its Host() label.
   public_hosts = [
@@ -18,7 +21,7 @@ locals {
   # Webhook endpoints: only the given path is reachable from the internet.
   webhook_routes = {
     komodo-webhook = { path = "^/listener/.*$", service = "http://core:30160" }
-    hub            = { path = "^/webhook$", service = "https://traefik:443" }
+    hub            = { path = "^/webhook$", service = local.traefik_tunnel }
   }
 }
 
@@ -32,7 +35,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "home" {
     ingress = concat(
       [for name in local.public_hosts : {
         hostname = "${name}.${var.domain}"
-        service  = "https://traefik:443"
+        service  = local.traefik_tunnel
         origin_request = {
           # Use the real hostname for SNI and for verifying Traefik's *.${var.domain} certificate.
           origin_server_name = "${name}.${var.domain}"
