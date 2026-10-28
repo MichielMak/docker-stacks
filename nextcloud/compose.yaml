@@ -20,6 +20,7 @@ services:
       - REDIS_HOST=nextcloud-redis
     networks:
       - npm
+      - default
     labels:
       - homepage.group=Media
       - homepage.name=Nextcloud
@@ -45,14 +46,14 @@ services:
       - ${DOCKER_DATA_DIR}/nextclouddb/config/databases:/var/lib/mysql
     restart: unless-stopped
     networks:
-      - npm
+      - default
   nextcloud-redis:
     image: redis:8.10.3-alpine@sha256:896f241f438ab6a210cfb24f573b84bea721a4cbe67f1b4fd07eb638b3b02a7b
     container_name: nextcloud-redis
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
-      - npm
+      - default
   eurooffice:
     container_name: eurooffice
     image: ghcr.io/euro-office/documentserver:v9.3.7@sha256:39c4cdad8c335d05ea5653926e1fc3a69da006d9c1729936b2b4193140cd2962

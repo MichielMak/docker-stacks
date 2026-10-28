@@ -22,6 +22,7 @@ services:
       - ${DOCKER_DATA_DIR}/spotweb/config:/config
     networks:
       - npm
+      - default
     labels:
       - homepage.group=Media
       - homepage.name=Spotweb
@@ -48,7 +49,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/spotwebdb/config/databases:/var/lib/mysql
     networks:
-      - npm
+      - default
 #    ports:
 #     - 3306:3306
 networks:

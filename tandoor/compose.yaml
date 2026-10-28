@@ -17,7 +17,7 @@ services:
       - SOCIAL_PROVIDERS=${SOCIAL_PROVIDERS}
       - SOCIALACCOUNT_PROVIDERS=${SOCIALACCOUNT_PROVIDERS}
     networks:
-      - npm
+      - default
   web_recipes:
     environment:
       - SECRET_KEY=${SECRET_KEY}
@@ -40,6 +40,7 @@ services:
     restart: unless-stopped
     networks:
       - npm
+      - default
     labels:
       - traefik.enable=true
       - traefik.docker.network=npm

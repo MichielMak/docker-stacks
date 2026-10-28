@@ -48,6 +48,8 @@ networks:
     external: true
 ```
 
+Databases, Redis and other backends stay off `npm`: put them on the stack's `default` network only, and give the app both (`networks: [npm, default]`, plus `traefik.docker.network=npm`).
+
 The `tunnel` network (created by the traefik stack, internal, IPv4 only, fixed subnet `10.250.250.0/28`) is only for the Cloudflare tunnel: traefik, cloudflared and Komodo core. Don't attach anything else to it. cloudflared isn't on `npm`, and `traefik/dynamic/tunnel-deny.yml` returns 403 to anything from this subnet on `websecure`.
 
 ### Traefik labels (required for HTTPS exposure)
