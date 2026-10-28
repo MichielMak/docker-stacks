@@ -7,8 +7,11 @@ services:
     environment:
       - TZ=Europe/Amsterdam
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    # Only Traefik's tunnel entrypoint and the Komodo webhook listener are reachable
+    # (tunnel network); default is for the outbound connection to Cloudflare.
     networks:
-      - npm
+      - tunnel
+      - default
     restart: unless-stopped
     image: cloudflare/cloudflared:2026.10.5@sha256:1b1d34d0a9c0bfca9de72db8460d328db3f19edd2b96169114e3e893a97bbe53
     labels:
@@ -21,5 +24,6 @@ services:
       - homepage.widget.tunnelid=${TUNNELID}
       - homepage.widget.key=${CLOUDFLAREAPITOKEN}
 networks:
-  npm:
+  # Created by the traefik stack.
+  tunnel:
     external: true
