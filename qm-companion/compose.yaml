@@ -14,7 +14,7 @@
 
 services:
   qm-socket-proxy:
-    image: ghcr.io/lewlew-glitch/qm-companion-socket-proxy:0.1.11@sha256:ecccbfe31f865c569525097abc71f3959e145e73d7bc47bd1acb9c4d8f91f757
+    image: ghcr.io/lewlew-glitch/qm-companion-socket-proxy:0.1.12@sha256:b102ac505dce4a23c5d14582ea827f6aadb55909cafd00dd0d8dbccebda0875b
     container_name: qm-socket-proxy
     labels:
       - qm.protected=true
@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
 
   qm-companion:
-    image: ghcr.io/lewlew-glitch/qm-companion:0.1.11@sha256:9cea0ec2e3ab79a610113469e0712afe7f3a893ac49e06235c28289b376fc59a
+    image: ghcr.io/lewlew-glitch/qm-companion:0.1.12@sha256:cb167ae3bacaefca208d0492e1c84c7b573ce9904671c4c3985ecc7e3ef7495b
     container_name: qm-companion
     depends_on:
       qm-socket-proxy:
