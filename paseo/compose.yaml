@@ -17,7 +17,7 @@ services:
       - GOTIFY_URL=http://gotify
       - GOTIFY_HEALTH_TOKEN=${GOTIFY_HEALTH_TOKEN}
       # Node.js for the daemon and agents, ahead of the image's Node 22 in PATH (Renovate 44 needs Node >= 24).
-      # versioning=node only offers LTS lines
+      # versioning=node only offers LTS lines. Node >= 25 links against libatomic, installed by the command below
       # renovate: datasource=node-version depName=node versioning=node
       - NODE_VERSION=26.13.0
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
@@ -46,6 +46,7 @@ services:
       - -c
     command:
       - >
+        ( dpkg -s libatomic1 >/dev/null 2>&1 || ( apt-get update && apt-get install -y --no-install-recommends libatomic1 && rm -rf /var/lib/apt/lists/* ) ) &&
         mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( /home/paseo/.npm-global/bin/node --version 2>/dev/null | grep -qxF "v$$NODE_VERSION" ||
           su paseo -s /bin/sh -c 'd=node-v$$NODE_VERSION-linux-$$(dpkg --print-architecture | sed s/amd64/x64/) && u=https://nodejs.org/dist/v$$NODE_VERSION && cd /tmp &&
             curl -fsSLO $$u/$$d.tar.gz && curl -fsSL $$u/SHASUMS256.txt | grep " $$d.tar.gz\$$" | sha256sum -c - && tar -xzf $$d.tar.gz && rm -rf /home/paseo/.npm-global/node &&
