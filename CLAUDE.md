@@ -88,6 +88,7 @@ labels:
 - **Groups**: updates per stack directory (one PR per stack)
 - **Automerge**: enabled; max 6 PRs/hour, 10 concurrent
 - Custom version extraction for Hotio, BamBuddy, Lidarr, PostgreSQL, Immich images
+- Pre-commit hook revisions (`.pre-commit-config.yaml`) are updated too. The `renovate-config-validator` hook and `renovate-version` in the workflow are bumped together in one "renovate" PR, so `renovate.json` is validated by the Renovate version that runs it
 
 When adding a new service, Renovate will pick up the image automatically. If the image uses non-standard versioning, add a custom `packageRule` in `renovate.json`.
 

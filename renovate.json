@@ -17,8 +17,12 @@
     "pip_requirements",
     "github-actions",
     "terraform",
+    "pre-commit",
     "custom.regex"
   ],
+  "pre-commit": {
+    "enabled": true
+  },
   "labels": [
     "renovate"
   ],
@@ -352,6 +356,27 @@
         "ghcr.io/renovatebot/renovate"
       ],
       "fetchChangeLogs": "off"
+    },
+    {
+      "description": "Bump the Renovate version and its config validator (pre-commit) in one PR, so CI validates renovate.json with the Renovate that runs it",
+      "matchPackageNames": [
+        "ghcr.io/renovatebot/renovate",
+        "renovatebot/pre-commit-hooks"
+      ],
+      "groupName": "renovate",
+      "groupSlug": "renovate",
+      "addLabels": [
+        "renovate-self"
+      ]
+    },
+    {
+      "description": "Label pre-commit hook updates",
+      "matchManagers": [
+        "pre-commit"
+      ],
+      "addLabels": [
+        "pre-commit"
+      ]
     },
     {
       "description": "OpenTofu (cloudflare/): merging applies to the live Cloudflare config, so review these by hand",
