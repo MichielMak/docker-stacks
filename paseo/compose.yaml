@@ -16,6 +16,10 @@ services:
       # Gotify app token for the weekly homelab check that Paseo Hub schedules (.paseo/triggers/)
       - GOTIFY_URL=http://gotify
       - GOTIFY_HEALTH_TOKEN=${GOTIFY_HEALTH_TOKEN}
+      # Node.js for the daemon and agents, ahead of the image's Node 22 in PATH (Renovate 44 needs Node >= 24).
+      # versioning=node only offers LTS lines
+      # renovate: datasource=node-version depName=node versioning=node
+      - NODE_VERSION=24.22.2
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
       # renovate: datasource=github-tags depName=docker/cli
       - DOCKER_CLI_VERSION=v29.9.2
@@ -42,7 +46,10 @@ services:
       - -c
     command:
       - >
-        mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( [ -x /home/paseo/.npm-global/bin/claude ] ||
+        mkdir -p /home/paseo/.npm-global && chown -R paseo:paseo /home/paseo/.npm-global && ( /home/paseo/.npm-global/bin/node --version 2>/dev/null | grep -qxF "v$$NODE_VERSION" ||
+          su paseo -s /bin/sh -c 'd=node-v$$NODE_VERSION-linux-$$(dpkg --print-architecture | sed s/amd64/x64/) && u=https://nodejs.org/dist/v$$NODE_VERSION && cd /tmp &&
+            curl -fsSLO $$u/$$d.tar.gz && curl -fsSL $$u/SHASUMS256.txt | grep " $$d.tar.gz\$$" | sha256sum -c - && tar -xzf $$d.tar.gz && rm -rf /home/paseo/.npm-global/node &&
+            mv $$d /home/paseo/.npm-global/node && rm $$d.tar.gz && mkdir -p /home/paseo/.npm-global/bin && for b in node npm npx corepack; do ln -sfn ../node/bin/$$b /home/paseo/.npm-global/bin/$$b; done' ) && ( [ -x /home/paseo/.npm-global/bin/claude ] ||
           su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @anthropic-ai/claude-code' ) && ( [ -x /home/paseo/.npm-global/bin/copilot ] ||
           su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @github/copilot' ) && ( [ -x /home/paseo/.npm-global/bin/dx ] ||
           su paseo -s /bin/sh -c 'HOME=/home/paseo npm install -g --prefix /home/paseo/.npm-global @get-dx/cli' ) && ( [ -x /home/paseo/.npm-global/bin/gh ] ||
