@@ -6,6 +6,7 @@ services:
       - PLEX_TOKEN=${MY_PLEX_TOKEN}
       - NOTIFICATIONS_ENABLE=true
       - NOTIFICATIONS_APPRISE_CONFIGS=${APPRISE_CONFIGS_URLS}
+      - UPDATE_STRATEGY=all
       - TZ=Europe/Amsterdam
     volumes:
       - ${DOCKER_DATA_DIR}/plexautolanguages/config:/config
