@@ -606,6 +606,21 @@ PGID=[[PGID]]
 """
 
 [[stack]]
+name = "openchamber"
+tags = ["gitops"]
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "openchamber"
+compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
+compose_cmd_wrapper_include = ["up", "pull", "build", "run"]
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
+
+[[stack]]
 name = "overseerr"
 tags = ["gitops"]
 

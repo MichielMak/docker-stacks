@@ -178,6 +178,16 @@
       "dependencyDashboardApproval": true
     },
     {
+      "description": "OpenCode majors need manual review — OpenChamber only supports OpenCode 2.x",
+      "matchPackageNames": [
+        "@opencode/cli"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
       "description": "MariaDB: stay on the 12.3 LTS line — 13.x is a rolling release and data directories cannot be downgraded. RomM is already on 13.x.",
       "matchFileNames": [
         "!**/romm/compose.yaml"
