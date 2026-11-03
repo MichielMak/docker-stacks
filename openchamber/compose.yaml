@@ -1,0 +1,58 @@
+services:
+  openchamber:
+    image: node:26.13.0-trixie@sha256:6d2c7d5d074bf72f81ddc252b4fbb5d625bc028eeda49cb4b8c2ff8eda1ee617
+    container_name: openchamber
+    init: true
+    environment:
+      - TZ=${TZ}
+      - LANG=C.UTF-8
+      - HOME=/home/node
+      - PATH=/home/node/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - NPM_CONFIG_PREFIX=/home/node/.npm-global
+      - OPENCHAMBER_HOST=0.0.0.0
+      - OPENCHAMBER_UI_PASSWORD=${OPENCHAMBER_UI_PASSWORD}
+      # Versions are pinned below and bumped by Renovate
+      - OPENCODE_DISABLE_AUTOUPDATE=1
+      # renovate: datasource=npm depName=@openchamber/web
+      - OPENCHAMBER_VERSION=2.6.0
+      # OpenChamber needs OpenCode 2.x: OpenCode majors wait for approval (renovate.json)
+      # renovate: datasource=npm depName=@opencode/cli
+      - OPENCODE_VERSION=2.2.5
+    # Upstream publishes no image (their compose builds from source), so OpenChamber and OpenCode are
+    # installed from npm into the persisted home on first start and whenever a version changes
+    entrypoint:
+      - sh
+      - -c
+    command:
+      - >
+        chown node:node /home/node &&
+        exec setpriv --reuid=node --regid=node --init-groups sh -c '
+          ( npm ls -g @openchamber/web@$$OPENCHAMBER_VERSION >/dev/null 2>&1 && npm ls -g @opencode/cli@$$OPENCODE_VERSION >/dev/null 2>&1 ||
+            npm install -g --allow-scripts=@opencode/cli,node-pty @openchamber/web@$$OPENCHAMBER_VERSION @opencode/cli@$$OPENCODE_VERSION ) &&
+          mkdir -p /home/node/workspaces && cd /home/node/workspaces &&
+          exec openchamber serve --foreground --port 3000'
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5m
+    volumes:
+      - ${DOCKER_DATA_DIR}/openchamber/home:/home/node
+    labels:
+      - homepage.group=Infra
+      - homepage.name=OpenChamber
+      - homepage.icon=https://openchamber.dev/favicon.svg
+      - homepage.href=https://openchamber.${DOMAIN}/
+      - homepage.description=Web UI for the OpenCode coding agent
+      - traefik.enable=true
+      - traefik.http.routers.openchamber.rule=Host(`openchamber.${DOMAIN}`)
+      - traefik.http.routers.openchamber.entrypoints=websecure
+      - traefik.http.routers.openchamber.tls=true
+      - traefik.http.services.openchamber.loadbalancer.server.port=3000
+    restart: unless-stopped
+    networks:
+      - npm
+networks:
+  npm:
+    external: true
