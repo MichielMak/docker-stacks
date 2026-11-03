@@ -7,7 +7,10 @@ services:
       - TZ=${TZ}
       - LANG=C.UTF-8
       - HOME=/home/node
-      - PATH=/home/node/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      # Agents commit, push and open PRs as the michiel-claude[bot] GitHub App (see ../paseo/claude-github-app/README.md).
+      # The App key and app.env are in ~/.config/claude-github-app/ in the home volume
+      - PATH=/opt/claude-github-app/bin:/home/node/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - GIT_CONFIG_GLOBAL=/opt/claude-github-app/gitconfig
       - NPM_CONFIG_PREFIX=/home/node/.npm-global
       - OPENCHAMBER_HOST=0.0.0.0
       - OPENCHAMBER_UI_PASSWORD=${OPENCHAMBER_UI_PASSWORD}
@@ -91,6 +94,7 @@ services:
       start_period: 5m
     volumes:
       - ${DOCKER_DATA_DIR}/openchamber/home:/home/node
+      - ../paseo/claude-github-app:/opt/claude-github-app:ro
     labels:
       - homepage.group=Infra
       - homepage.name=OpenChamber

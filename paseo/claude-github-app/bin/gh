@@ -1,5 +1,11 @@
 #!/bin/sh
-# Runs the real gh as the GitHub App.
-GH_TOKEN=$(/opt/claude-github-app/token) || exit 1
+# Runs the real gh (the next gh in PATH after this wrapper) as the GitHub App.
+self=$(cd "$(dirname "$0")" && pwd -P)
+GH_TOKEN=$("$self/../token") || exit 1
 export GH_TOKEN
-exec /home/paseo/.npm-global/bin/gh "$@"
+IFS=:
+for d in $PATH; do
+  [ -n "$d" ] && [ -x "$d/gh" ] && [ "$(cd "$d" 2>/dev/null && pwd -P)" != "$self" ] && exec "$d/gh" "$@"
+done
+echo "claude-github-app: no gh found in PATH" >&2
+exit 127
