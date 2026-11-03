@@ -1,8 +1,11 @@
 #!/bin/sh
-# Runs the real gh (the next gh in PATH after this wrapper) as the GitHub App.
+# Runs the real gh (the next gh in PATH after this wrapper): as the GitHub App where the bot config
+# is active (claude-github-app.enabled, see ../gitconfig), otherwise with the user's own gh login.
 self=$(cd "$(dirname "$0")" && pwd -P)
-GH_TOKEN=$("$self/../token") || exit 1
-export GH_TOKEN
+if [ "$(/usr/bin/git config --bool claude-github-app.enabled 2>/dev/null)" = true ]; then
+  GH_TOKEN=$("$self/../token") || exit 1
+  export GH_TOKEN
+fi
 IFS=:
 for d in $PATH; do
   [ -n "$d" ] && [ -x "$d/gh" ] && [ "$(cd "$d" 2>/dev/null && pwd -P)" != "$self" ] && exec "$d/gh" "$@"

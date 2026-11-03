@@ -1,17 +1,18 @@
 # claude-github-app
 
-Lets Claude Code sessions in the Paseo container, and agents in the OpenChamber container,
-commit, push and open PRs as the GitHub App `michiel-claude[bot]` instead of as the user.
+Lets Claude Code sessions in the Paseo container, and agents in the OpenChamber container (only in
+the App's repos), commit, push and open PRs as the GitHub App `michiel-claude[bot]` instead of as the user.
 Mounted read-only at `/opt/claude-github-app` in both.
 
 | File | Purpose |
 |------|---------|
 | `token` | Signs a JWT with the App key and exchanges it for a 1-hour installation token (cached 50 min) |
 | `git-credential` | git credential helper that hands out that token |
-| `bin/gh` | Wrapper that runs the next `gh` in `PATH` with `GH_TOKEN` set to that token |
+| `bin/gh` | Wrapper that runs the next `gh` in `PATH`, with `GH_TOKEN` set to that token where the marker is set |
 | `bin/git-push-verified` | Pushes the current branch through the GitHub API, so the commits are Verified |
-| `bin/git` | Wrapper that sends `git push` to `git-push-verified`; every other git command goes straight to `/usr/bin/git` |
-| `gitconfig` | Bot author identity, no commit signing, SSH GitHub remotes rewritten to HTTPS |
+| `bin/git` | Wrapper that sends `git push` to `git-push-verified` where the marker is set; everything else goes straight to `/usr/bin/git` |
+| `gitconfig` | Bot author identity, no commit signing, SSH GitHub remotes rewritten to HTTPS, and the `claude-github-app.enabled` marker |
+| `repos.gitconfig` | Includes `gitconfig` only in repos whose remote is one of the App's repos (OpenChamber) |
 
 ## Not in the repo (home volume, `~/.config/claude-github-app/`)
 
@@ -37,9 +38,18 @@ Keep that `PATH` in sync with `PATH` in `../compose.yaml`. Other tools in the co
 
 ## OpenChamber
 
-`openchamber/compose.yaml` mounts this directory and sets `GIT_CONFIG_GLOBAL` and `PATH`
-for the whole container, so everything there (OpenCode agents and the terminal) commits
-and pushes as the App.
+Here the bot is limited to the App's repos; other repos use your own identity.
+
+- `openchamber/compose.yaml` mounts this directory, puts `bin/` first in `PATH`, and adds
+  `repos.gitconfig` as an include through `GIT_CONFIG_COUNT`/`GIT_CONFIG_KEY_0`/`GIT_CONFIG_VALUE_0`.
+- `repos.gitconfig` includes `gitconfig` in a repo only when one of its remotes is one of the App's
+  repos (`includeIf "hasconfig:remote.*.url:..."`). That config has the highest priority, so the bot
+  identity and credentials win there. Keep its list in sync with the App's repository access.
+- In every other repo, and outside a repo, git and gh use your own setup in the home volume:
+  `~/.gitconfig` with your name, email and `helper = !gh auth git-credential`, and `gh auth login`.
+- `bin/git` and `bin/gh` check `claude-github-app.enabled`, which only `gitconfig` sets. So
+  `git push` is a plain push and `gh` uses your login outside the App's repos. In Paseo, `gitconfig`
+  is the global config, so the marker is always set there.
 
 ## Verified commits
 

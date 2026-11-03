@@ -2,6 +2,9 @@
 [user]
 	name = michiel-claude[bot]
 	email = 339110929+michiel-claude[bot]@users.noreply.github.com
+# Tells bin/git and bin/gh to act as the App in this repo
+[claude-github-app]
+	enabled = true
 [commit]
 	gpgsign = false
 [tag]
