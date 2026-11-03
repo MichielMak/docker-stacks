@@ -168,7 +168,7 @@ To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (
 
 ## Pushing from agent sessions (Paseo, OpenChamber)
 
-Claude sessions in Paseo and agent sessions in OpenChamber commit and push as the GitHub App `michiel-claude[bot]` (see `paseo/claude-github-app/README.md`). There, `git push` goes through `git-push-verified`, which recreates the commits through the GitHub API so they show as Verified. Their hashes change: the local branch is moved to the new commits. To make existing unsigned commits on a branch Verified, run `git push-verified --resign`. Tags, `--delete` and other refspecs still use a plain, unsigned push.
+Claude sessions in Paseo, and agent sessions in OpenChamber in the App's repos (`paseo/claude-github-app/repos.gitconfig`), commit and push as the GitHub App `michiel-claude[bot]` (see `paseo/claude-github-app/README.md`). There, `git push` goes through `git-push-verified`, which recreates the commits through the GitHub API so they show as Verified. Their hashes change: the local branch is moved to the new commits. To make existing unsigned commits on a branch Verified, run `git push-verified --resign`. Tags, `--delete` and other refspecs still use a plain, unsigned push.
 
 ## Key Services Reference
 

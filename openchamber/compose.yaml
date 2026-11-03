@@ -7,10 +7,13 @@ services:
       - TZ=${TZ}
       - LANG=C.UTF-8
       - HOME=/home/node
-      # Agents commit, push and open PRs as the michiel-claude[bot] GitHub App (see ../paseo/claude-github-app/README.md).
+      # In the repos listed in repos.gitconfig, git and gh act as the michiel-claude[bot] GitHub App; everywhere else
+      # they use the user's own identity (~/.gitconfig, gh auth login). See ../paseo/claude-github-app/README.md.
       # The App key and app.env are in ~/.config/claude-github-app/ in the home volume
       - PATH=/opt/claude-github-app/bin:/home/node/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - GIT_CONFIG_GLOBAL=/opt/claude-github-app/gitconfig
+      - GIT_CONFIG_COUNT=1
+      - GIT_CONFIG_KEY_0=include.path
+      - GIT_CONFIG_VALUE_0=/opt/claude-github-app/repos.gitconfig
       - NPM_CONFIG_PREFIX=/home/node/.npm-global
       - OPENCHAMBER_HOST=0.0.0.0
       - OPENCHAMBER_UI_PASSWORD=${OPENCHAMBER_UI_PASSWORD}

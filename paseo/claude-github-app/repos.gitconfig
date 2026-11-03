@@ -1,0 +1,88 @@
+# Repos whose agents commit and push as michiel-claude[bot] (the repos the App is installed on).
+# Included from ~/.gitconfig in containers where the bot is opt-in per repo (OpenChamber); other repos
+# use the user's own identity. One line per URL form, as hasconfig patterns are plain globs.
+# Keep in sync with the App's repository access.
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/docker-stacks"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/docker-stacks.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/docker-stacks"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/docker-stacks.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/docker-stacks"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/docker-stacks.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/AI"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/AI.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/AI"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/AI.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/AI"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/AI.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/esphome"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/esphome.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/esphome"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/esphome.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/esphome"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/esphome.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/hass-config"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/hass-config.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/hass-config"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/hass-config.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/hass-config"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/hass-config.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/open_agb_firm"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/open_agb_firm.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/open_agb_firm"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/open_agb_firm.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/open_agb_firm"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/open_agb_firm.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/flightscanner"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/flightscanner.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/flightscanner"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/flightscanner.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/flightscanner"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/flightscanner.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/app-openthread-border-router"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:https://github.com/MichielMak/app-openthread-border-router.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/app-openthread-border-router"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:git@github.com:MichielMak/app-openthread-border-router.git"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/app-openthread-border-router"]
+	path = /opt/claude-github-app/gitconfig
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/MichielMak/app-openthread-border-router.git"]
+	path = /opt/claude-github-app/gitconfig
