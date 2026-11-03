@@ -1,7 +1,7 @@
 #!/bin/sh
 # Prints a GitHub App installation token. Tokens live 60 minutes; the cache is reused for 50.
 set -eu
-state=/home/paseo/.config/claude-github-app
+state="$HOME/.config/claude-github-app"
 . "$state/app.env"
 cache="$state/.token"
 if [ -s "$cache" ] && [ -n "$(find "$cache" -mmin -50)" ]; then

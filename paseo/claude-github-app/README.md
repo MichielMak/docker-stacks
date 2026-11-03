@@ -1,19 +1,21 @@
 # claude-github-app
 
-Lets Claude Code sessions in the Paseo container commit, push and open PRs as the
-GitHub App `michiel-claude[bot]` instead of as the user. Mounted read-only at
-`/opt/claude-github-app`.
+Lets Claude Code sessions in the Paseo container, and agents in the OpenChamber container,
+commit, push and open PRs as the GitHub App `michiel-claude[bot]` instead of as the user.
+Mounted read-only at `/opt/claude-github-app` in both.
 
 | File | Purpose |
 |------|---------|
 | `token` | Signs a JWT with the App key and exchanges it for a 1-hour installation token (cached 50 min) |
 | `git-credential` | git credential helper that hands out that token |
-| `bin/gh` | Wrapper that runs the real `gh` with `GH_TOKEN` set to that token |
+| `bin/gh` | Wrapper that runs the next `gh` in `PATH` with `GH_TOKEN` set to that token |
 | `bin/git-push-verified` | Pushes the current branch through the GitHub API, so the commits are Verified |
 | `bin/git` | Wrapper that sends `git push` to `git-push-verified`; every other git command goes straight to `/usr/bin/git` |
 | `gitconfig` | Bot author identity, no commit signing, SSH GitHub remotes rewritten to HTTPS |
 
-## Not in the repo (Paseo home volume, `~/.config/claude-github-app/`)
+## Not in the repo (home volume, `~/.config/claude-github-app/`)
+
+Each container reads these from its own home (`$HOME`), so copy them into both home volumes.
 
 - `private-key.pem` — App private key, mode 600
 - `app.env` — `APP_ID=` and `INSTALLATION_ID=`
@@ -32,6 +34,12 @@ GitHub App `michiel-claude[bot]` instead of as the user. Mounted read-only at
 
 Keep that `PATH` in sync with `PATH` in `../compose.yaml`. Other tools in the container
 (Paseo itself, Copilot, your own shell) keep using the user's credentials.
+
+## OpenChamber
+
+`openchamber/compose.yaml` mounts this directory and sets `GIT_CONFIG_GLOBAL` and `PATH`
+for the whole container, so everything there (OpenCode agents and the terminal) commits
+and pushes as the App.
 
 ## Verified commits
 
