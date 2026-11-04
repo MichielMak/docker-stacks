@@ -414,6 +414,19 @@
         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s*\\n\\s*-?\\s*\\w+?_VERSION\\s*[:=]\\s*(?<currentValue>\\S+)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Trivy version passed to the local install-trivy action (stand-in for setup-trivy while get.trivy.dev is down, aquasecurity/setup-trivy#42)",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/[^/]+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "uses:\\s*\\./\\.github/actions/install-trivy\\s*\\n\\s*with:\\s*\\n\\s*version:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "aquasecurity/trivy",
+      "versioningTemplate": "semver"
     }
   ],
   "customDatasources": {
