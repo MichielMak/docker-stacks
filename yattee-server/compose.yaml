@@ -1,0 +1,37 @@
+# Backend for the Yattee app on iPhone and Apple TV: https://github.com/yattee/yattee-server
+# Finds video streams with yt-dlp. Playback is relayed, not stored; /downloads only fills on "Save Offline".
+# First start: open https://yattee.${DOMAIN}/ and finish the setup wizard to create the admin account.
+services:
+  yattee-server:
+    image: yattee/yattee-server:1.0.10@sha256:e54e36648535396c54cbe9687b51d702f698f3987cdab5ce26ba696e3e939176
+    container_name: yattee-server
+    restart: unless-stopped
+    # Runs as root: the image installs deno (needed by yt-dlp) under /root
+    volumes:
+      # SQLite database and the key that encrypts stored credentials: back this up
+      - ${DOCKER_DATA_DIR}/yattee-server/data:/app/data
+      # Files for "Save Offline", removed after the server's download max age
+      - ${DOCKER_DATA_DIR}/yattee-server/downloads:/downloads
+    networks:
+      - npm
+    labels:
+      - homepage.group=Media
+      - homepage.name=Yattee
+      - homepage.icon=mdi-television-play
+      - homepage.href=https://yattee.${DOMAIN}/
+      - homepage.description=Video backend for the Yattee app
+      - traefik.enable=true
+      - traefik.http.routers.yattee.rule=Host(`yattee.${DOMAIN}`)
+      - traefik.http.routers.yattee.entrypoints=websecure
+      - traefik.http.routers.yattee.tls=true
+      # No Authentik: the app logs in with the server's own HTTP Basic Auth
+      - traefik.http.services.yattee.loadbalancer.server.port=8085
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8085/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+networks:
+  npm:
+    external: true
