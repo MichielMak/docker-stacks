@@ -38,7 +38,7 @@ services:
       - UV_TOOL_BIN_DIR=/home/paseo/.npm-global/bin
       # Atlassian Teamwork Graph CLI, installed from Atlassian's CDN (custom Renovate datasource)
       # renovate: datasource=custom.twg depName=twg
-      - TWG_VERSION=1.4.2
+      - TWG_VERSION=1.4.3
     entrypoint:
       - /usr/bin/tini
       - --
