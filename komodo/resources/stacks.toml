@@ -1142,3 +1142,16 @@ DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 PUID=[[PUID]]
 PGID=[[PGID]]
 """
+
+[[stack]]
+name = "yattee-server"
+tags = ["gitops"]
+
+[stack.config]
+server = "Local"
+linked_repo = "docker-stacks"
+run_directory = "yattee-server"
+environment = """
+DOMAIN=[[DOMAIN]]
+DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
+"""
