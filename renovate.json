@@ -30,9 +30,10 @@
   "prHourlyLimit": 6,
   "prConcurrentLimit": 10,
   "pinDigests": true,
-  "automerge": true,
+  "automerge": false,
   "automergeType": "pr",
-  "platformAutomerge": true,
+  "platformAutomerge": false,
+  "automergeSchedule": ["* 0-6 * * *"],
   "pruneStaleBranches": true,
   "recreateWhen": "always",
   "dependencyDashboardAutoclose": false,
@@ -48,6 +49,27 @@
     "self-hosted-renovate-mm"
   ],
   "packageRules": [
+    {
+      "description": "Automerge minor, patch and digest updates; majors wait for review. Renovate merges the PR itself (platformAutomerge off) once every check is green, and only 00:00-07:00 (automergeSchedule), since every merge deploys. Must stay first so later automerge: false rules win.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest",
+        "pin",
+        "pinDigest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Core stacks need manual review: if one breaks overnight, everything behind it is down until morning",
+      "matchFileNames": [
+        "traefik/**",
+        "cloudflared/**",
+        "authentik/**",
+        "pihole/**"
+      ],
+      "automerge": false
+    },
     {
       "description": "Group arl-sentinel pip deps with its Docker stack",
       "matchManagers": ["pip_requirements"],

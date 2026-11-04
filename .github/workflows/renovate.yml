@@ -2,8 +2,21 @@ name: Renovate
 
 on:
   schedule:
-    # Hourly at :20, offset from other scheduled workflows.
+    # Hourly at :20, offset from other scheduled workflows. GitHub skips many
+    # scheduled runs, so in practice this fires every 4-7 hours.
     - cron: "20 * * * *"
+  # Run again as soon as CI finishes on a Renovate PR. Renovate merges about
+  # one PR per run (the merge moves main, so the other PRs are rebased and
+  # their CI runs again), so this keeps merges going through the night
+  # automerge window instead of waiting for the next scheduled run.
+  # Renovate never checks out PR code here; it only reads its config from main.
+  workflow_run: # zizmor: ignore[dangerous-triggers]
+    workflows:
+      - Pre-commit
+      - Trivy Security Scan
+    types: [completed]
+    branches:
+      - "renovate/**"
   workflow_dispatch:
     inputs:
       repoCache:
@@ -50,6 +63,12 @@ concurrency:
 jobs:
   renovate:
     name: Renovate
+    # workflow_run: only for green CI on branches in this repo (not forks
+    # that happen to use a renovate/ branch name).
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
