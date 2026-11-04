@@ -20,7 +20,7 @@ services:
       # Versions are pinned below and bumped by Renovate
       - OPENCODE_DISABLE_AUTOUPDATE=1
       # renovate: datasource=npm depName=@openchamber/web
-      - OPENCHAMBER_VERSION=2.6.0
+      - OPENCHAMBER_VERSION=2.6.1
       # OpenChamber needs OpenCode 2.x: OpenCode majors wait for approval (renovate.json)
       # renovate: datasource=npm depName=@opencode/cli
       - OPENCODE_VERSION=2.2.5
