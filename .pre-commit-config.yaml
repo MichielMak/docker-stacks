@@ -16,6 +16,17 @@ repos:
       - id: check-yaml
         # Traefik dynamic configs are Go templates ({{ env "X" }}), not valid YAML
         exclude: "^traefik/dynamic/"
+  # GitHub Actions workflows: actionlint catches syntax, expression and shell
+  # (shellcheck) errors; zizmor catches security problems such as unpinned
+  # actions, template injection and persisted credentials.
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.32.0
+    hooks:
+      - id: zizmor
   - repo: local
     hooks:
       - id: docker-compose-config
