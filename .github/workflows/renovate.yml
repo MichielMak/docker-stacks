@@ -54,9 +54,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # Exchanges the GitHub App private key for a short-lived installation
       # token. This replaces the self-hosted token-generator container.
+      # The token keeps all of the App's permissions on purpose: Renovate uses
+      # most of them (contents, pull requests, issues, workflows, checks,
+      # statuses, Dependabot alerts, packages). It is limited to the
+      # repositories in `renovate_repos`.
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0

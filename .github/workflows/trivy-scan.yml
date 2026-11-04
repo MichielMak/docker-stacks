@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install Trivy
         uses: ./.github/actions/install-trivy
@@ -68,7 +70,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'true'
-        uses: marocchino/sticky-pull-request-comment@v3
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: trivy-config-scan
           path: config_comment.md
@@ -78,7 +80,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'false'
-        uses: marocchino/sticky-pull-request-comment@v3
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: trivy-config-scan
           delete: true
@@ -97,6 +99,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Install Trivy
@@ -105,10 +108,12 @@ jobs:
           version: v0.76.1
 
       - name: Determine changed compose files
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           set -euo pipefail
-          base="origin/${{ github.base_ref }}"
-          git fetch --quiet origin "${{ github.base_ref }}" || true
+          base="origin/${BASE_REF}"
+          git fetch --quiet origin "${BASE_REF}" || true
           files=$(git diff --name-only "$base"...HEAD -- \
             '**/compose.yaml' '**/compose.yml' \
             '**/docker-compose.yaml' '**/docker-compose.yml' || true)
@@ -129,7 +134,8 @@ jobs:
 
           # Extract every `image:` reference from the changed compose files,
           # strip quotes/whitespace, and de-duplicate.
-          images=$(grep -hoE '^[[:space:]]*image:[[:space:]]*\S+' $(cat changed_files.txt) \
+          mapfile -t changed_files < changed_files.txt
+          images=$(grep -hoE '^[[:space:]]*image:[[:space:]]*\S+' "${changed_files[@]}" \
             | sed -E 's/^[[:space:]]*image:[[:space:]]*//; s/["'\'']//g' \
             | tr -d '\r' \
             | sort -u || true)
@@ -225,7 +231,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'true'
-        uses: marocchino/sticky-pull-request-comment@v3
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: trivy-image-scan
           path: image_comment.md
@@ -235,7 +241,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.actor != 'dependabot[bot]' &&
           steps.scan.outputs.found == 'false'
-        uses: marocchino/sticky-pull-request-comment@v3
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: trivy-image-scan
           delete: true

@@ -51,6 +51,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up OpenTofu
         uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
@@ -62,7 +64,7 @@ jobs:
         run: tofu fmt -check -diff
 
       - name: Init
-        run: tofu init -backend-config='endpoints={s3="https://${{ vars.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"}'
+        run: tofu init -backend-config="endpoints={s3=\"https://${TF_VAR_account_id}.r2.cloudflarestorage.com\"}"
 
       - name: Validate
         run: tofu validate

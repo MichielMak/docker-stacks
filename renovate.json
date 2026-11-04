@@ -73,6 +73,13 @@
       ]
     },
     {
+      "description": "Wait 3 days before updating GitHub Actions: compromised action releases are usually found and pulled within that window, and pinned digests don't help once Renovate bumps to a bad release. Vulnerability fixes skip this wait.",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "minimumReleaseAge": "3 days"
+    },
+    {
       "description": "Skip digest pinning for aquasecurity/trivy (the setup-trivy 'version' with-input): Renovate's uses-with extraction has no replaceString here, so pinDigest always fails the branch update",
       "matchManagers": [
         "github-actions"
