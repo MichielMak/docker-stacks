@@ -40,11 +40,15 @@ Keep that `PATH` in sync with `PATH` in `../compose.yaml`. Other tools in the co
 
 Here the bot is limited to the App's repos; other repos use your own identity.
 
-- `openchamber/compose.yaml` mounts this directory, puts `bin/` first in `PATH`, and adds
-  `repos.gitconfig` as an include through `GIT_CONFIG_COUNT`/`GIT_CONFIG_KEY_0`/`GIT_CONFIG_VALUE_0`.
+- `openchamber/compose.yaml` mounts this directory, puts `bin/` first in `PATH`, and on start adds
+  `repos.gitconfig` as an `include.path` at the end of `~/.gitconfig` (once). It is not set through
+  `GIT_CONFIG_COUNT`/`GIT_CONFIG_KEY_0`/`GIT_CONFIG_VALUE_0`: OpenChamber's git library (simple-git)
+  refuses every git command when the environment sets `include.path`, which breaks OpenChamber's
+  GitHub features (PR list, opening a PR).
 - `repos.gitconfig` includes `gitconfig` in a repo only when one of its remotes is one of the App's
-  repos (`includeIf "hasconfig:remote.*.url:..."`). That config has the highest priority, so the bot
-  identity and credentials win there. Keep its list in sync with the App's repository access.
+  repos (`includeIf "hasconfig:remote.*.url:..."`). Being last in `~/.gitconfig`, it overrides your
+  global settings, so the bot identity and credentials win there. A repo's own `.git/config` can
+  still override it. Keep its list in sync with the App's repository access.
 - In every other repo, and outside a repo, git and gh use your own setup in the home volume:
   `~/.gitconfig` with your name, email and `helper = !gh auth git-credential`, and `gh auth login`.
 - `bin/git` and `bin/gh` check `claude-github-app.enabled`, which only `gitconfig` sets. So

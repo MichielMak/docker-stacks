@@ -11,9 +11,8 @@ services:
       # they use the user's own identity (~/.gitconfig, gh auth login). See ../paseo/claude-github-app/README.md.
       # The App key and app.env are in ~/.config/claude-github-app/ in the home volume
       - PATH=/opt/claude-github-app/bin:/home/node/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - GIT_CONFIG_COUNT=1
-      - GIT_CONFIG_KEY_0=include.path
-      - GIT_CONFIG_VALUE_0=/opt/claude-github-app/repos.gitconfig
+      # repos.gitconfig is included from ~/.gitconfig by the command below, not through GIT_CONFIG_* variables:
+      # OpenChamber's git library (simple-git) refuses every git command when the environment sets include.path
       - NPM_CONFIG_PREFIX=/home/node/.npm-global
       - OPENCHAMBER_HOST=0.0.0.0
       - OPENCHAMBER_UI_PASSWORD=${OPENCHAMBER_UI_PASSWORD}
@@ -87,6 +86,8 @@ services:
           $$b/uv python install --default --preview-features python-install-default $$PYTHON_VERSION && $$b/uv python upgrade $$PYTHON_VERSION &&
           ( $$b/twg --version 2>/dev/null | grep -qxF "$$TWG_VERSION" ||
             curl -fsSL --retry 2 https://teamwork-graph.atlassian.com/cli/install | bash -s -- --yes --skip-login --skip-skills --version $$TWG_VERSION --install-dir $$b ) &&
+          ( git config --global --get-all include.path | grep -qxF /opt/claude-github-app/repos.gitconfig ||
+            git config --global --add include.path /opt/claude-github-app/repos.gitconfig ) &&
           mkdir -p /home/node/workspaces && cd /home/node/workspaces &&
           exec openchamber serve --foreground --port 3000'
     healthcheck:
