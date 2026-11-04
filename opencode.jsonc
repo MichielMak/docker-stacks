@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      // MCPJungle gateway (mcpjungle/compose.yaml): one endpoint for every server
+      // registered there (hass, TrueNAS_Docker, unifi-network). Reached over the
+      // npm Docker network, so it only works from containers on that network
+      // (e.g. openchamber). MCPJungle does no auth, so OAuth is off.
+      "mcpjungle": {
+        "type": "remote",
+        "url": "http://mcpjungle:8080/mcp",
+        "oauth": false
+      }
+    }
+  }
+}
