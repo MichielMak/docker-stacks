@@ -389,6 +389,13 @@
       ]
     },
     {
+      "description": "The pre-commit manager cannot write a digest into rev:, so pinning fails with 'update failure'",
+      "matchManagers": [
+        "pre-commit"
+      ],
+      "pinDigests": false
+    },
+    {
       "description": "OpenTofu (cloudflare/): merging applies to the live Cloudflare config, so review these by hand",
       "matchFileNames": ["cloudflare/**", ".github/workflows/cloudflare.yml"],
       "matchPackageNames": ["cloudflare/cloudflare", "opentofu/opentofu"],
