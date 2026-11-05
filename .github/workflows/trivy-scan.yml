@@ -150,12 +150,17 @@ jobs:
           echo "$images"
 
           : > image_comment.md
+          : > image_errors.md
           fail=0
+          scan_error=0
           run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           for img in $images; do
             echo "::group::Scanning $img"
-            # --ignore-unfixed: only report/gate on vulnerabilities that have a
-            #   fix available (actionable — Renovate can bump to the patched image).
+            # --ignore-unfixed: only report vulnerabilities that have a fix
+            #   available (actionable — Renovate can bump to the patched image).
+            # --exit-code 2: findings return 2, keeping them apart from Trivy's
+            #   exit code 1, which means the scan itself failed (for example an
+            #   image or digest that does not exist).
             json="$(mktemp)"
             set +e
             trivy image \
@@ -163,18 +168,27 @@ jobs:
               --ignore-unfixed \
               --no-progress \
               --timeout 15m \
-              --exit-code 1 \
+              --exit-code 2 \
               --format json \
               --output "$json" \
               "$img"
             code=$?
             set -e
 
+            if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then
+              echo "::error::Scan failed for $img (exit $code)"
+              echo "- \`$img\` (exit $code)" >> image_errors.md
+              scan_error=1
+              rm -f "$json"
+              echo "::endgroup::"
+              continue
+            fi
+
             # Human-readable table in the job log (full detail lives here).
             trivy convert --format table "$json" || cat "$json"
 
-            if [ "$code" -ne 0 ]; then
-              echo "::error::Vulnerabilities found in $img"
+            if [ "$code" -eq 2 ]; then
+              echo "::warning::Vulnerabilities found in $img"
               crit=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | map(select(.Severity == "CRITICAL")) | length' "$json")
               high=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | map(select(.Severity == "HIGH")) | length' "$json")
               total=$(jq '[.Results[]?.Vulnerabilities[]?] | unique_by(.VulnerabilityID + "|" + .PkgName) | length' "$json")
@@ -204,13 +218,23 @@ jobs:
             echo "::endgroup::"
           done
 
-          if [ "$fail" -ne 0 ]; then
+          if [ "$fail" -ne 0 ] || [ "$scan_error" -ne 0 ]; then
             {
-              echo "## 🛡️ Trivy image scan — fixable HIGH/CRITICAL vulnerabilities found"
-              echo
-              echo "The images below have known vulnerabilities with fixes available. Update to a patched image (digest) before merging."
-              echo
-              cat image_comment.md
+              if [ "$scan_error" -ne 0 ]; then
+                echo "## ❌ Trivy image scan — some images could not be scanned"
+                echo
+                echo "These images could not be pulled or scanned. Check that the tag and digest exist. This blocks merging."
+                echo
+                cat image_errors.md
+                echo
+              fi
+              if [ "$fail" -ne 0 ]; then
+                echo "## 🛡️ Trivy image scan — fixable HIGH/CRITICAL vulnerabilities found"
+                echo
+                echo "For information only: these findings do not block merging. Many are already deployed; the weekly scheduled scan tracks them."
+                echo
+                cat image_comment.md
+              fi
             } > image_comment_final.md
             mv image_comment_final.md image_comment.md
 
@@ -225,6 +249,7 @@ jobs:
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
+          echo "scan_error=$([ "$scan_error" -ne 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
       - name: Post findings comment
         if: >-
@@ -246,6 +271,8 @@ jobs:
           header: trivy-image-scan
           delete: true
 
-      - name: Fail if vulnerabilities found
-        if: steps.scan.outputs.found == 'true'
+      # Vulnerabilities are reported only (see the comment above); fail only
+      # when an image could not be scanned at all.
+      - name: Fail if an image could not be scanned
+        if: steps.scan.outputs.scan_error == 'true'
         run: exit 1
