@@ -47,7 +47,7 @@ services:
       - UV_TOOL_BIN_DIR=/home/node/.npm-global/bin
       # Atlassian Teamwork Graph CLI, installed from Atlassian's CDN (custom Renovate datasource)
       # renovate: datasource=custom.twg depName=twg
-      - TWG_VERSION=1.4.3
+      - TWG_VERSION=1.4.4
     # Upstream publishes no image (their compose builds from source), so OpenChamber, OpenCode and the CLI tools
     # are installed into the persisted home on first start and whenever a version changes
     entrypoint:
