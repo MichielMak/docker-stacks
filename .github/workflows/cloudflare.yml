@@ -28,7 +28,7 @@ concurrency:
 
 env:
   # renovate: datasource=github-releases depName=opentofu/opentofu
-  TOFU_VERSION: 1.13.8
+  TOFU_VERSION: 1.13.9
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
