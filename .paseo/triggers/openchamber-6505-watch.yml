@@ -1,0 +1,76 @@
+name: openchamber-6505-watch
+enabled: true
+on:
+  # Hub's GitHub triggers only see repos the App is installed on, so poll the upstream repo daily.
+  schedule.tick:
+    recurrence:
+      start: "2026-11-08T09:00:00"
+      rule: "FREQ=DAILY"
+      timezone: Europe/Amsterdam
+run:
+  target:
+    daemon: ba650f671649
+    cwd: /home/paseo/workspace/docker-stacks
+  agent:
+    provider: claude
+    # Opens a PR when the fix ships, like paseo-mention.
+    mode: bypassPermissions
+  continuation:
+    mode: new
+  title: "OpenChamber #6505 watch ${{ paseo.execution.id }}"
+  prompt: |
+    Daily watch for openchamber/openchamber#6505 in michielmak/docker-stacks.
+
+    Background: OpenCode is held at 2.2.5 in openchamber/compose.yaml and renovate.json, because
+    OpenCode 2.2.6 makes OpenChamber's proxied API calls fail with 403. The fix is upstream PR
+    openchamber/openchamber#6508.
+
+    Rules:
+    - Follow CLAUDE.md. Never push to main, never merge a PR, never decrypt or print secrets.
+    - Never comment on or change anything in openchamber/openchamber.
+    - Use the MCP tools only to read. Never restart, remove, update or reboot anything.
+
+    1. Skip if already handled: if `gh pr list --repo michielmak/docker-stacks --state all
+       --head fix/lift-opencode-hold` shows a PR, send nothing and call finish_execution.
+
+    2. Check upstream with curl against the public APIs:
+       https://api.github.com/repos/openchamber/openchamber/pulls/6508
+       https://api.github.com/repos/openchamber/openchamber/issues/6505
+       If #6508 is merged: get the latest @openchamber/web version on npm
+       (https://registry.npmjs.org/@openchamber/web/latest) and its GitHub release tag. Check that the
+       release includes the merge commit:
+       https://api.github.com/repos/openchamber/openchamber/compare/<merge_commit_sha>...<release_tag>
+       (status "ahead" or "identical" means it is included).
+
+    3. Decide:
+       - #6508 still open, or merged but not in a published @openchamber/web release yet:
+         send nothing and call finish_execution.
+       - #6508 closed without merging, or #6505 closed as not planned: send a priority 5 Gotify
+         message "OpenChamber #6505: fix PR closed" with a one-line summary. Change nothing.
+       - The fix is in a published release: go to step 4.
+
+    4. Open the PR:
+       - `git fetch origin`, then create a worktree under .claude/worktrees/ on a new branch
+         `fix/lift-opencode-hold` from origin/main. Never work in the main checkout.
+       - renovate.json: remove the "Hold OpenCode at 2.2.5" packageRule. Keep every other rule.
+       - openchamber/compose.yaml: remove the 3-line "Held at 2.2.5" comment. Set OPENCODE_VERSION
+         to the latest 2.x @opencode/cli on npm. Set OPENCHAMBER_VERSION to the fixed release if it
+         is still lower. Keep the `# renovate:` comments.
+       - Delete .paseo/triggers/openchamber-6505-watch.yml and its row in .paseo/README.md.
+       - Run `pre-commit run --files <changed files>` and fix anything it reports.
+       - Commit, push, and open a PR against main. Body: plain and short. Name the OpenChamber
+         release that contains openchamber/openchamber#6508, and list what changed. End with
+         "After merge: redeploy openchamber, then disable the openchamber-6505-watch trigger in
+         the Hub UI (deleting the file does not remove it)."
+
+    5. Send a priority 5 Gotify message: title "OpenChamber #6505 fixed: PR ready", message = the
+       PR link. Never print the token:
+
+         curl -fsS -X POST "$GOTIFY_URL/message?token=$GOTIFY_HEALTH_TOKEN" \
+           -F "title=<title>" -F "message=<message>" -F "priority=<priority>"
+
+    If a check or step fails, send a priority 2 Gotify message that says which one failed.
+    Put the findings in finish_execution.
+  max_runtime: 45m
+  idle_timeout: 10m
+  auto_archive: true
