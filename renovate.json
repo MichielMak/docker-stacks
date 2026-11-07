@@ -217,7 +217,7 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "Hold OpenCode at 2.2.5: 2.2.6 adds a cross-site guard that 403s OpenChamber's proxied API calls (openchamber/openchamber#6505). Remove this rule once an @openchamber/web release includes openchamber/openchamber#6508. The openchamber-6505-watch Paseo trigger reports when that happens.",
+      "description": "Hold OpenCode at 2.2.5: 2.2.6 adds a cross-site guard that 403s OpenChamber's proxied API calls (openchamber/openchamber#6505). Remove this rule once an @openchamber/web release includes openchamber/openchamber#6508. The openchamber-6505-watch Paseo trigger opens that PR when the fix ships.",
       "matchPackageNames": [
         "@opencode/cli"
       ],
