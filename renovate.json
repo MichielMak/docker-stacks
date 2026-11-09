@@ -217,13 +217,6 @@
       "dependencyDashboardApproval": true
     },
     {
-      "description": "Hold OpenCode at 2.2.5: 2.2.6 adds a cross-site guard that 403s OpenChamber's proxied API calls (openchamber/openchamber#6505). Remove this rule once an @openchamber/web release includes openchamber/openchamber#6508. The openchamber-6505-watch Paseo trigger opens that PR when the fix ships.",
-      "matchPackageNames": [
-        "@opencode/cli"
-      ],
-      "allowedVersions": "<=2.2.5"
-    },
-    {
       "description": "MariaDB: stay on the 12.3 LTS line — 13.x is a rolling release and data directories cannot be downgraded. RomM is already on 13.x.",
       "matchFileNames": [
         "!**/romm/compose.yaml"
