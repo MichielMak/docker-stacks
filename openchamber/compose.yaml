@@ -21,10 +21,8 @@ services:
       # renovate: datasource=npm depName=@openchamber/web
       - OPENCHAMBER_VERSION=2.7.0
       # OpenChamber needs OpenCode 2.x: OpenCode majors wait for approval (renovate.json)
-      # Held at 2.2.5: OpenCode 2.2.6's cross-site guard 403s OpenChamber's proxied API calls, so
-      # sessions do not load (openchamber/openchamber#6505). Lift once OpenChamber ships #6508.
       # renovate: datasource=npm depName=@opencode/cli
-      - OPENCODE_VERSION=2.2.5
+      - OPENCODE_VERSION=2.2.6
       - DX_API_TOKEN=${DX_API_TOKEN}
       # CLI tools for agents, the same set as the paseo stack, installed into ~/.npm-global/bin by the command below
       # renovate: datasource=npm depName=@get-dx/cli

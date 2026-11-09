@@ -7,7 +7,6 @@ One file per trigger in `triggers/`, run by Paseo Hub (`hub/`) on the Paseo daem
 | `paseo-mention` | MichielMak writes `@paseo` in an issue, issue comment or PR comment | Works on the request in a worktree, opens or updates a PR, replies |
 | `renovate-needs-agent` | MichielMak adds the `needs-agent` label to a Renovate PR | Checks release notes, fixes the compose files on the PR branch, comments with a risk level |
 | `weekly-homelab-check` | Mondays 09:00 Europe/Amsterdam | Read-only Docker and Home Assistant check, summary via Gotify |
-| `openchamber-6505-watch` | Daily 09:00 Europe/Amsterdam | Checks openchamber/openchamber#6505 and its fix PR #6508. When a release with the fix ships, opens a PR that lifts the OpenCode 2.2.5 hold and removes this trigger, then sends the link via Gotify. Disable it in the Hub UI after that PR is merged |
 | `mcp-tools-test` | Manual run only | Lists the MCP tools and env vars a Hub agent gets |
 
 ## Deploy
