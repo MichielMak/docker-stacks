@@ -133,6 +133,12 @@ jobs:
                 "password": "${{ secrets.DOCKERHUB_TOKEN }}"
               },
               {
+                "matchHost": "dhi.io",
+                "hostType": "docker",
+                "username": "${{ secrets.DOCKERHUB_USERNAME }}",
+                "password": "${{ secrets.DOCKERHUB_TOKEN }}"
+              },
+              {
                 "matchHost": "ghcr.io",
                 "hostType": "docker",
                 "username": "x-access-token",
