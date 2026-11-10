@@ -52,10 +52,13 @@ services:
       # renovate: datasource=pypi depName=azure-cli
       - AZURE_CLI_VERSION=2.92.0
       - AZURE_CORE_COLLECT_TELEMETRY=false
-      # Komodo CLI (km). The API key and secret go in ~/.config/komodo/komodo.cli.toml in the home volume
+      # Komodo CLI (km). The API key and secret belong to a Komodo service user with limited permissions,
+      # and come from secrets.sops.env. Every agent in the container can read them, whatever its project
       # renovate: datasource=github-releases depName=moghtech/komodo
       - KOMODO_CLI_VERSION=v2.3.4
       - KOMODO_CLI_HOST=https://komodo.${DOMAIN}
+      - KOMODO_CLI_KEY=${KOMODO_CLI_KEY}
+      - KOMODO_CLI_SECRET=${KOMODO_CLI_SECRET}
     # Upstream publishes no image (their compose builds from source), so OpenChamber, OpenCode and the CLI tools
     # are installed into the persisted home on first start and whenever a version changes
     entrypoint:
