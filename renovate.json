@@ -136,6 +136,13 @@
       "allowedVersions": "!/^(?:latest|stable|edge|release|rolling|master|main)$|^[a-f0-9]{7,}$/i"
     },
     {
+      "description": "headless-shell: track the stable channel by digest — its version tags mix stable/beta/dev builds (must stay after the global Docker tag rules)",
+      "matchPackageNames": [
+        "chromedp/headless-shell"
+      ],
+      "allowedVersions": "/^stable$/"
+    },
+    {
       "description": "Hotio: parse release-/pr-plugins- <semver> tags",
       "matchPackageNames": [
         "/^ghcr\\.io\\/hotio\\//"

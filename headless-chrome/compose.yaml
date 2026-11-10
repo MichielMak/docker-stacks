@@ -3,7 +3,9 @@ services:
     #ports:
     #   - 9222:9222
     container_name: headless-chrome
-    image: chromedp/headless-shell:159.0.8130.0@sha256:5e1207c6b0034b96bd7aa4e933f2634a346d5c9e04e17f2b2569aabdaea16e9a
+    # Stable channel: version tags mix stable/beta/dev builds, so track `stable` and let Renovate bump the digest.
+    # Pinned digest = 158.0.8127.18.
+    image: chromedp/headless-shell:stable@sha256:830fa77e0602cb42e5cb2cbd9237ba27b649ad69d5fb82b54713aac8b7ab4f29
     restart: unless-stopped
     command:
       - --remote-allow-origins=*
