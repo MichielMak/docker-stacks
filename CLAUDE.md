@@ -110,6 +110,8 @@ The wrapper runs in the stack's run directory inside `komodo-periphery`. Periphe
 - **Never** add `config` to `compose_cmd_wrapper_include`: Komodo 2.3.x logs the resolved compose config unredacted ([moghtech/komodo#1636](https://github.com/moghtech/komodo/issues/1636)).
 - **Komodo-internal secrets** stay in Komodo as secret Variables, referenced as `[[NAME]]`, for example the alerter URL `[[KOMODO_ALERTER_GOTIFY_URL]]`. They're not in `variables.toml`.
 
+- **Private registries** (like `dhi.io`, Docker Hardened Images): the login is a Komodo registry account, added in the UI under Settings → Providers → Registry (domain, username, access token). The Resource Sync can't manage these, because they hold a token. A stack uses one by setting both `registry_provider` (the domain) and `registry_account` (the username) in `stacks.toml`. Komodo then runs `docker login` before the pull. With only `registry_account` set, Komodo doesn't log in.
+
 **Rules for agents:** never decrypt, print or log a secret value. That includes `sops -d`, `printenv`, `docker inspect`, app logs, and Komodo Update logs. To check a value, compare its length or hash, never the value.
 
 **The age key:**

@@ -1044,6 +1044,9 @@ server = "Local"
 auto_pull = false
 linked_repo = "docker-stacks"
 run_directory = "traefik"
+# Logs in to dhi.io (Docker Hardened Images) before pull. The account itself lives in
+# Komodo's DB (Settings > Providers > Registry), not in this TOML, because it holds a token.
+registry_provider = "dhi.io"
 registry_account = "makstra"
 environment = """
 DOMAIN=[[DOMAIN]]

@@ -3,11 +3,6 @@
 # other secrets are [[KOMODO_...]] refs to secret Komodo Variables.
 
 [[repo]]
-name = "dhi.io"
-tags = ["gitops"]
-config = {}
-
-[[repo]]
 name = "docker-stacks"
 tags = ["gitops"]
 
