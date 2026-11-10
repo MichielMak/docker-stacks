@@ -107,6 +107,19 @@ jobs:
         with:
           version: v0.76.2
 
+      # dhi.io (Docker Hardened Images) needs a login even to read manifests.
+      # Trivy picks the credential per registry from the Docker config.
+      - name: Log in to dhi.io
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -z "$DOCKERHUB_TOKEN" ]; then
+            echo "No Docker Hub token available (fork PR?); skipping dhi.io login."
+            exit 0
+          fi
+          printf '%s' "$DOCKERHUB_TOKEN" | docker login dhi.io --username "$DOCKERHUB_USERNAME" --password-stdin
+
       - name: Determine changed compose files
         env:
           BASE_REF: ${{ github.base_ref }}
