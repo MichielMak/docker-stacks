@@ -52,6 +52,11 @@ services:
       # renovate: datasource=pypi depName=azure-cli
       - AZURE_CLI_VERSION=2.92.0
       - AZURE_CORE_COLLECT_TELEMETRY=false
+      # Komodo CLI (km), kept at the komodo-core version (renovate.json groups it with the komodo stack).
+      # The API key and secret go in ~/.config/komodo/komodo.cli.toml in the home volume
+      # renovate: datasource=github-releases depName=moghtech/komodo
+      - KOMODO_CLI_VERSION=v2.3.4
+      - KOMODO_CLI_HOST=https://komodo.${DOMAIN}
     # Upstream publishes no image (their compose builds from source), so OpenChamber, OpenCode and the CLI tools
     # are installed into the persisted home on first start and whenever a version changes
     entrypoint:
@@ -92,6 +97,9 @@ services:
             curl -fsSL --retry 2 https://teamwork-graph.atlassian.com/cli/install | bash -s -- --yes --skip-login --skip-skills --version $$TWG_VERSION --install-dir $$b ) &&
           ( $$b/uv tool list 2>/dev/null | grep -qxF "azure-cli v$$AZURE_CLI_VERSION" ||
             $$b/uv tool install --force --python $$PYTHON_VERSION azure-cli==$$AZURE_CLI_VERSION ) &&
+          ( $$b/km --version 2>/dev/null | grep -qxF "komodo-cli $${KOMODO_CLI_VERSION#v}" ||
+            ( curl -fsSL -o /tmp/km https://github.com/moghtech/komodo/releases/download/$$KOMODO_CLI_VERSION/km-$$(uname -m) &&
+              chmod +x /tmp/km && mv /tmp/km $$b/km ) ) &&
           ( git config --global --get-all include.path | grep -qxF /opt/claude-github-app/repos.gitconfig ||
             git config --global --add include.path /opt/claude-github-app/repos.gitconfig ) &&
           mkdir -p /home/node/workspaces && cd /home/node/workspaces &&
