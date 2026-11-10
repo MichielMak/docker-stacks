@@ -52,8 +52,7 @@ services:
       # renovate: datasource=pypi depName=azure-cli
       - AZURE_CLI_VERSION=2.92.0
       - AZURE_CORE_COLLECT_TELEMETRY=false
-      # Komodo CLI (km), kept at the komodo-core version (renovate.json groups it with the komodo stack).
-      # The API key and secret go in ~/.config/komodo/komodo.cli.toml in the home volume
+      # Komodo CLI (km). The API key and secret go in ~/.config/komodo/komodo.cli.toml in the home volume
       # renovate: datasource=github-releases depName=moghtech/komodo
       - KOMODO_CLI_VERSION=v2.3.4
       - KOMODO_CLI_HOST=https://komodo.${DOMAIN}

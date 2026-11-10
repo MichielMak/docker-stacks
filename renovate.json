@@ -319,20 +319,6 @@
       ]
     },
     {
-      "description": "Komodo CLI (km) in openchamber ships in the same PR as the komodo stack (CLI and core must match)",
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchPackageNames": [
-        "moghtech/komodo"
-      ],
-      "groupName": "stack: komodo",
-      "groupSlug": "stack-komodo",
-      "addLabels": [
-        "stack:komodo"
-      ]
-    },
-    {
       "description": "Socket proxy sidecars live in many stacks: bump them all in one PR (must stay after the per-stack grouping rule)",
       "matchDatasources": [
         "docker"
