@@ -1,0 +1,92 @@
+# ProxmoxMCP-Plus - https://github.com/RekklesNA/ProxmoxMCP-Plus
+#
+# Exposes Proxmox VE tools (VMs, LXCs, snapshots, backups, logs) to MCPJungle
+# over Streamable HTTP.
+#
+# Required env vars:
+#   PROXMOX_USER          token owner, plain value in stacks.toml (mcp@pve)
+#   PROXMOX_TOKEN_NAME    token id, plain value in stacks.toml (mcp)
+#   PROXMOX_TOKEN_VALUE   token secret, in secrets.sops.env
+#   MCP_API_KEY           bearer key MCPJungle sends, in secrets.sops.env
+#
+# Configured through environment variables only. The image ships no
+# config.json, and the loader falls back to PROXMOX_* env vars when the file
+# is missing.
+#
+# Proxmox API access
+# ------------------
+# The server talks to pve.${DOMAIN}:443 through Traefik's existing "pve" route
+# (traefik/dynamic/proxmox.yml) instead of PVE_IP:8006. That gives a valid
+# certificate, so TLS verification stays on. Turning it off would also need
+# PROXMOX_DEV_MODE.
+#
+# The API token (mcp@pve!mcp, privilege separation on) has the custom role
+# MCPLifecycle on "/", for both the user and the token:
+#   VM.Audit VM.PowerMgmt VM.Snapshot VM.Snapshot.Rollback VM.Backup
+#   Datastore.Audit Datastore.AllocateSpace Sys.Audit Sys.Syslog
+#   VM.GuestAgent.Audit (PVE 9) / VM.Monitor (PVE 8)
+# The token decides what is possible; MCP_TOOL_ALLOWLIST below only hides the
+# tools that would fail anyway, plus a few the role would allow.
+#
+# Register it in the MCPJungle web UI after deploy:
+#   Server name:  proxmox
+#   Transport:    streamable_http
+#   Target URL:   http://proxmox-mcp:8000/mcp
+#   Bearer token: the MCP_API_KEY value from secrets.sops.env
+
+services:
+  proxmox-mcp:
+    image: ghcr.io/rekklesna/proxmoxmcp-plus:0.6.10@sha256:744b8826933d9cd1605e0fe2feae53afe0c4086c12bcfc6a276d51a683c63a16
+    container_name: proxmox-mcp
+    environment:
+      # Native MCP Streamable HTTP instead of the default OpenAPI bridge
+      - PROXMOX_MCP_MODE=mcp-http
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
+      - MCP_TRANSPORT=STREAMABLE_HTTP
+      # Every request must carry "Authorization: Bearer <MCP_API_KEY>". The
+      # npm network holds many containers, so do not rely on it being private.
+      - MCP_API_KEY=${MCP_API_KEY}
+      # DNS rebinding protection: the Host header must match one of these.
+      # MCPJungle connects to proxmox-mcp:8000.
+      - MCP_ALLOWED_HOSTS=proxmox-mcp:*,localhost:*,127.0.0.1:*
+      # Proxmox VE API
+      - PROXMOX_HOST=pve.${DOMAIN}
+      - PROXMOX_PORT=443
+      - PROXMOX_VERIFY_SSL=true
+      - PROXMOX_USER=${PROXMOX_USER}
+      - PROXMOX_TOKEN_NAME=${PROXMOX_TOKEN_NAME}
+      - PROXMOX_TOKEN_VALUE=${PROXMOX_TOKEN_VALUE}
+      # Guest and node command execution stays off (also the default).
+      - COMMAND_POLICY_MODE=deny_all
+      # Persistent job store (see the volume below)
+      - PROXMOX_JOBS_SQLITE_PATH=/app/data/proxmox-jobs.sqlite3
+      # "Lifecycle" scope: inspect, power on/off, snapshot, back up.
+      # Left out on purpose:
+      #   - create/clone/delete/migrate and config updates
+      #   - restore_backup (overwrites a guest), delete_snapshot/backup/iso
+      #   - execute_*_command and update_container_ssh_keys
+      #   - retry_job (replays a stored mutation)
+      #   - get_cluster_join_info (cluster join data)
+      # Unknown names make the server refuse to start, so a typo cannot
+      # silently widen access.
+      - MCP_TOOL_ALLOWLIST=list_targets,get_nodes,list_bridges,get_node_status,get_node_time,get_node_diagnostics,get_vms,get_vm_config,get_vm_ip_addresses,get_next_vmid,get_storage,get_node_storage,get_cluster_status,get_containers,get_container_config,get_container_ip,list_snapshots,list_isos,list_templates,list_backups,preflight_vm_migration,preflight_container_migration,get_node_syslog,get_task_log,get_cluster_log,get_node_firewall_log,get_guest_firewall_log,start_vm,stop_vm,shutdown_vm,reset_vm,start_container,stop_container,restart_container,create_snapshot,rollback_snapshot,create_backup,list_jobs,get_job,poll_job,cancel_job
+    volumes:
+      - proxmox-mcp-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # No Traefik labels and no published ports on purpose. Its tools can stop
+    # and roll back guests; MCPJungle reaches it by container name on npm.
+    networks:
+      - default
+    restart: unless-stopped
+
+volumes:
+  proxmox-mcp-data:
+
+networks:
+  default:
+    external: true
+    name: npm
