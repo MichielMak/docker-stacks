@@ -5,7 +5,7 @@
 This is a **GitOps-based Docker orchestration repository** managing 60+ self-hosted services (home lab) using:
 - **Komodo** — declarative Docker stack manager that continuously syncs this repo to the Docker environment
 - **Traefik** — reverse proxy configured entirely via Docker container labels
-- **Renovate** — automated container image updates via PRs, run self-hosted from `.github/workflows/renovate.yml`
+- **Renovate** — automated container image updates via PRs, run self-hosted from [`MichielMak/renovate-config`](https://github.com/MichielMak/renovate-config)
 
 ## Repository Structure
 
@@ -88,11 +88,12 @@ labels:
 - **Groups**: updates per stack directory (one PR per stack)
 - **Automerge**: enabled; max 6 PRs/hour, 10 concurrent
 - Custom version extraction for Hotio, BamBuddy, Lidarr, PostgreSQL, Immich images
-- Pre-commit hook revisions (`.pre-commit-config.yaml`) are updated too. The `renovate-config-validator` hook and `renovate-version` in the workflow are bumped together in one "renovate" PR, so `renovate.json` is validated by the Renovate version that runs it
+- Pre-commit hook revisions (`.pre-commit-config.yaml`) are updated too
+- Settings shared with other repositories (timezone, reviewers, labels, PR limits, vulnerability alerts, GitHub Actions grouping and 3-day release age) come from the `github>MichielMak/renovate-config` preset. Put only rules specific to this repo in `renovate.json`
 
 When adding a new service, Renovate will pick up the image automatically. If the image uses non-standard versioning, add a custom `packageRule` in `renovate.json`.
 
-Renovate runs hourly as a GitHub Actions workflow (`.github/workflows/renovate.yml`). It manages this repository and `MichielMak/open_agb_firm` — add further repositories to the `renovate_repos` and `renovate_repositories` lists at the top of the workflow. It authenticates as a GitHub App using the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets, and pulls Docker Hub metadata with `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`. The workflow can also be triggered manually, with options to reset or disable the repository cache.
+Renovate runs hourly as a GitHub Actions workflow in `MichielMak/renovate-config`, which also manages `open_agb_firm` and `flightscanner`. That repo holds the runner, its secrets and the repository list. This repo merges Renovate PRs through Renovate itself (`platformAutomerge: false`), so `.github/workflows/renovate-trigger.yml` starts a Renovate run as soon as CI is green on a `renovate/**` branch. It uses a GitHub App token limited to `renovate-config` with `actions: write`, from the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets.
 
 ## Secrets (SOPS)
 
@@ -181,7 +182,7 @@ Claude sessions in Paseo, and agent sessions in OpenChamber in the App's repos (
 | Resource Sync | `komodo/resources/` | Komodo resources as code (TOML) |
 | Authentik | `authentik/` | OIDC / SSO / ForwardAuth |
 | Homepage | `homepage/` | Service dashboard |
-| Renovate | `.github/workflows/renovate.yml` | Automated image updates (GitHub Actions) |
+| Renovate | `renovate.json`, runner in `MichielMak/renovate-config` | Automated image updates (GitHub Actions) |
 | Cloudflare | `cloudflare/` | Tunnel routes, DNS, Access (OpenTofu) |
 | Paseo Hub | `hub/` | Runs Paseo agents from GitHub events and schedules (triggers in `.paseo/triggers/`) |
 | Plex | `plex/` | Media server |

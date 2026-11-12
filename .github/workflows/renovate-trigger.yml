@@ -1,0 +1,46 @@
+name: Renovate trigger
+
+# Renovate runs from MichielMak/renovate-config. This repo merges Renovate PRs
+# through Renovate itself (platformAutomerge off), and Renovate merges about
+# one PR per run: the merge moves main, so the other PRs are rebased and their
+# CI runs again. Starting a Renovate run as soon as CI is green keeps merges
+# going through the night automerge window, instead of waiting for the next
+# scheduled run.
+# Nothing here checks out or runs PR code; it only dispatches a workflow.
+on:
+  workflow_run: # zizmor: ignore[dangerous-triggers]
+    workflows:
+      - Pre-commit
+      - Trivy Security Scan
+    types: [completed]
+    branches:
+      - "renovate/**"
+
+permissions: {}
+
+jobs:
+  trigger:
+    name: Start Renovate
+    # Only for green CI on branches in this repo (not forks that happen to use
+    # a renovate/ branch name).
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      # A token that can only start workflows in renovate-config.
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ secrets.RENOVATE_CLIENT_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: renovate-config
+          permission-actions: write
+
+      - name: Dispatch Renovate
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository_owner }}/renovate-config
+        run: gh workflow run renovate.yml --repo "$REPO"

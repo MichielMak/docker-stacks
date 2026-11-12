@@ -1,15 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":enableVulnerabilityAlerts"
+    "github>MichielMak/renovate-config"
   ],
-  "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dependency Dashboard Michiel",
   "dependencyDashboardHeader": "This issue contains a list of Renovate updates and statuses.",
-  "timezone": "Europe/Amsterdam",
   "assigneesFromCodeOwners": true,
-  "reviewers": ["MichielMak"],
   "assignAutomerge": true,
   "enabledManagers": [
     "docker-compose",
@@ -23,12 +19,7 @@
   "pre-commit": {
     "enabled": true
   },
-  "labels": [
-    "renovate"
-  ],
   "ignoreUnstable": true,
-  "prHourlyLimit": 6,
-  "prConcurrentLimit": 10,
   "pinDigests": true,
   "automerge": false,
   "automergeType": "pr",
@@ -37,14 +28,7 @@
   "pruneStaleBranches": true,
   "recreateWhen": "always",
   "dependencyDashboardAutoclose": false,
-  "rebaseWhen": "behind-base-branch",
   "branchConcurrentLimit": 10,
-  "osvVulnerabilityAlerts": true,
-  "vulnerabilityAlerts": {
-    "addLabels": ["security"],
-    "schedule": ["at any time"],
-    "minimumReleaseAge": "0 hours"
-  },
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
   ],
@@ -82,37 +66,6 @@
       "matchManagers": ["pip_requirements"],
       "matchPackageNames": ["playwright"],
       "enabled": false
-    },
-    {
-      "description": "Group GitHub Actions updates and label them",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "groupName": "github-actions",
-      "groupSlug": "github-actions",
-      "addLabels": [
-        "github-actions"
-      ]
-    },
-    {
-      "description": "Wait 3 days before updating GitHub Actions: compromised action releases are usually found and pulled within that window, and pinned digests don't help once Renovate bumps to a bad release. Vulnerability fixes skip this wait.",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "minimumReleaseAge": "3 days"
-    },
-    {
-      "description": "Skip digest pinning for aquasecurity/trivy (the setup-trivy 'version' with-input): Renovate's uses-with extraction has no replaceString here, so pinDigest always fails the branch update",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "matchDepTypes": [
-        "uses-with"
-      ],
-      "matchPackageNames": [
-        "aquasecurity/trivy"
-      ],
-      "pinDigests": false
     },
     {
       "description": "Docker: allow only stable SemVer or CalVer",
@@ -382,38 +335,6 @@
         "digest"
       ],
       "enabled": true
-    },
-    {
-      "description": "The renovate-version workflow input takes a plain tag, so it must not be pinned to a digest",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "matchDepTypes": [
-        "uses-with"
-      ],
-      "matchPackageNames": [
-        "ghcr.io/renovatebot/renovate"
-      ],
-      "pinDigests": false
-    },
-    {
-      "description": "Skip changelog fetching for Renovate's own image: paging through its thousands of releases adds ~2.5 minutes to every run",
-      "matchPackageNames": [
-        "ghcr.io/renovatebot/renovate"
-      ],
-      "fetchChangeLogs": "off"
-    },
-    {
-      "description": "Bump the Renovate version and its config validator (pre-commit) in one PR, so CI validates renovate.json with the Renovate that runs it",
-      "matchPackageNames": [
-        "ghcr.io/renovatebot/renovate",
-        "renovatebot/pre-commit-hooks"
-      ],
-      "groupName": "renovate",
-      "groupSlug": "renovate",
-      "addLabels": [
-        "renovate-self"
-      ]
     },
     {
       "description": "Label pre-commit hook updates",

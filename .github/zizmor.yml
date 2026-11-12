@@ -1,11 +1,5 @@
 # zizmor configuration: https://docs.zizmor.sh/configuration/
 rules:
-  # Renovate uses most of the App's permissions (contents, pull requests,
-  # issues, workflows, checks, statuses, Dependabot alerts, packages), and
-  # the token is already limited to the repositories it manages.
-  github-app:
-    ignore:
-      - renovate.yml
   # install-trivy appends a fixed directory under $RUNNER_TEMP to
   # $GITHUB_PATH; nothing attacker-controlled is written.
   github-env:
