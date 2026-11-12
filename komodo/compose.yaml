@@ -70,7 +70,7 @@ services:
       MONGO_INITDB_DATABASE: komodo
       MONGO_INITDB_ROOT_PASSWORD: ${KOMODO_DATABASE_PASSWORD}
       MONGO_INITDB_ROOT_USERNAME: komodo
-    image: docker.io/library/mongo:8.3.13@sha256:d0c8f51bb63fb1f992f4ff05293adb3f0967aaaae32c3e5fa567907800819b3b
+    image: docker.io/library/mongo:8.3.17@sha256:e4159d72cf2bd2ffeee23a1a5da8f002ecd498fefcfabe5c1429454ed6f97f85
     networks:
       - komodo
     restart: unless-stopped
