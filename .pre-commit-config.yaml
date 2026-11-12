@@ -3,7 +3,9 @@ repos:
     rev: 44.227.4
     hooks:
       - id: renovate-config-validator
-        args: [--strict]
+        # --no-global: check the files as repository config (with file
+        # arguments the validator otherwise treats them as global config)
+        args: [--strict, --no-global]
         files: "(^|/)renovate\\.json5?$"
         verbose: true
   - repo: https://github.com/gitleaks/gitleaks
