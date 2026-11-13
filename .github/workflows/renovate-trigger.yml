@@ -39,8 +39,11 @@ jobs:
           repositories: renovate-config
           permission-actions: write
 
+      # Call the REST endpoint with an explicit ref: `gh workflow run` first
+      # looks up the default branch over GraphQL, which needs contents: read
+      # and fails with this actions-only token.
       - name: Dispatch Renovate
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO: ${{ github.repository_owner }}/renovate-config
-        run: gh workflow run renovate.yml --repo "$REPO"
+        run: gh api --method POST "repos/$REPO/actions/workflows/renovate.yml/dispatches" -f ref=main
