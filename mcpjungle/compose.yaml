@@ -150,7 +150,7 @@ services:
     restart: unless-stopped
 
   mcpjungle-db:
-    image: postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    image: postgres:17.12-alpine@sha256:34261f594522cf41dfcb76aefd42b9d201098b0e6b23c9c68733f169e4218b6f
     container_name: mcpjungle-db
     environment:
       - POSTGRES_USER=mcpjungle
