@@ -22,7 +22,7 @@ services:
       - OPENCHAMBER_VERSION=2.7.1
       # OpenChamber needs OpenCode 2.x: OpenCode majors wait for approval (renovate.json)
       # renovate: datasource=npm depName=@opencode/cli
-      - OPENCODE_VERSION=2.2.7
+      - OPENCODE_VERSION=2.3.0
       - DX_API_TOKEN=${DX_API_TOKEN}
       # CLI tools for agents, the same set as the paseo stack, installed into ~/.npm-global/bin by the command below
       # renovate: datasource=npm depName=@get-dx/cli
