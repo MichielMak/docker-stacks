@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: linuxserver/nextcloud:35.0.2@sha256:2f607ed0099185662f8af145f420633d3b3612dcfbbf38721874b63fc488f4d1
+    image: linuxserver/nextcloud:35.0.3@sha256:1c3cfb00eb8653e03042653065e848523edf177498b439fcfdddff5ecd355e1a
     container_name: nextcloud
     restart: unless-stopped
     depends_on:
@@ -56,7 +56,7 @@ services:
       - default
   eurooffice:
     container_name: eurooffice
-    image: ghcr.io/euro-office/documentserver:v9.3.7@sha256:39c4cdad8c335d05ea5653926e1fc3a69da006d9c1729936b2b4193140cd2962
+    image: ghcr.io/euro-office/documentserver:v9.3.8@sha256:0f19cb676d48f85b826e199ac9e773ea12130f7d32bfc9a45e86aea320441b8a
     restart: unless-stopped
     environment:
       - JWT_ENABLED=true
