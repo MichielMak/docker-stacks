@@ -26,7 +26,7 @@ services:
       - DX_API_TOKEN=${DX_API_TOKEN}
       # CLI tools for agents, the same set as the paseo stack, installed into ~/.npm-global/bin by the command below
       # renovate: datasource=npm depName=@get-dx/cli
-      - DX_VERSION=0.11.0
+      - DX_VERSION=0.12.0
       # renovate: datasource=github-releases depName=cli/cli
       - GH_VERSION=v2.103.3
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
