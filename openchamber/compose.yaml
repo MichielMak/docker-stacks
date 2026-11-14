@@ -28,7 +28,7 @@ services:
       # renovate: datasource=npm depName=@get-dx/cli
       - DX_VERSION=0.12.0
       # renovate: datasource=github-releases depName=cli/cli
-      - GH_VERSION=v2.103.3
+      - GH_VERSION=v2.104.0
       # Docker CLI + compose plugin only (no daemon), used to validate compose files
       # renovate: datasource=github-tags depName=docker/cli
       - DOCKER_CLI_VERSION=v29.9.3
