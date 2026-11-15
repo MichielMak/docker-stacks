@@ -3,8 +3,6 @@
   "extends": [
     "github>MichielMak/renovate-config"
   ],
-  "dependencyDashboardTitle": "Renovate Dependency Dashboard Michiel",
-  "dependencyDashboardHeader": "This issue contains a list of Renovate updates and statuses.",
   "assigneesFromCodeOwners": true,
   "assignAutomerge": true,
   "enabledManagers": [
@@ -27,7 +25,6 @@
   "automergeSchedule": ["* 0-6 * * *"],
   "pruneStaleBranches": true,
   "recreateWhen": "always",
-  "dependencyDashboardAutoclose": false,
   "branchConcurrentLimit": 10,
   "gitIgnoredAuthors": [
     "self-hosted-renovate-mm"
