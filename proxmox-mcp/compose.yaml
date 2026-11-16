@@ -36,7 +36,7 @@
 
 services:
   proxmox-mcp:
-    image: ghcr.io/rekklesna/proxmoxmcp-plus:v0.7.0@sha256:074832b6c3d7df8d2a342224774961cfe2de96be9fd47b1e639a137a79d14e5a
+    image: ghcr.io/rekklesna/proxmoxmcp-plus:v0.7.1@sha256:52f577bdbedbd51e415e636641a185002645f1d067729af903aafee53952a88d
     container_name: proxmox-mcp
     environment:
       # Native MCP Streamable HTTP instead of the default OpenAPI bridge
