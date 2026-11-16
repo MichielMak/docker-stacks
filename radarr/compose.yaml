@@ -13,6 +13,7 @@ services:
       - RADARR__AUTH__OIDCCLIENTSECRET=${RADARR_OIDC_CLIENT_SECRET}
       - RADARR__AUTH__OIDCUSERIDENTIFIER=${RADARR_OIDC_USER}
       - RADARR__AUTH__OIDCSCOPES=openid profile email
+      - RADARR__SERVER__TRUSTEDNETWORKS=${NPM_SUBNET}
     volumes:
       - ${DOCKER_DATA_DIR}/radarr/config:/config
       - ${MEDIA_DIR}:/media
@@ -58,6 +59,7 @@ services:
       - RADARR__AUTH__OIDCCLIENTSECRET=${RADARREXTERNAL_OIDC_CLIENT_SECRET}
       - RADARR__AUTH__OIDCUSERIDENTIFIER=${RADARR_OIDC_USER}
       - RADARR__AUTH__OIDCSCOPES=openid profile email
+      - RADARR__SERVER__TRUSTEDNETWORKS=${NPM_SUBNET}
     volumes:
       - ${DOCKER_DATA_DIR}/radarrrexternal/config:/config
       - ${MEDIA_DIR}:/media
