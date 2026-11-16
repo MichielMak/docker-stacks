@@ -6,6 +6,13 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=Europe/Amsterdam
+      - RADARR__AUTH__METHOD=Oidc
+      - RADARR__AUTH__REQUIRED=Enabled
+      - RADARR__AUTH__OIDCAUTHORITY=https://auth.${DOMAIN}/application/o/radarr/
+      - RADARR__AUTH__OIDCCLIENTID=${RADARR_OIDC_CLIENT_ID}
+      - RADARR__AUTH__OIDCCLIENTSECRET=${RADARR_OIDC_CLIENT_SECRET}
+      - RADARR__AUTH__OIDCUSERIDENTIFIER=${RADARR_OIDC_USER}
+      - RADARR__AUTH__OIDCSCOPES=openid profile email
     volumes:
       - ${DOCKER_DATA_DIR}/radarr/config:/config
       - ${MEDIA_DIR}:/media
@@ -32,7 +39,6 @@ services:
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.priority=99
       - traefik.http.routers.radarr.tls=true
-      - traefik.http.routers.radarr.middlewares=authentik-forwardauth@docker
       - traefik.http.routers.radarr.service=radarr
       - traefik.http.services.radarr.loadbalancer.server.port=7878
     restart: unless-stopped
@@ -45,6 +51,13 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=Europe/Amsterdam
+      - RADARR__AUTH__METHOD=Oidc
+      - RADARR__AUTH__REQUIRED=Enabled
+      - RADARR__AUTH__OIDCAUTHORITY=https://auth.${DOMAIN}/application/o/radarrexternal/
+      - RADARR__AUTH__OIDCCLIENTID=${RADARREXTERNAL_OIDC_CLIENT_ID}
+      - RADARR__AUTH__OIDCCLIENTSECRET=${RADARREXTERNAL_OIDC_CLIENT_SECRET}
+      - RADARR__AUTH__OIDCUSERIDENTIFIER=${RADARR_OIDC_USER}
+      - RADARR__AUTH__OIDCSCOPES=openid profile email
     volumes:
       - ${DOCKER_DATA_DIR}/radarrrexternal/config:/config
       - ${MEDIA_DIR}:/media
@@ -71,7 +84,6 @@ services:
       - traefik.http.routers.radarrexternal.entrypoints=websecure
       - traefik.http.routers.radarrexternal.priority=99
       - traefik.http.routers.radarrexternal.tls=true
-      - traefik.http.routers.radarrexternal.middlewares=authentik-forwardauth@docker
       - traefik.http.routers.radarrexternal.service=radarrexternal
       - traefik.http.services.radarrexternal.loadbalancer.server.port=7878
     restart: unless-stopped
