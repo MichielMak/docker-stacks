@@ -117,6 +117,22 @@ locals {
         { url = "https://owncloud.makstra.nl/web-oidc-callback" },
       ]
     }
+    # Radarr 7 lets in one user: the verified email or `sub` in RADARR__AUTH__OIDCUSERIDENTIFIER.
+    # sub_mode user_username makes `sub` the Authentik username.
+    radarr = {
+      name             = "Provider for radarr"
+      client_id        = "67bx60Teqq0pcY1jvJ2cjY62qQudwN8zxt6Elv69"
+      redirects        = [{ url = "https://radarr.makstra.nl/signin-oidc" }]
+      implicit_consent = true
+      sub_mode         = "user_username"
+    }
+    radarrexternal = {
+      name             = "Provider for radarrexternal"
+      client_id        = "C3SmfaQ4prwrJtGVBPpOg83dz7EZa8XRQBwEv2zY"
+      redirects        = [{ url = "https://radarrexternal.makstra.nl/signin-oidc" }]
+      implicit_consent = true
+      sub_mode         = "user_username"
+    }
     romm = {
       name             = "romm"
       client_id        = "J3XIFPLr6RXriwIAxjcIsQubYylJ9OI5Hb4eP1NB"
