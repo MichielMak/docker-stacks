@@ -7,9 +7,6 @@ name: Cloudflare
 
 on:
   pull_request:
-    paths:
-      - "cloudflare/**"
-      - ".github/workflows/cloudflare.yml"
   push:
     branches: [main]
     paths:
@@ -21,10 +18,6 @@ on:
 
 permissions:
   contents: read
-
-concurrency:
-  group: cloudflare-tofu
-  cancel-in-progress: false
 
 env:
   # renovate: datasource=github-releases depName=opentofu/opentofu
@@ -40,10 +33,46 @@ env:
   TF_INPUT: "false"
 
 jobs:
+  # Pull requests run this workflow every time, so "Cloudflare OpenTofu" always reports and can be a
+  # required check. This job decides whether there is anything to plan.
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+    outputs:
+      tofu: ${{ steps.diff.outputs.tofu }}
+    steps:
+      - name: Checkout
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Diff
+        id: diff
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # push is already path-filtered; schedule and workflow_dispatch always run.
+          if [ "$EVENT" != pull_request ]; then
+            echo "tofu=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BASE...$HEAD" | grep -qE '^(cloudflare/|\.github/workflows/cloudflare\.yml$)'; then
+            echo "tofu=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tofu=false" >> "$GITHUB_OUTPUT"
+          fi
+
   tofu:
-    name: ${{ github.event_name == 'pull_request' && 'Plan' || 'Apply' }}
+    # Static name: this is the required check. A skipped job counts as passing.
+    name: Cloudflare OpenTofu
+    needs: changes
     # Fork PRs get no secrets.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: needs.changes.outputs.tofu == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    concurrency:
+      group: cloudflare-tofu
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     defaults:
       run:

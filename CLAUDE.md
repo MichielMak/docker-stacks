@@ -163,7 +163,7 @@ To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (
 - **Webhook-only exposure:** add it to `webhook_routes` with a path regex, so only that path is public. If it goes through Traefik, add a separate router on the `tunnel` entrypoint with the same path in its rule (see `hub-webhook` in `hub/compose.yaml`).
 - **Request header transform rules** live in `cloudflare/transform.tf`. They strip visitor-supplied `X-Forwarded-*`/`X-Real-IP` headers, so the forwarded headers Traefik trusts on its `tunnel` entrypoint only come from Cloudflare.
 - **WAF custom rules** live in `cloudflare/waf.tf`. The GitHub webhook allow rules read GitHub's hook IP ranges from `api.github.com/meta` on every plan.
-- `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`, and daily at 05:23 UTC so new GitHub ranges go live. State lives in the R2 bucket `tofu-state`.
+- `.github/workflows/cloudflare.yml` plans on pull requests and applies on merge to `main`, and daily at 05:23 UTC so new GitHub ranges go live. Like the Authentik workflow, it runs on every PR and reports `Cloudflare OpenTofu`. State lives in the R2 bucket `tofu-state`.
 - Credentials are GitHub repository secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `ACCESS_GUEST_EMAILS`. Account, zone and tunnel IDs are repository variables (`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`, `CLOUDFLARE_TUNNEL_ID`).
 - The repo and its Actions logs are public. Never commit email addresses or other personal data: pass them in through a secret and a `sensitive = true` variable.
 - Only the tunnel CNAMEs are managed. Other DNS records (mail, SPF, DKIM) and the WARP login app are still dashboard-only.
@@ -177,7 +177,7 @@ To remove a stack, delete it from `stacks.toml`: the sync deletes it in Komodo (
 - **Add an OIDC app:** add an entry to `local.oauth2` in `oauth2.tf` (only what differs from the defaults listed at the top) and one with the same key to `local.apps` in `applications.tf`. Set `internal_only = true` to limit it to the `internal` group. After the apply, read the client secret in the admin UI and put it in the app's `secrets.sops.env`.
 - **Forward auth** (`authentik-forwardauth@docker`) is `authentik_provider_proxy.forwardauth` in `proxy.tf`, served by the embedded outpost.
 - Still UI-only: users and group membership, flows and stages, the Google and Discord login sources, custom scope mappings and policies.
-- `.github/workflows/authentik.yml` plans on pull requests and applies on merge to `main`. State lives in the R2 bucket `tofu-state` under `authentik/`.
+- `.github/workflows/authentik.yml` plans on pull requests and applies on merge to `main`. It runs on every PR, so its `Authentik OpenTofu` check always reports (skipped, which counts as passing, when `authentik/terraform/` didn't change). State lives in the R2 bucket `tofu-state` under `authentik/`.
 - Credentials are the GitHub repository secrets `AUTHENTIK_TOKEN` (an API token for a service account) and the shared `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`.
 - Keep the `goauthentik/authentik` provider version close to the server version in `authentik/compose.yaml`. Renovate doesn't automerge it.
 
