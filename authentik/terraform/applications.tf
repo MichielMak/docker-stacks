@@ -17,6 +17,8 @@ locals {
     mealie         = { name = "mealie", icon = "mealie.svg", url = "https://mealie.makstra.nl" }
     nextcloud      = { name = "nextcloud", icon = "nextcloud.svg", url = "https://nextcloud.makstra.nl", internal_only = true }
     npm            = { name = "npm", icon = "", url = "", proxy = "forwardauth", internal_only = true }
+    radarr         = { name = "Radarr", icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/radarr.svg", url = "https://radarr.makstra.nl", internal_only = true }
+    radarrexternal = { name = "Radarr external", icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/radarr.svg", url = "https://radarrexternal.makstra.nl", internal_only = true }
     romm           = { name = "romm", icon = "romm.svg", url = "https://romm.makstra.nl" }
     tandoor        = { name = "tandoor", icon = "tandoor.svg", url = "https://tandoor.makstra.nl/", internal_only = true }
     termix         = { name = "termix", icon = "termix.svg", url = "https://termix.makstra.nl", internal_only = true }
