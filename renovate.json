@@ -358,6 +358,14 @@
       "automerge": false
     },
     {
+      "description": "OpenTofu (authentik/terraform/): merging applies to the live Authentik config, so review these by hand",
+      "matchFileNames": ["authentik/terraform/**", ".github/workflows/authentik.yml"],
+      "matchPackageNames": ["goauthentik/authentik", "opentofu/opentofu"],
+      "groupName": "opentofu authentik",
+      "groupSlug": "opentofu-authentik",
+      "automerge": false
+    },
+    {
       "description": "OpenTofu release tags have a v prefix; TOFU_VERSION does not",
       "matchPackageNames": ["opentofu/opentofu"],
       "extractVersion": "^v(?<version>.+)$"
