@@ -48,7 +48,6 @@ environment = """
 AUTHENTIK_ERROR_REPORTING__ENABLED=true
 DOMAIN=[[DOMAIN]]
 AUTHENTIK_INTERNAL_URL=http://192.168.178.4:9000
-AUTHENTIK_VERSION=2025.6.4
 DOCKER_DATA_DIR=[[DOCKER_DATA_DIR]]
 """
 compose_cmd_wrapper = "sops exec-env secrets.sops.env '[[COMPOSE_COMMAND]]'"
