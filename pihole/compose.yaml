@@ -13,6 +13,11 @@ services:
       # This env var replaces the whole list in pihole.toml (";" separates entries) and locks it in the UI.
       # Only settable via pihole.toml or env, not the API, so nebula-sync can't copy it to the replica.
       FTLCONF_misc_dnsmasq_lines: local=/${DOMAIN}/;server=/ts.net/100.100.100.100
+      # Containers can't set the clock (no CAP_SYS_TIME), so FTL's NTP client fails with
+      # "Failed to adjust time during NTP sync: Insufficient permissions". The host keeps time.
+      # nebula-sync (FULL_SYNC) copies this to the Proxmox LXC replica, which has the same limit.
+      # FTL still serves NTP to the LAN (ntp.ipv4/ipv6.active).
+      FTLCONF_ntp_sync_active: "false"
     volumes:
       - ${DOCKER_DATA_DIR}/pihole/etc-pihole:/etc/pihole
       - ${DOCKER_DATA_DIR}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
