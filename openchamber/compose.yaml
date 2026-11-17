@@ -47,7 +47,7 @@ services:
       - UV_TOOL_BIN_DIR=/home/node/.npm-global/bin
       # Atlassian Teamwork Graph CLI, installed from Atlassian's CDN (custom Renovate datasource)
       # renovate: datasource=custom.twg depName=twg
-      - TWG_VERSION=1.4.4
+      - TWG_VERSION=1.4.5
       # Azure CLI, installed from PyPI as a uv tool; login state lives in ~/.azure in the home volume
       # renovate: datasource=pypi depName=azure-cli
       - AZURE_CLI_VERSION=2.93.0
