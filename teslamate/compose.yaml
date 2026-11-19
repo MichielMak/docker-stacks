@@ -1,6 +1,6 @@
 services:
   teslamate:
-    image: teslamate/teslamate:4.4.0@sha256:c85b3d447502683ed7bf12fb478e0dae9a985fe975ac22cccb64faeb4c4a5d31
+    image: teslamate/teslamate:4.5.0@sha256:a285b02171a789cf2af5075502d2ec9034b58a42db777a30ae86aef2d0c12af4
     container_name: teslamate
     restart: unless-stopped
     #ports:
@@ -51,7 +51,7 @@ services:
       - default
 
   teslamate-grafana:
-    image: teslamate/grafana:4.4.0@sha256:2dd1fae85cd891e1d851350d13b547abf000efd602c8d0e5734eda6d43e22e01
+    image: teslamate/grafana:4.5.0@sha256:598c65f4fbefaccc213d16fde5b86b5e71366bd391c00b28ff64b976e0841dde
     container_name: teslamate-grafana
     restart: unless-stopped
     #ports:
@@ -78,7 +78,7 @@ services:
       - default
 
   teslamate-mosquitto:
-    image: eclipse-mosquitto:2.0.22@sha256:914f529386804c8278a4e581526b9be5e1604df44b30daabc70aa97dcefe5268
+    image: eclipse-mosquitto:2.0.23@sha256:6a332cc7a8dbe011cbc076180cbb76b37c6f0f55809682ea08e7980ef0112ad9
     container_name: teslamate-mosquitto
     restart: unless-stopped
     command: mosquitto -c /mosquitto-no-auth.conf
