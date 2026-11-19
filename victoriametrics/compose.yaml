@@ -59,7 +59,7 @@ services:
 
   # Per-container CPU, memory, network and disk I/O metrics.
   cadvisor:
-    image: ghcr.io/google/cadvisor:v0.61.0@sha256:448ca9b1ce0d3f2eb7563938030908a4b81ddfe959a3fe5e62f691fd4b2cb417
+    image: ghcr.io/google/cadvisor:v0.61.1@sha256:4929b70e82079d001d0028b85d6a4dd25ad4666b719455c9542b983489963916
     container_name: cadvisor
     restart: unless-stopped
     # cAdvisor reads cgroups and /dev/kmsg (OOM events), which needs privileged.
