@@ -31,7 +31,7 @@ services:
       - traefik.http.services.uptime.loadbalancer.server.port=3001
 
   uptime-kuma-dockerproxy:
-    image: linuxserver/socket-proxy:3.4.7@sha256:18289eeb306e8e3b70901ffec23eafbb318d73b4514d0bd737dbfc7c5b4fe506
+    image: linuxserver/socket-proxy:3.4.8@sha256:6beb1743581ec3b2ed1a2bafd617e8c7a1d7ae2fe835293e333327618fc2b925
     container_name: uptime-kuma-dockerproxy
     # Docker container monitors inspect containers; INFO is for the "Test" button on the Docker host.
     environment:
