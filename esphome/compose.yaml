@@ -1,6 +1,6 @@
 services:
   esphome:
-    image: esphome/esphome:2026.10.2@sha256:c994a49a945094643b14c213bfd500a95ffed94cd68848772828192e126bd375
+    image: esphome/esphome:2026.11.0@sha256:35a22f23ba41e58ed1fa63627317d86f4eaba585e526e44f1118ab082cc96041
     volumes:
       - ${DOCKER_DATA_DIR}/esphome/config:/config
     environment:
