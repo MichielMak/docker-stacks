@@ -1,7 +1,7 @@
 services:
   pbs:
     container_name: pbs
-    image: ghcr.io/marcinmajsc/pve-backup-server-dockerfiles:v4.2.11-1@sha256:0cfbd945752e4ddf81cd6bd693ea3d9f53d160e949e494d0d1668f6db4ae9c2b
+    image: ghcr.io/marcinmajsc/pve-backup-server-dockerfiles:v4.2.14-1@sha256:728b6d65b71d5c1ff1321441fd497d894b3e790e02a8ee133bc8b086ed755631
     #ports:
     #  - 8007:8007
     mem_limit: 2G
