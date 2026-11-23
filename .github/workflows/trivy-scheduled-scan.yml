@@ -30,6 +30,15 @@ jobs:
         with:
           version: v0.76.2
 
+      # dhi.io (Docker Hardened Images) needs a login even to read manifests.
+      # Trivy picks the credential per registry from the Docker config.
+      - name: Log in to dhi.io
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          printf '%s' "$DOCKERHUB_TOKEN" | docker login dhi.io --username "$DOCKERHUB_USERNAME" --password-stdin
+
       - name: Extract and scan all images
         id: scan
         run: |
@@ -71,6 +80,13 @@ jobs:
           fail=0
           scan_error=0
           for img in $images; do
+            # Images tagged :local are built on the host (e.g. komodo-periphery-sops
+            # from komodo/periphery.Dockerfile) and exist in no registry.
+            if [[ "$img" == *:local ]]; then
+              echo "::notice::Skipping locally built image $img"
+              continue
+            fi
+
             echo "::group::Scanning $img"
             # --ignore-unfixed: only report vulnerabilities that have a fix
             #   available (actionable — Renovate can bump to the patched image).
