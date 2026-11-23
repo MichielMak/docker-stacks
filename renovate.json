@@ -4,7 +4,6 @@
     "github>MichielMak/renovate-config"
   ],
   "assigneesFromCodeOwners": true,
-  "assignAutomerge": true,
   "enabledManagers": [
     "docker-compose",
     "dockerfile",
