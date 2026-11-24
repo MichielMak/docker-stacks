@@ -1,6 +1,7 @@
 # Keeps yattee-server's YouTube account cookies fresh and alerts through Gotify when they die.
-# Seed once: export cookies.txt from a private YouTube window, close it, and drop the file into
-# ${DOCKER_DATA_DIR}/yt-cookie-sentinel/inbox/cookies.txt. See app/sentinel.py.
+# Seed once: export cookies.txt from a private YouTube window, close it, and paste it on
+# https://yt-cookies.${DOMAIN}/ (or drop the file into ${DOCKER_DATA_DIR}/yt-cookie-sentinel/inbox/cookies.txt).
+# See app/sentinel.py.
 services:
   yt-cookie-sentinel:
     image: python:3.15-slim@sha256:ea4f1f290e071bf7d28199cfb3e09f5dbad31b50e9c32fd58f2f2d7be915f3ae
@@ -27,6 +28,8 @@ services:
       - YATTEE_URL=http://yattee-server:8085
       - YATTEE_USERNAME=${YATTEE_USERNAME}
       - YATTEE_PASSWORD=${YATTEE_PASSWORD}
+      # Shown in notifications; the page itself is seed_page.py on port 8080.
+      - SEED_PAGE_URL=https://yt-cookies.${DOMAIN}/
     volumes:
       # Code comes from this repo, so changes deploy with the stack.
       - ./app:/app:ro
@@ -44,9 +47,24 @@ services:
       retries: 2
       start_period: 5m
     networks:
-      # npm: reaches yattee-server and gotify. default: reaches the browser.
+      # npm: reaches yattee-server and gotify, and Traefik reaches the seed page. default: reaches the browser.
       - npm
       - default
+    labels:
+      - homepage.group=Media
+      - homepage.name=YouTube cookies
+      - homepage.icon=mdi-cookie-refresh
+      - homepage.href=https://yt-cookies.${DOMAIN}/
+      - homepage.description=Seed and status of Yattee's YouTube session
+      - traefik.enable=true
+      - traefik.docker.network=npm
+      - traefik.http.routers.yt-cookies.rule=Host(`yt-cookies.${DOMAIN}`)
+      # LAN and tailnet only: never add the tunnel entrypoint, this page takes a live Google session.
+      - traefik.http.routers.yt-cookies.entrypoints=websecure
+      - traefik.http.routers.yt-cookies.tls=true
+      # Authentik's npm app is internal-only, so only the internal group gets in.
+      - traefik.http.routers.yt-cookies.middlewares=authentik-forwardauth@docker
+      - traefik.http.services.yt-cookies.loadbalancer.server.port=8080
 
   # Its own browser, only on this stack's network: whoever can reach its DevTools port
   # controls the Google session. No profile volume: the sentinel owns the cookies and
