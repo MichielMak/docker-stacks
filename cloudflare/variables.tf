@@ -20,3 +20,10 @@ variable "access_guest_emails" {
   type        = list(string)
   sensitive   = true
 }
+
+variable "github_token" {
+  description = "GitHub token for reading api.github.com/meta. Optional: without it the request is anonymous and limited per IP address. CI passes the workflow's GITHUB_TOKEN."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

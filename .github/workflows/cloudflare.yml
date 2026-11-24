@@ -29,6 +29,8 @@ env:
   TF_VAR_zone_id: ${{ vars.CLOUDFLARE_ZONE_ID }}
   TF_VAR_tunnel_id: ${{ vars.CLOUDFLARE_TUNNEL_ID }}
   TF_VAR_access_guest_emails: ${{ secrets.ACCESS_GUEST_EMAILS }}
+  # Authenticates the api.github.com/meta request in waf.tf, so it isn't rate limited per runner IP.
+  TF_VAR_github_token: ${{ github.token }}
   TF_IN_AUTOMATION: "true"
   TF_INPUT: "false"
 

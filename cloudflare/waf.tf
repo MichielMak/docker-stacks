@@ -1,8 +1,13 @@
 # GitHub's webhook source ranges. Read on every plan, so the allow rules below pick up
 # new ranges by themselves (the daily scheduled apply in cloudflare.yml makes it live).
+# With a token, the request counts against the token's rate limit instead of the runner's
+# shared IP address, which other users of GitHub-hosted runners also use up.
 data "http" "github_meta" {
-  url             = "https://api.github.com/meta"
-  request_headers = { Accept = "application/vnd.github+json" }
+  url = "https://api.github.com/meta"
+  request_headers = merge(
+    { Accept = "application/vnd.github+json" },
+    var.github_token == "" ? {} : { Authorization = "Bearer ${var.github_token}" },
+  )
 
   lifecycle {
     postcondition {
