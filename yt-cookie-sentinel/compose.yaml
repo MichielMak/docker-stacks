@@ -1,0 +1,61 @@
+# Keeps yattee-server's YouTube account cookies fresh and alerts through Gotify when they die.
+# Seed once: export cookies.txt from a private YouTube window, close it, and drop the file into
+# ${DOCKER_DATA_DIR}/yt-cookie-sentinel/inbox/cookies.txt. See app/sentinel.py.
+services:
+  yt-cookie-sentinel:
+    image: python:3.15-slim@sha256:ea4f1f290e071bf7d28199cfb3e09f5dbad31b50e9c32fd58f2f2d7be915f3ae
+    container_name: yt-cookie-sentinel
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python sentinel.py"
+    environment:
+      - TZ=Europe/Amsterdam
+      # Without this, print() output is buffered and never shows in the logs.
+      - PYTHONUNBUFFERED=1
+      # How often to ask Yattee whether its cookies are still good.
+      - CHECK_INTERVAL_SECONDS=3600
+      # How often to visit YouTube so Google rotates the session (also done when Yattee reports stale).
+      - REFRESH_INTERVAL_SECONDS=21600
+      - CDP_URL=http://yt-cookie-browser:9222
+      - GOTIFY_URL=http://gotify
+      - GOTIFY_TOKEN=${YT_COOKIE_SENTINEL_GOTIFY_TOKEN}
+      # A Yattee admin user: cookies are replaced through the admin API.
+      - YATTEE_URL=http://yattee-server:8085
+      - YATTEE_USERNAME=${YATTEE_USERNAME}
+      - YATTEE_PASSWORD=${YATTEE_PASSWORD}
+    volumes:
+      # Code comes from this repo, so changes deploy with the stack.
+      - ./app:/app:ro
+      # The live session (cookies.txt) and state: secrets, written with mode 0600.
+      - ${DOCKER_DATA_DIR}/yt-cookie-sentinel/data:/data
+      - ${DOCKER_DATA_DIR}/yt-cookie-sentinel/inbox:/inbox
+    restart: unless-stopped
+    depends_on:
+      - yt-cookie-browser
+    healthcheck:
+      # The loop writes a heartbeat every CHECK_INTERVAL_SECONDS.
+      test: ["CMD", "python", "-c", "import os,sys,time; sys.exit(time.time() - os.path.getmtime('/data/heartbeat') > 7800)"]
+      interval: 5m
+      timeout: 10s
+      retries: 2
+      start_period: 5m
+    networks:
+      # npm: reaches yattee-server and gotify. default: reaches the browser.
+      - npm
+      - default
+
+  # Its own browser, only on this stack's network: whoever can reach its DevTools port
+  # controls the Google session. No profile volume: the sentinel owns the cookies and
+  # loads them into a fresh context on every visit.
+  yt-cookie-browser:
+    # Stable channel: version tags mix stable/beta/dev builds, so track `stable` and let Renovate bump the digest.
+    image: chromedp/headless-shell:stable@sha256:381353d3530ab9d579d2fe8b9c0f4519c995617f5a71daf6bb649e2d12005bd9
+    container_name: yt-cookie-browser
+    restart: unless-stopped
+    command:
+      - --remote-allow-origins=*
+    networks:
+      - default
+
+networks:
+  npm:
+    external: true
