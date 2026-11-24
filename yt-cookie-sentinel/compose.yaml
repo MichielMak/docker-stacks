@@ -6,7 +6,12 @@ services:
     image: python:3.15-slim@sha256:ea4f1f290e071bf7d28199cfb3e09f5dbad31b50e9c32fd58f2f2d7be915f3ae
     container_name: yt-cookie-sentinel
     working_dir: /app
-    command: sh -c "pip install --no-cache-dir -r requirements.txt && python sentinel.py"
+    # Playwright's bundled Node (1.65+) needs libatomic1, which the slim image lacks.
+    # Installed once per container; a restart keeps it.
+    command: >-
+      sh -c "(ldconfig -p | grep -q libatomic.so.1 ||
+      (apt-get update -qq && apt-get install -y -qq --no-install-recommends libatomic1 && rm -rf /var/lib/apt/lists/*))
+      && pip install --no-cache-dir -r requirements.txt && python sentinel.py"
     environment:
       - TZ=Europe/Amsterdam
       # Without this, print() output is buffered and never shows in the logs.
