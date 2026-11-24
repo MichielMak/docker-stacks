@@ -140,6 +140,10 @@ def refresh_session(state: dict, cookies: list[dict]) -> bool | None:
     Returns the LOGGED_IN verdict (True, False or None for no answer).
     """
     result = browser.refresh(cookies, CDP_URL, PAGE_WAIT_SECONDS, USER_AGENT)
+    if result["rotation_pending"]:
+        # Google may already treat cookies as current that this browser never
+        # received: store what we have, but don't push it or trust it.
+        result["logged_in"] = None
     state["refreshed_at"] = time.time()
     state["logged_in"] = result["logged_in"]
     save_state(state)
@@ -147,7 +151,11 @@ def refresh_session(state: dict, cookies: list[dict]) -> bool | None:
         # Also on "no answer": the browser may have rotated the cookies, and
         # only the new ones are valid from now on.
         write_jar(cookiejar.format(result["cookies"]))
-    print(f"Refresh: logged_in={result['logged_in']} cookies={len(result['cookies'])} error={result['error']}")
+    print(
+        f"Refresh: logged_in={result['logged_in']} cookies={len(result['cookies'])} "
+        f"rotations={result['rotations']} accounts_requests={result['accounts_requests']} "
+        f"changed={result['changed']} error={result['error']}"
+    )
     if result["logged_in"] is None:
         notify_throttled(
             state, "refresh_unknown", ERROR_NOTICE_INTERVAL_SECONDS,
