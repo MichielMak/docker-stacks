@@ -127,9 +127,23 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Frame-Options", "DENY")
-        self.send_header("Referrer-Policy", "no-referrer")
+        # Not no-referrer: then browsers send "Origin: null" on the form post.
+        self.send_header("Referrer-Policy", "same-origin")
         self.end_headers()
         self.wfile.write(body)
+
+    def _same_origin(self) -> bool:
+        """Refuse form posts from other sites.
+
+        Browsers send Sec-Fetch-Site on every request; trust it when present.
+        Otherwise compare Origin with Host. Origin is "null" when the page's
+        Referrer-Policy is no-referrer, which is why this page uses same-origin.
+        """
+        fetch_site = self.headers.get("Sec-Fetch-Site")
+        if fetch_site:
+            return fetch_site == "same-origin"
+        origin = urlparse(self.headers.get("Origin") or "").netloc
+        return bool(origin) and origin == self.headers.get("Host")
 
     def do_GET(self):
         path = urlparse(self.path).path
@@ -144,9 +158,7 @@ class Handler(BaseHTTPRequestHandler):
         if urlparse(self.path).path != "/seed":
             self._send(404, b"not found", "text/plain")
             return
-        # Cross-site form posts: the browser always sends Origin on POST.
-        origin = urlparse(self.headers.get("Origin") or "").netloc
-        if not origin or origin != self.headers.get("Host"):
+        if not self._same_origin():
             self._send(403, b"cross-origin request refused", "text/plain")
             return
         length = int(self.headers.get("Content-Length") or 0)
