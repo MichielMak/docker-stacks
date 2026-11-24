@@ -13,12 +13,21 @@ Can be run standalone to test the browser connection:
 
 import re
 import socket
+import time
 from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
 
 YOUTUBE_URL = "https://www.youtube.com/"
 _LOGGED_IN_RE = re.compile(r'"LOGGED_IN"\s*:\s*(true|false)')
+# How long to wait for an in-flight RotateCookies request before giving up.
+ROTATION_TIMEOUT_SECONDS = 60
+
+
+def _is_rotation(url: str) -> bool:
+    """accounts.google.com/RotateCookies and accounts.youtube.com/RotateCookies (not the ...Page iframe)."""
+    parsed = urlparse(url)
+    return (parsed.hostname or "").startswith("accounts.") and parsed.path.rstrip("/").endswith("/RotateCookies")
 
 
 def _resolve_to_ip(cdp_url: str) -> str:
@@ -49,6 +58,28 @@ def refresh(cookies: list[dict], cdp_url: str, wait_seconds: int, user_agent: st
             user_agent=user_agent or _desktop_user_agent(browser.version),
             viewport={"width": 1280, "height": 800},
         )
+        rotation = {"pending": set(), "results": [], "accounts": set()}
+
+        def on_request(req):
+            parsed = urlparse(req.url)
+            if (parsed.hostname or "").startswith("accounts."):
+                # Diagnostics only: path without query string, never cookies.
+                rotation["accounts"].add(f"{parsed.hostname}{parsed.path}")
+            if _is_rotation(req.url):
+                rotation["pending"].add(req)
+
+        def on_done(req, outcome):
+            if req in rotation["pending"]:
+                rotation["pending"].discard(req)
+                rotation["results"].append(f"{urlparse(req.url).hostname}:{outcome}")
+
+        def on_finished(req):
+            resp = req.response()
+            on_done(req, resp.status if resp else "no-response")
+
+        context.on("request", on_request)
+        context.on("requestfinished", on_finished)
+        context.on("requestfailed", lambda req: on_done(req, f"failed({req.failure})"))
         try:
             if cookies:
                 context.add_cookies(cookies)
@@ -59,6 +90,16 @@ def refresh(cookies: list[dict], cdp_url: str, wait_seconds: int, user_agent: st
             except Exception:
                 pass  # YouTube keeps connections open; networkidle often never comes
             page.wait_for_timeout(wait_seconds * 1000)
+
+            # Google rotates the session cookies with a background RotateCookies
+            # request. Once it is sent, Google treats the new cookies as current
+            # and later drops the old ones, so never read the cookies (or close
+            # the context) while one is still in flight.
+            deadline = time.monotonic() + ROTATION_TIMEOUT_SECONDS
+            while rotation["pending"] and time.monotonic() < deadline:
+                page.wait_for_timeout(500)
+            if rotation["results"]:
+                page.wait_for_timeout(2000)  # let the Set-Cookie headers land in the jar
 
             logged_in = page.evaluate(
                 "() => (window.ytcfg && typeof window.ytcfg.get === 'function') ? window.ytcfg.get('LOGGED_IN') : null"
@@ -71,10 +112,34 @@ def refresh(cookies: list[dict], cdp_url: str, wait_seconds: int, user_agent: st
             if logged_in is None:
                 error = f"no LOGGED_IN on {page.url}"
                 page.screenshot(path=f"{debug_dir}/refresh_unknown.png")
+            if rotation["pending"]:
+                error = (error + "; " if error else "") + "RotateCookies still pending at timeout"
+            new_cookies = context.cookies()
             page.close()
-            return {"logged_in": logged_in, "cookies": context.cookies(), "error": error}
+            return {
+                "logged_in": logged_in,
+                "cookies": new_cookies,
+                "error": error,
+                "rotations": rotation["results"],
+                "rotation_pending": bool(rotation["pending"]),
+                "accounts_requests": sorted(rotation["accounts"]),
+                "changed": changed_cookie_names(cookies, new_cookies),
+            }
         finally:
             context.close()
+
+
+def changed_cookie_names(before: list[dict], after: list[dict]) -> list[str]:
+    """Names (with domain) of cookies that were added, changed or removed. Never values."""
+    old = {(c["domain"], c["name"]): c["value"] for c in before}
+    new = {(c["domain"], c["name"]): c["value"] for c in after}
+    names = []
+    for key in sorted(old.keys() | new.keys()):
+        if old.get(key) == new.get(key):
+            continue
+        suffix = " (new)" if key not in old else " (gone)" if key not in new else ""
+        names.append(f"{key[0]}/{key[1]}{suffix}")
+    return names
 
 
 if __name__ == "__main__":
@@ -82,4 +147,4 @@ if __name__ == "__main__":
 
     result = refresh([], os.environ.get("CDP_URL", "http://yt-cookie-browser:9222"), 5)
     # Anonymous visit: expect logged_in False. Never print the cookies.
-    print({"logged_in": result["logged_in"], "cookie_count": len(result["cookies"]), "error": result["error"]})
+    print({k: v for k, v in result.items() if k != "cookies"} | {"cookie_count": len(result["cookies"])})
