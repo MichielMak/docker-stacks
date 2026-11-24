@@ -1,0 +1,41 @@
+# Written by hand: scripts/komodo-migrate.py --write-toml leaves it alone.
+
+# Renovate only automerges between 00:00 and 07:00 (automergeSchedule in renovate.json),
+# and only during a run. Its hourly GitHub cron is often skipped: on 2026-11-23/24 it ran
+# at 22:27 and 07:04, so nothing merged that night. This Action starts a run at 00:30,
+# 02:30 and 04:30. Each merge then keeps the next runs going through
+# .github/workflows/renovate-trigger.yml.
+#
+# Needs the secret Komodo Variable RENOVATE_DISPATCH_TOKEN (Settings -> Variables, marked
+# secret): a fine-grained GitHub token for MichielMak/renovate-config only, with
+# "Actions: Read and write". Komodo fills it in at run time and redacts it from the logs.
+[[action]]
+name = "Renovate night run"
+description = "Starts the Renovate workflow in MichielMak/renovate-config during the automerge window."
+tags = ["gitops"]
+
+[action.config]
+# Komodo cron has a seconds field: sec min hour day month weekday.
+schedule_format = "Cron"
+schedule = "0 30 0,2,4 * * *"
+schedule_timezone = "Europe/Amsterdam"
+failure_alert = true
+file_contents = """
+const res = await fetch(
+  "https://api.github.com/repos/MichielMak/renovate-config/actions/workflows/renovate.yml/dispatches",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer [[RENOVATE_DISPATCH_TOKEN]]",
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "komodo-renovate-night-run",
+    },
+    body: JSON.stringify({ ref: "main" }),
+  },
+);
+if (!res.ok) {
+  throw new Error(`Dispatch failed: HTTP ${res.status} ${await res.text()}`);
+}
+console.log("Renovate run started");
+"""

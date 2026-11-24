@@ -94,7 +94,7 @@ labels:
 
 When adding a new service, Renovate will pick up the image automatically. If the image uses non-standard versioning, add a custom `packageRule` in `renovate.json`.
 
-Renovate runs hourly as a GitHub Actions workflow in `MichielMak/renovate-config`, which also manages `open_agb_firm` and `flightscanner`. That repo holds the runner, its secrets and the repository list. This repo merges Renovate PRs through Renovate itself (`platformAutomerge: false`), so `.github/workflows/renovate-trigger.yml` starts a Renovate run as soon as CI is green on a `renovate/**` branch. It uses a GitHub App token limited to `renovate-config` with `actions: write`, from the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets.
+Renovate runs hourly as a GitHub Actions workflow in `MichielMak/renovate-config`, which also manages `open_agb_firm` and `flightscanner`. That repo holds the runner, its secrets and the repository list. This repo merges Renovate PRs through Renovate itself (`platformAutomerge: false`), so `.github/workflows/renovate-trigger.yml` starts a Renovate run as soon as CI is green on a `renovate/**` branch. It uses a GitHub App token limited to `renovate-config` with `actions: write`, from the `RENOVATE_CLIENT_ID` and `RENOVATE_PRIVATE_KEY` repository secrets. GitHub often skips the hourly cron, so the Komodo Action `Renovate night run` (`komodo/resources/actions.toml`) also starts a run at 00:30, 02:30 and 04:30, with the secret Komodo Variable `RENOVATE_DISPATCH_TOKEN`.
 
 ## Secrets (SOPS)
 
