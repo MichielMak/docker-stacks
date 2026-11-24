@@ -51,17 +51,20 @@
       "automerge": false
     },
     {
-      "description": "Group arl-sentinel pip deps with its Docker stack",
+      "description": "Group arl-sentinel pip deps with its Docker stack. Playwright only connects to a separate Chrome over CDP, so its version needn't match a browser build",
       "matchManagers": ["pip_requirements"],
-      "matchFileNames": ["arl-sentinel/app/requirements.txt"],
+      "matchFileNames": ["arl-sentinel/app/requirements*.txt"],
       "groupName": "stack: arl-sentinel",
-      "groupSlug": "stack-arl-sentinel"
+      "groupSlug": "stack-arl-sentinel",
+      "addLabels": ["stack:arl-sentinel"]
     },
     {
-      "description": "Disable playwright auto-updates (version must match runtime browser binaries)",
+      "description": "Group yt-cookie-sentinel pip deps with its Docker stack (Playwright over CDP, as above)",
       "matchManagers": ["pip_requirements"],
-      "matchPackageNames": ["playwright"],
-      "enabled": false
+      "matchFileNames": ["yt-cookie-sentinel/app/requirements*.txt"],
+      "groupName": "stack: yt-cookie-sentinel",
+      "groupSlug": "stack-yt-cookie-sentinel",
+      "addLabels": ["stack:yt-cookie-sentinel"]
     },
     {
       "description": "Docker: allow only stable SemVer or CalVer",
