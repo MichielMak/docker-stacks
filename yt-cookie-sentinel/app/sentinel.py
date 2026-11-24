@@ -3,7 +3,8 @@
 Keeps Yattee's YouTube account cookies fresh without manual exports:
 
 1. Seed once: export cookies.txt from a private/incognito YouTube window,
-   close that window, and drop the file into /inbox/cookies.txt.
+   close that window, and paste the export on the seed page (seed_page.py)
+   or drop the file into /inbox/cookies.txt.
 2. Every REFRESH_INTERVAL_SECONDS (and whenever Yattee reports its cookies
    stale), the sentinel loads the stored cookies into a fresh context in the
    yt-cookie-browser container, visits youtube.com so Google rotates the
@@ -18,6 +19,7 @@ Never log or print cookie values; use cookiejar.fingerprint() instead.
 import json
 import os
 import sys
+import threading
 import time
 import traceback
 
@@ -44,11 +46,15 @@ GOTIFY_TOKEN = os.environ.get("GOTIFY_TOKEN", "")
 YATTEE_URL = os.environ.get("YATTEE_URL", "http://yattee-server:8085")
 YATTEE_USERNAME = os.environ.get("YATTEE_USERNAME", "")
 YATTEE_PASSWORD = os.environ.get("YATTEE_PASSWORD", "")
+SEED_PAGE_URL = os.environ.get("SEED_PAGE_URL", "the seed page")
+
+# The main loop and the seed page both drive the browser and write the state.
+LOCK = threading.Lock()
 
 SEED_HELP = (
     "Open a private/incognito window, log into YouTube, export cookies.txt for youtube.com "
-    "with the cookie extension, close the private window, and drop the file into "
-    f"{INBOX_PATH} (on the host: $DOCKER_DATA_DIR/yt-cookie-sentinel/inbox/cookies.txt)."
+    f"with the cookie extension, close the private window, and paste the export on {SEED_PAGE_URL}. "
+    f"Or drop the file into {INBOX_PATH} (on the host: $DOCKER_DATA_DIR/yt-cookie-sentinel/inbox/cookies.txt)."
 )
 
 
@@ -177,40 +183,56 @@ def handle_logged_out(state: dict) -> None:
     )
 
 
+def apply_seed(yattee: Yattee, state: dict, text: str) -> tuple[str, str]:
+    """Check a new cookies.txt, store it and push it to Yattee.
+
+    Returns (outcome, message). outcome is "seeded", "rejected",
+    "logged_out", "inconclusive" or "push_failed". Only "inconclusive" is
+    worth retrying with the same cookies.
+    """
+    cookies = cookiejar.parse(text)
+    if not cookiejar.has_auth_cookies(cookies):
+        return "rejected", (
+            "No youtube.com account cookies (LOGIN_INFO and SAPISID) in it. "
+            "Export while logged in on youtube.com."
+        )
+
+    logged_in = refresh_session(state, cookies)
+    if logged_in is None:
+        return "inconclusive", "YouTube gave no clear answer. Try again in a few minutes."
+    if logged_in is False:
+        return "logged_out", (
+            "YouTube says these cookies are logged out: the browser you exported from "
+            "already rotated them. Export from a fresh private window and close it right after."
+        )
+
+    state.pop("dead_since", None)
+    state.get("notified_at", {}).pop("dead", None)
+    save_state(state)
+    if not push_to_yattee(yattee, state, read_file(JAR_PATH)):
+        return "push_failed", "Session stored, but Yattee refused the cookies. Retrying every hour."
+    return "seeded", "New session stored and pushed to Yattee. Refreshes are automatic from now on."
+
+
+SEED_TITLES = {
+    "seeded": "YouTube cookies seeded",
+    "rejected": "YouTube cookie seed rejected",
+    "logged_out": "YouTube cookie seed already logged out",
+}
+
+
 def handle_inbox(yattee: Yattee, state: dict) -> bool:
     """Apply a new seed from the inbox. Returns True when there was one."""
     text = read_file(INBOX_PATH)
     if text is None:
         return False
-    cookies = cookiejar.parse(text)
-    if not cookiejar.has_auth_cookies(cookies):
-        os.remove(INBOX_PATH)
-        notify(
-            "YouTube cookie seed rejected",
-            "The file has no youtube.com account cookies (LOGIN_INFO and SAPISID). "
-            "Export while logged in on youtube.com. " + SEED_HELP,
-            priority=8,
-        )
-        return True
-
-    logged_in = refresh_session(state, cookies)
-    if logged_in is None:
+    outcome, message = apply_seed(yattee, state, text)
+    if outcome == "inconclusive":
         return True  # keep the inbox file and retry next cycle
     os.remove(INBOX_PATH)  # it holds a live session; don't leave it lying around
-    if logged_in is False:
-        notify(
-            "YouTube cookie seed already logged out",
-            "YouTube says the new cookies are logged out: the browser you exported from "
-            "rotated them. " + SEED_HELP,
-            priority=8,
-        )
-        return True
-
-    state.pop("dead_since", None)
-    state.get("notified_at", {}).pop("dead", None)
-    save_state(state)
-    if push_to_yattee(yattee, state, read_file(JAR_PATH)):
-        notify("YouTube cookies seeded", "New session stored and pushed to Yattee. Refreshes are automatic from now on.")
+    if outcome in SEED_TITLES:
+        extra = "" if outcome == "seeded" else " " + SEED_HELP
+        notify(SEED_TITLES[outcome], message + extra, priority=5 if outcome == "seeded" else 8)
     return True
 
 
@@ -264,9 +286,16 @@ def main() -> None:
         notify("YouTube cookie sentinel", "YATTEE_USERNAME/YATTEE_PASSWORD are missing; cannot push cookies.", priority=8)
     yattee = Yattee(YATTEE_URL, YATTEE_USERNAME, YATTEE_PASSWORD)
     run_once = "--once" in sys.argv
+    if not run_once:
+        import seed_page
+
+        # Pass this module itself: when run as a script it is "__main__", and an
+        # "import sentinel" in seed_page would load a second copy with its own LOCK.
+        seed_page.start(yattee, sys.modules[__name__])
     while True:
         try:
-            run_cycle(yattee)
+            with LOCK:
+                run_cycle(yattee)
         except Exception:
             traceback.print_exc()
             state = load_state()
