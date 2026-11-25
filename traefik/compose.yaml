@@ -38,7 +38,7 @@ services:
     # Docker Hardened Image. Komodo logs in to dhi.io first (registry_provider in stacks.toml).
     # Runs as UID 65532, so ${DOCKER_DATA_DIR}/traefik/letsencrypt must be owned by 65532.
     # Renovate pins the digest.
-    image: dhi.io/traefik:3.7.20@sha256:480e3105148929bb1c49f0603b0fe9bae27bf2fa9784631018798e733f222537
+    image: dhi.io/traefik:3.8.0@sha256:bd1de390a36fc00022162d66aea73f535bf1dbefc20160dd05c7a414eec371d8
     container_name: traefik
     restart: unless-stopped
     depends_on:
