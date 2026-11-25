@@ -7,6 +7,10 @@ services:
     container_name: yattee-server
     restart: unless-stopped
     # Runs as root: the image installs deno (needed by yt-dlp) under /root
+    environment:
+      # Bundled bgutil PO token provider for yt-dlp: full formats without account cookies.
+      # Applied on every start, so it overrides the admin panel toggle.
+      - YT_POT_ENABLED=true
     volumes:
       # SQLite database and the key that encrypts stored credentials: back this up
       - ${DOCKER_DATA_DIR}/yattee-server/data:/app/data
