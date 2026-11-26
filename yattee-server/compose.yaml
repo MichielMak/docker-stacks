@@ -3,7 +3,7 @@
 # First start: open https://yattee.${DOMAIN}/ and finish the setup wizard to create the admin account.
 services:
   yattee-server:
-    image: yattee/yattee-server:1.0.10@sha256:e54e36648535396c54cbe9687b51d702f698f3987cdab5ce26ba696e3e939176
+    image: yattee/yattee-server:1.0.11@sha256:26b35e741dd4f06029735ddd487f9fcb6ab62fa9367565dfd0a6912417c969da
     container_name: yattee-server
     restart: unless-stopped
     # Runs as root: the image installs deno (needed by yt-dlp) under /root
