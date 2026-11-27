@@ -1,6 +1,6 @@
 services:
   paseo:
-    image: ghcr.io/getpaseo/paseo:0.17.5@sha256:321c8361600602c6e1f1c7a492efc0efa251609730b4086c2f973ad3f14f848d
+    image: ghcr.io/getpaseo/paseo:0.17.6@sha256:bb15466afcb2668a35b54c83a175880b662da8450db239528f6614dacf49b38e
     container_name: paseo
     environment:
       - TZ=${TZ}
