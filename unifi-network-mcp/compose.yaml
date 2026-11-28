@@ -36,7 +36,7 @@
 
 services:
   unifi-network-mcp:
-    image: ghcr.io/sirkirby/unifi-network-mcp:0.50.4@sha256:faf447c22552ff97c25f194b32f74c0c28ca89dc45caa7b2de54c4ad8b2d692f
+    image: ghcr.io/sirkirby/unifi-network-mcp:0.51.0@sha256:041ad1f19eba534efcba803d9e22846c64ffec611fb69f1a36726e7e5cc00143
     container_name: unifi-network-mcp
     environment:
       # Serve MCP over HTTP instead of the default stdio transport
